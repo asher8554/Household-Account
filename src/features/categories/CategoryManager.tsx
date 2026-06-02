@@ -65,7 +65,7 @@ export function CategoryManager({ categories }: CategoryManagerProps) {
       <form onSubmit={handleAdd} className="grid gap-2">
         <div className="grid grid-cols-[1fr_1fr_48px] gap-2">
           <select
-            className="h-10 rounded-lg border border-line bg-white px-3 text-sm"
+            className="h-10 rounded-lg border border-line bg-field px-3 text-sm"
             value={newType}
             onChange={(event) => setNewType(event.target.value as CategoryType)}
           >
@@ -73,14 +73,14 @@ export function CategoryManager({ categories }: CategoryManagerProps) {
             <option value="income">수입</option>
           </select>
           <input
-            className="h-10 rounded-lg border border-line bg-white px-3 text-sm"
+            className="h-10 rounded-lg border border-line bg-field px-3 text-sm"
             placeholder="이름"
             value={newName}
             onChange={(event) => setNewName(event.target.value)}
           />
           <FormField label="">
             <input
-              className="h-10 w-full rounded-lg border border-line bg-white p-1"
+              className="h-10 w-full rounded-lg border border-line bg-field p-1"
               type="color"
               value={newColor}
               title="카테고리 색상"
@@ -106,12 +106,12 @@ export function CategoryManager({ categories }: CategoryManagerProps) {
               {isEditing ? (
                 <div className="grid grid-cols-[minmax(0,1fr)_42px] gap-2">
                   <input
-                    className="h-9 rounded-lg border border-line bg-white px-2 text-sm"
+                    className="h-9 rounded-lg border border-line bg-field px-2 text-sm"
                     value={editDraft.name}
                     onChange={(event) => setEditDraft({ ...editDraft, name: event.target.value })}
                   />
                   <input
-                    className="h-9 w-full rounded-lg border border-line bg-white p-1"
+                    className="h-9 w-full rounded-lg border border-line bg-field p-1"
                     type="color"
                     value={editDraft.color}
                     title="카테고리 색상"

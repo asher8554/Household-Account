@@ -41,7 +41,7 @@ export function MonthSummaryCards({ summary }: MonthSummaryCardsProps) {
         const Icon = item.icon;
 
         return (
-          <article key={item.label} className="rounded-lg border border-line bg-white px-4 py-3 shadow-panel">
+          <article key={item.label} className="rounded-lg border border-line bg-panel px-4 py-3 shadow-panel">
             <div className="flex items-start justify-between gap-3">
               <div>
                 <p className="text-sm text-muted">{item.label}</p>

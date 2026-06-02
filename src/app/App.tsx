@@ -3,14 +3,17 @@ import { useEffect } from "react";
 import { AppShell } from "./AppShell";
 import { DashboardScreen } from "../features/dashboard/DashboardScreen";
 import { ensureDefaultCategories } from "../features/categories/category-service";
+import { useTheme } from "../features/theme/theme-service";
 
 export function App() {
+  const { theme, toggleTheme } = useTheme();
+
   useEffect(() => {
     void ensureDefaultCategories();
   }, []);
 
   return (
-    <AppShell>
+    <AppShell theme={theme} onToggleTheme={toggleTheme}>
       <DashboardScreen />
     </AppShell>
   );
