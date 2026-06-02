@@ -11,10 +11,10 @@ type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary: "bg-moss text-white hover:bg-[#3e5e49]",
-  secondary: "border border-line bg-white text-ink hover:bg-moss-soft",
+  primary: "bg-moss text-white hover:bg-moss-hover",
+  secondary: "border border-line bg-panel text-ink hover:bg-moss-soft",
   ghost: "text-muted hover:bg-moss-soft hover:text-ink",
-  danger: "bg-coral text-white hover:bg-[#b24a3c]",
+  danger: "bg-coral text-white hover:bg-coral-hover",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {

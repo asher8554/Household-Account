@@ -12,7 +12,7 @@ type SectionPanelProps = {
 
 export function SectionPanel({ title, eyebrow, action, children, className }: SectionPanelProps) {
   return (
-    <section className={cx("rounded-lg border border-line bg-white shadow-panel", className)}>
+    <section className={cx("rounded-lg border border-line bg-panel shadow-panel", className)}>
       <div className="flex items-start justify-between gap-3 border-b border-line px-4 py-3">
         <div>
           {eyebrow ? <p className="text-xs font-medium uppercase text-muted">{eyebrow}</p> : null}

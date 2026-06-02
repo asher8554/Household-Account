@@ -4,8 +4,31 @@
 @tailwind utilities;
 
 :root {
-  color: #20231f;
-  background: #f7f8f4;
+  --color-surface: 247 248 244;
+  --color-panel: 255 255 255;
+  --color-field: 255 255 255;
+  --color-ink: 32 35 31;
+  --color-muted: 109 116 106;
+  --color-line: 223 228 215;
+  --color-moss: 71 107 83;
+  --color-moss-hover: 62 94 73;
+  --color-moss-soft: 231 239 229;
+  --color-coral: 200 86 69;
+  --color-coral-hover: 178 74 60;
+  --color-coral-soft: 247 222 217;
+  --color-honey: 212 154 45;
+  --color-honey-soft: 246 234 209;
+  --color-mint: 47 143 122;
+  --color-mint-soft: 223 241 236;
+  --color-expense-0: 255 255 255;
+  --color-expense-1: 255 244 241;
+  --color-expense-2: 247 222 217;
+  --color-expense-3: 237 184 174;
+  --color-expense-4: 220 142 129;
+  --shadow-panel: 0 14px 40px rgba(32, 35, 31, 0.08);
+  color-scheme: light;
+  color: rgb(var(--color-ink));
+  background: rgb(var(--color-surface));
   font-family:
     ui-sans-serif,
     system-ui,
@@ -19,6 +42,32 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+:root.dark {
+  --color-surface: 20 24 22;
+  --color-panel: 30 36 32;
+  --color-field: 25 31 27;
+  --color-ink: 238 242 234;
+  --color-muted: 166 176 160;
+  --color-line: 58 68 60;
+  --color-moss: 112 161 128;
+  --color-moss-hover: 131 181 147;
+  --color-moss-soft: 39 55 45;
+  --color-coral: 232 128 111;
+  --color-coral-hover: 242 147 131;
+  --color-coral-soft: 72 42 38;
+  --color-honey: 228 177 80;
+  --color-honey-soft: 69 55 31;
+  --color-mint: 93 190 164;
+  --color-mint-soft: 33 59 52;
+  --color-expense-0: 30 36 32;
+  --color-expense-1: 51 40 37;
+  --color-expense-2: 72 45 40;
+  --color-expense-3: 104 58 50;
+  --color-expense-4: 138 71 60;
+  --shadow-panel: 0 18px 46px rgba(0, 0, 0, 0.28);
+  color-scheme: dark;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -27,6 +76,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  background: rgb(var(--color-surface));
 }
 
 button,
@@ -36,11 +86,21 @@ textarea {
   font: inherit;
 }
 
+input,
+select,
+textarea {
+  color: rgb(var(--color-ink));
+}
+
+::placeholder {
+  color: rgb(var(--color-muted) / 0.72);
+}
+
 button:focus-visible,
 a:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-  outline: 2px solid #2f8f7a;
+  outline: 2px solid rgb(var(--color-mint));
   outline-offset: 2px;
 }

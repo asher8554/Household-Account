@@ -26,18 +26,21 @@ export function CategoryExpenseChart({ stats }: CategoryExpenseChartProps) {
                 type="category"
                 dataKey="name"
                 width={84}
-                tick={{ fontSize: 12, fill: "#6d746a" }}
+                tick={{ fontSize: 12, fill: "rgb(var(--color-muted))" }}
                 axisLine={false}
                 tickLine={false}
               />
               <Tooltip
                 formatter={(value) => formatKrw(Number(value))}
-                cursor={{ fill: "#e7efe5" }}
+                cursor={{ fill: "rgb(var(--color-moss-soft))" }}
                 contentStyle={{
-                  border: "1px solid #dfe4d7",
+                  backgroundColor: "rgb(var(--color-panel))",
+                  border: "1px solid rgb(var(--color-line))",
                   borderRadius: 8,
+                  color: "rgb(var(--color-ink))",
                   boxShadow: "0 10px 24px rgba(32,35,31,0.08)",
                 }}
+                labelStyle={{ color: "rgb(var(--color-muted))" }}
               />
               <Bar dataKey="amount" radius={[0, 6, 6, 0]} barSize={18}>
                 {chartData.map((entry) => (

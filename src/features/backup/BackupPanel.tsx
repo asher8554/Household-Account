@@ -54,7 +54,7 @@ export function BackupPanel() {
         <label className="grid gap-2 text-sm">
           <span className="font-medium">전체 초기화</span>
           <input
-            className="h-10 rounded-lg border border-line bg-white px-3 text-sm"
+            className="h-10 rounded-lg border border-line bg-field px-3 text-sm"
             placeholder="초기화"
             value={resetText}
             onChange={(event) => setResetText(event.target.value)}

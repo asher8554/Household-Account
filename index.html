@@ -10,6 +10,15 @@
     <title>Household Account</title>
   </head>
   <body>
+    <script>
+      (() => {
+        const stored = window.localStorage.getItem("household-account-theme");
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        const shouldUseDark = stored === "dark" || (!stored && prefersDark);
+
+        document.documentElement.classList.toggle("dark", shouldUseDark);
+      })();
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

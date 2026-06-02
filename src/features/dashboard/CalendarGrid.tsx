@@ -20,14 +20,14 @@ type CalendarGridProps = {
 };
 
 function intensityClass(expense: number, maxDailyExpense: number) {
-  if (expense <= 0 || maxDailyExpense <= 0) return "bg-white";
+  if (expense <= 0 || maxDailyExpense <= 0) return "bg-expense-0";
 
   const ratio = expense / maxDailyExpense;
 
-  if (ratio <= 0.25) return "bg-[#fff4f1]";
-  if (ratio <= 0.5) return "bg-[#f7ded9]";
-  if (ratio <= 0.75) return "bg-[#edb8ae]";
-  return "bg-[#dc8e81]";
+  if (ratio <= 0.25) return "bg-expense-1";
+  if (ratio <= 0.5) return "bg-expense-2";
+  if (ratio <= 0.75) return "bg-expense-3";
+  return "bg-expense-4";
 }
 
 export function CalendarGrid({
@@ -45,7 +45,7 @@ export function CalendarGrid({
   const categoryMap = new Map(categories.map((category) => [category.id, category]));
 
   return (
-    <section className="rounded-lg border border-line bg-white shadow-panel">
+    <section className="rounded-lg border border-line bg-panel shadow-panel">
       <div className="flex flex-col gap-3 border-b border-line px-4 py-3 md:flex-row md:items-center md:justify-between">
         <div>
           <p className="text-sm text-muted">월간 달력</p>
