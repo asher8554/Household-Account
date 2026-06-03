@@ -166,8 +166,9 @@ export async function importBackupFile(file: File) {
 export async function resetAllData() {
   const now = new Date().toISOString();
 
-  await db.transaction("rw", db.categories, db.transactions, async () => {
+  await db.transaction("rw", db.categories, db.transactions, db.cardImportStatuses, async () => {
     await db.transactions.clear();
+    await db.cardImportStatuses.clear();
     await db.categories.clear();
     await db.categories.bulkPut(createDefaultCategories(now));
   });

@@ -1,11 +1,13 @@
 // IndexedDB 테이블과 앱 데이터베이스 인스턴스를 정의합니다.
 import Dexie, { type Table } from "dexie";
 import type { Category } from "../features/categories/category-types";
+import type { CardImportStatus } from "../features/import-guide/import-status-types";
 import type { Transaction } from "../features/transactions/transaction-types";
 
 export class HouseholdDatabase extends Dexie {
   categories!: Table<Category, string>;
   transactions!: Table<Transaction, string>;
+  cardImportStatuses!: Table<CardImportStatus, string>;
 
   constructor() {
     super("household-account");
@@ -13,6 +15,12 @@ export class HouseholdDatabase extends Dexie {
     this.version(1).stores({
       categories: "&id,type,isActive,sortOrder,updatedAt",
       transactions: "&id,date,type,categoryId,source,updatedAt",
+    });
+
+    this.version(2).stores({
+      categories: "&id,type,isActive,sortOrder,updatedAt",
+      transactions: "&id,date,type,categoryId,source,updatedAt",
+      cardImportStatuses: "&source,lastLoadedAt,updatedAt",
     });
   }
 }

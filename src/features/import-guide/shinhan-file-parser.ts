@@ -6,14 +6,14 @@ type CellValue = string | number | boolean | Date | null;
 type TextEncoding = "utf-8" | "euc-kr" | "utf-16le" | "utf-16be";
 
 const columnAliases = {
-  date: ["이용일자", "승인일자", "거래일자", "거래일시", "매출일자", "일자", "사용일자", "입출금일자", "처리일자", "이체일자"],
+  date: ["이용일자", "승인일자", "승인일", "거래일자", "거래일시", "매출일자", "일자", "사용일자", "입출금일자", "처리일자", "이체일자"],
   amount: ["이용금액", "승인금액", "거래금액", "매출금액", "결제금액", "청구금액", "원화금액", "금액"],
   withdrawalAmount: ["출금액", "출금금액", "지급액", "찾으신금액", "출금", "출금(원)", "출금액(원)"],
   depositAmount: ["입금액", "입금금액", "수입액", "맡기신금액", "입금", "입금(원)", "입금액(원)"],
   merchant: ["가맹점명", "이용가맹점", "가맹점", "사용처", "상호", "내용", "적요", "거래내용", "거래처", "받는분", "보낸분", "상대예금주", "상대계좌예금주", "입금통장표시", "출금통장표시"],
   status: ["승인상태", "상태", "거래상태", "구분", "승인구분", "매출구분", "거래구분", "입출금구분", "거래종류"],
   approvalNo: ["승인번호", "승인No", "승인NO", "승인 NO", "승인코드", "거래번호", "처리번호"],
-  cardName: ["카드명", "카드번호", "카드", "이용카드"],
+  cardName: ["카드명", "카드번호", "카드종류", "카드", "이용카드"],
 };
 
 type ColumnMapping = {
@@ -273,7 +273,7 @@ async function readLegacyXlsRows(file: File): Promise<CellValue[][]> {
   }
 
   const text = decodeBytes(bytes);
-  const lowerText = text.slice(0, 1000).toLowerCase();
+  const lowerText = text.trimStart().slice(0, 20000).toLowerCase();
 
   if (lowerText.includes("<html") || lowerText.includes("<table")) {
     return parseHtmlWorkbook(text);
