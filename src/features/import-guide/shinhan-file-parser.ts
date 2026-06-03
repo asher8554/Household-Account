@@ -6,21 +6,31 @@ type CellValue = string | number | boolean | Date | null;
 type TextEncoding = "utf-8" | "euc-kr" | "utf-16le" | "utf-16be";
 
 const columnAliases = {
-  date: ["이용일자", "승인일자", "거래일자", "매출일자", "일자", "사용일자"],
+  date: ["이용일자", "승인일자", "거래일자", "거래일시", "매출일자", "일자", "사용일자", "입출금일자", "처리일자", "이체일자"],
   amount: ["이용금액", "승인금액", "거래금액", "매출금액", "결제금액", "청구금액", "원화금액", "금액"],
-  merchant: ["가맹점명", "이용가맹점", "가맹점", "사용처", "상호", "내용", "적요"],
-  status: ["승인상태", "상태", "거래상태", "구분", "승인구분", "매출구분"],
-  approvalNo: ["승인번호", "승인No", "승인NO", "승인 NO", "승인코드"],
+  withdrawalAmount: ["출금액", "출금금액", "지급액", "찾으신금액", "출금", "출금(원)", "출금액(원)"],
+  depositAmount: ["입금액", "입금금액", "수입액", "맡기신금액", "입금", "입금(원)", "입금액(원)"],
+  merchant: ["가맹점명", "이용가맹점", "가맹점", "사용처", "상호", "내용", "적요", "거래내용", "거래처", "받는분", "보낸분", "상대예금주", "상대계좌예금주", "입금통장표시", "출금통장표시"],
+  status: ["승인상태", "상태", "거래상태", "구분", "승인구분", "매출구분", "거래구분", "입출금구분", "거래종류"],
+  approvalNo: ["승인번호", "승인No", "승인NO", "승인 NO", "승인코드", "거래번호", "처리번호"],
   cardName: ["카드명", "카드번호", "카드", "이용카드"],
 };
 
 type ColumnMapping = {
   date: number;
   amount: number;
+  withdrawalAmount: number;
+  depositAmount: number;
   merchant: number;
   status: number;
   approvalNo: number;
   cardName: number;
+};
+
+type FileInstitution = {
+  name: string;
+  source: "shinhan-file" | "bank-file";
+  kind: "card" | "bank";
 };
 
 export async function parseShinhanTransactionFile(file: File): Promise<ShinhanParsedCandidate[]> {
@@ -34,14 +44,15 @@ export async function parseShinhanTransactionFile(file: File): Promise<ShinhanPa
 
   const headers = table[headerIndex].map((cell) => normalizeLooseText(cell));
   const mapping = buildColumnMapping(headers);
+  const institution = detectFileInstitution(file.name, mapping);
 
-  if (mapping.date < 0 || mapping.amount < 0 || mapping.merchant < 0) {
-    throw new Error("날짜, 금액, 가맹점명 컬럼을 자동으로 찾지 못했습니다.");
+  if (mapping.date < 0 || !hasAmountColumn(mapping) || mapping.merchant < 0) {
+    throw new Error("날짜, 금액, 거래내용 컬럼을 자동으로 찾지 못했습니다.");
   }
 
   return table
     .slice(headerIndex + 1)
-    .map((row, index) => toCandidate(row, mapping, index))
+    .map((row, index) => toCandidate(row, mapping, index, institution))
     .filter((candidate): candidate is ShinhanParsedCandidate => candidate !== null);
 }
 
@@ -65,15 +76,23 @@ async function readFileRows(file: File): Promise<CellValue[][]> {
   throw new Error("CSV, TSV, TXT, xls, xlsx 파일만 지원합니다.");
 }
 
-function toCandidate(row: CellValue[], mapping: ColumnMapping, index: number): ShinhanParsedCandidate | null {
+function toCandidate(
+  row: CellValue[],
+  mapping: ColumnMapping,
+  index: number,
+  institution: FileInstitution,
+): ShinhanParsedCandidate | null {
   const date = parseDateKey(row[mapping.date]);
-  const amount = parseKrwAmount(row[mapping.amount]);
+  const withdrawalAmount = getOptionalAmount(row, mapping.withdrawalAmount);
+  const depositAmount = getOptionalAmount(row, mapping.depositAmount);
+  const directAmount = getOptionalAmount(row, mapping.amount);
+  const amount = institution.kind === "bank" ? withdrawalAmount ?? depositAmount ?? directAmount : directAmount;
   const merchant = normalizeLooseText(row[mapping.merchant]);
   const statusText = getOptionalCell(row, mapping.status);
   const approvalNo = getOptionalCell(row, mapping.approvalNo);
   const cardName = getOptionalCell(row, mapping.cardName);
   const rawText = row.map((cell) => normalizeLooseText(cell)).filter(Boolean).join(" ");
-  const type = detectTransactionType(statusText, rawText);
+  const type = institution.kind === "bank" && depositAmount ? "income" : detectTransactionType(statusText, rawText);
 
   if (!date || !amount || !merchant) {
     return {
@@ -86,6 +105,8 @@ function toCandidate(row: CellValue[], mapping: ColumnMapping, index: number): S
       statusText,
       approvalNo,
       cardName,
+      institutionName: institution.name,
+      transactionSource: institution.source,
       rawText,
       note: "필수값 누락.",
     } satisfies ShinhanParsedCandidate;
@@ -101,8 +122,14 @@ function toCandidate(row: CellValue[], mapping: ColumnMapping, index: number): S
     statusText,
     approvalNo,
     cardName,
+    institutionName: institution.name,
+    transactionSource: institution.source,
     rawText,
   } satisfies ShinhanParsedCandidate;
+}
+
+function getOptionalAmount(row: CellValue[], index: number) {
+  return index >= 0 ? parseKrwAmount(row[index]) : null;
 }
 
 function getOptionalCell(row: CellValue[], index: number) {
@@ -113,6 +140,8 @@ function buildColumnMapping(headers: string[]): ColumnMapping {
   return {
     date: findColumnIndex(headers, columnAliases.date),
     amount: findColumnIndex(headers, columnAliases.amount),
+    withdrawalAmount: findColumnIndex(headers, columnAliases.withdrawalAmount),
+    depositAmount: findColumnIndex(headers, columnAliases.depositAmount),
     merchant: findColumnIndex(headers, columnAliases.merchant),
     status: findColumnIndex(headers, columnAliases.status),
     approvalNo: findColumnIndex(headers, columnAliases.approvalNo),
@@ -127,7 +156,7 @@ function findHeaderRowIndex(rows: CellValue[][]) {
   rows.slice(0, 12).forEach((row, index) => {
     const headers = row.map((cell) => normalizeLooseText(cell));
     const mapping = buildColumnMapping(headers);
-    const score = Number(mapping.date >= 0) + Number(mapping.amount >= 0) + Number(mapping.merchant >= 0);
+    const score = Number(mapping.date >= 0) + Number(hasAmountColumn(mapping)) + Number(mapping.merchant >= 0);
 
     if (score > bestScore) {
       bestScore = score;
@@ -136,6 +165,37 @@ function findHeaderRowIndex(rows: CellValue[][]) {
   });
 
   return bestScore >= 2 ? bestIndex : -1;
+}
+
+function hasAmountColumn(mapping: ColumnMapping) {
+  return mapping.amount >= 0 || mapping.withdrawalAmount >= 0 || mapping.depositAmount >= 0;
+}
+
+function detectFileInstitution(fileName: string, mapping: ColumnMapping): FileInstitution {
+  const normalizedFileName = fileName.toLowerCase();
+  const hasBankColumns = mapping.withdrawalAmount >= 0 || mapping.depositAmount >= 0;
+  const bankName =
+    normalizedFileName.includes("kb") || normalizedFileName.includes("kbstar") || normalizedFileName.includes("국민")
+      ? "국민은행"
+      : normalizedFileName.includes("hana") || normalizedFileName.includes("keb") || normalizedFileName.includes("하나")
+        ? "하나은행"
+        : normalizedFileName.includes("toss") || normalizedFileName.includes("토스")
+          ? "토스뱅크"
+          : "";
+
+  if (hasBankColumns || bankName) {
+    return {
+      name: bankName || "은행거래",
+      source: "bank-file",
+      kind: "bank",
+    };
+  }
+
+  return {
+    name: "신한카드",
+    source: "shinhan-file",
+    kind: "card",
+  };
 }
 
 function findColumnIndex(headers: string[], aliases: string[]) {

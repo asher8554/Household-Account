@@ -75,8 +75,11 @@ const appSteps: Step[] = [
 
 const requiredColumns = [
   "이용일자 또는 승인일자",
+  "거래일자 또는 거래일시",
   "이용금액 또는 승인금액",
+  "출금액 또는 입금액",
   "가맹점명",
+  "거래내용 또는 적요",
   "승인/취소 상태",
   "할부개월",
   "승인번호",
@@ -85,11 +88,18 @@ const requiredColumns = [
 
 const shinhanCardMainUrl = "https://www.shinhancard.com/pconts/html/main.html?_refer=https://www.google.com/";
 
+const institutionLinks = [
+  { label: "신한카드", href: shinhanCardMainUrl },
+  { label: "국민은행", href: "https://www.kbstar.com/" },
+  { label: "하나은행", href: "https://www.kebhana.com/" },
+  { label: "토스뱅크", href: "https://www.tossbank.com/" },
+];
+
 const roadmap = [
   {
     icon: FileSpreadsheet,
-    title: "1. 신한카드 CSV/xls/xlsx 가져오기",
-    description: "파일 선택, 드래그앤드롭, xls 자동 변환, 자동 컬럼 매핑, 미리보기, 중복 제외를 지원합니다.",
+    title: "1. 카드/은행 파일 가져오기",
+    description: "파일 선택, 드래그앤드롭, xls 자동 변환, 입출금 컬럼 매핑, 미리보기, 중복 제외를 지원합니다.",
   },
   {
     icon: Bell,
@@ -171,7 +181,7 @@ export function ShinhanImportGuideScreen() {
     try {
       const count = await importReadyShinhanItems(filePreview);
       setFilePreview(buildShinhanPreview(filePreview, await listTransactions()));
-      setStatusMessage(`신한카드 파일 거래 ${count}건을 저장했습니다.`);
+      setStatusMessage(`파일 거래 ${count}건을 저장했습니다.`);
     } finally {
       setIsImportingFile(false);
     }
@@ -194,23 +204,28 @@ export function ShinhanImportGuideScreen() {
       <section className="rounded-lg border border-line bg-panel p-5 shadow-panel">
         <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_360px] lg:items-start">
           <div>
-            <p className="text-sm font-medium text-moss">신한카드 가져오기</p>
+            <p className="text-sm font-medium text-moss">금융기관 가져오기</p>
             <h2 className="mt-2 text-2xl font-semibold tracking-normal md:text-3xl">
-              신한카드 파일과 승인 알림을 거래로 저장합니다.
+              카드와 은행 거래내역을 대시보드 거래로 저장합니다.
             </h2>
             <p className="mt-3 max-w-3xl text-sm leading-6 text-muted">
-              카드 계정 비밀번호나 금융 API 토큰은 저장하지 않습니다. 사용자가 내려받은 CSV/xls/xlsx 파일 또는
+              금융기관 계정 비밀번호나 API 토큰은 저장하지 않습니다. 사용자가 내려받은 CSV/xls/xlsx 파일 또는
               붙여넣은 알림 텍스트만 브라우저 안에서 분석하고, 결과는 IndexedDB에 저장합니다.
             </p>
-            <a
-              className="mt-4 inline-flex h-10 items-center gap-2 rounded-lg bg-moss px-4 text-sm font-medium text-white transition-colors hover:bg-moss-hover"
-              href={shinhanCardMainUrl}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <ExternalLink size={16} aria-hidden="true" />
-              신한카드 홈페이지 바로가기
-            </a>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {institutionLinks.map((link) => (
+                <a
+                  key={link.href}
+                  className="inline-flex h-10 items-center gap-2 rounded-lg bg-moss px-4 text-sm font-medium text-white transition-colors hover:bg-moss-hover"
+                  href={link.href}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <ExternalLink size={16} aria-hidden="true" />
+                  {link.label}
+                </a>
+              ))}
+            </div>
             {statusMessage ? (
               <p className="mt-4 rounded-lg border border-line bg-field px-3 py-2 text-sm text-ink">{statusMessage}</p>
             ) : null}
@@ -223,17 +238,18 @@ export function ShinhanImportGuideScreen() {
             <ul className="mt-3 grid gap-2 text-sm text-ink">
               <li>지출은 기본 기타 카테고리.</li>
               <li>승인취소/환급은 기본 기타수입 카테고리.</li>
+              <li>은행 출금액은 지출, 입금액은 수입.</li>
               <li>날짜, 구분, 금액, 가맹점명 기준 중복 제외.</li>
-              <li>CSV, xls, xlsx 지원. 신한카드 xls 자동 변환.</li>
+              <li>CSV, xls, xlsx 지원. 카드/은행 파일 자동 변환.</li>
             </ul>
           </div>
         </div>
       </section>
 
       <div className="grid gap-5 xl:grid-cols-2">
-        <SectionPanel title="CSV/xls/xlsx 파일 가져오기" eyebrow="신한카드 파일">
+        <SectionPanel title="CSV/xls/xlsx 파일 가져오기" eyebrow="카드/은행 파일">
           <div className="grid gap-4">
-            <FormField label="신한카드 이용내역 파일">
+            <FormField label="카드 또는 은행 거래내역 파일">
               <input
                 className="block w-full rounded-lg border border-line bg-field px-3 py-2 text-sm"
                 type="file"
@@ -255,7 +271,7 @@ export function ShinhanImportGuideScreen() {
                 <Upload className="mx-auto text-moss" size={24} aria-hidden="true" />
                 <p className="text-sm font-medium text-ink">파일을 여기로 드래그앤드롭하세요.</p>
                 <p className="text-sm leading-6">
-                  신한카드에서 받은 바이너리 xls도 자동 변환합니다. CSV, TSV, TXT, xls, xlsx를 지원합니다.
+                  신한카드, 국민은행, 하나은행, 토스뱅크에서 받은 거래내역 파일을 올립니다. CSV, TSV, TXT, xls, xlsx를 지원합니다.
                 </p>
               </div>
             </div>

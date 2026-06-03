@@ -32,6 +32,8 @@ function toNotificationCandidate(block: string, index: number): ShinhanParsedCan
       statusText,
       approvalNo: "",
       cardName: extractCardName(rawText),
+      institutionName: "신한카드",
+      transactionSource: "shinhan-notification",
       rawText,
       note: "금액 또는 가맹점 후보를 찾지 못했습니다.",
     } satisfies ShinhanParsedCandidate;
@@ -47,6 +49,8 @@ function toNotificationCandidate(block: string, index: number): ShinhanParsedCan
     statusText,
     approvalNo: "",
     cardName: extractCardName(rawText),
+    institutionName: "신한카드",
+    transactionSource: "shinhan-notification",
     rawText,
     note: parseDateKey(rawText) ? undefined : "날짜가 없어 오늘 날짜로 처리.",
   } satisfies ShinhanParsedCandidate;
