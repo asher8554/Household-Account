@@ -94,3 +94,4 @@
 - `npm run build`가 통과했다.
 - `npm audit --audit-level=high`가 취약점 0건으로 통과했다.
 - 브라우저 MCP 백엔드 연결이 실패해서 자동 시각 검증은 완료하지 못했다.
+- GitHub Pages 워크플로우 `26894704572`가 build와 deploy 모두 성공했다.
