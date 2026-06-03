@@ -95,3 +95,23 @@
 - `npm audit --audit-level=high`가 취약점 0건으로 통과했다.
 - 브라우저 MCP 백엔드 연결이 실패해서 자동 시각 검증은 완료하지 못했다.
 - GitHub Pages 워크플로우 `26894704572`가 build와 deploy 모두 성공했다.
+
+## 신한카드 xls 드래그앤드롭 작업 계획
+
+- 신한카드 다운로드 파일이 `.xls` 확장자로 내려오는 상황을 반영한다.
+- 보안 취약점이 있는 `xlsx` 패키지는 다시 도입하지 않는다.
+- 신한카드 `.xls`가 HTML 표 또는 Spreadsheet XML 형태일 때 브라우저에서 직접 행 데이터로 변환한다.
+- 진짜 바이너리 Excel 97 `.xls`는 감지해서 CSV 또는 xlsx 재저장 안내를 표시한다.
+- 파일 선택과 드래그앤드롭이 같은 파싱/미리보기 흐름을 사용하게 한다.
+
+## 신한카드 xls 드래그앤드롭 구현 결과
+
+- 파일 입력 accept에 `.xls`와 `application/vnd.ms-excel`을 추가했다.
+- 파일 가져오기 패널에 드래그앤드롭 업로드 영역을 추가했다.
+- 파일 선택과 드래그앤드롭 모두 `processFile` 흐름을 공유한다.
+- `.xls` 내부가 HTML table이면 DOMParser로 행 데이터를 추출한다.
+- `.xls` 내부가 HTML table이면 여러 table의 행을 모두 추출한다.
+- `.xls` 내부가 Spreadsheet XML이면 네임스페이스가 붙은 Row/Cell 구조도 행 데이터로 추출한다.
+- EUC-KR, UTF-8, UTF-16 BOM/charset 기반 텍스트 디코딩을 추가했다.
+- Compound Binary `.xls`는 감지 후 CSV 또는 xlsx 재저장 안내를 표시한다.
+- `npm run build`가 통과했다.
