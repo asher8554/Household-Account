@@ -1,4 +1,4 @@
-// 신한카드 CSV, xlsx, HTML/XML xls 파일을 거래 후보로 변환합니다.
+// 카드와 은행 CSV, xlsx, HTML/XML xls 파일을 거래 후보로 변환합니다.
 import type { ShinhanParsedCandidate } from "./shinhan-import-types";
 import { detectTransactionType, normalizeLooseText, parseDateKey, parseKrwAmount } from "./shinhan-normalizers";
 
@@ -29,7 +29,7 @@ type ColumnMapping = {
 
 type FileInstitution = {
   name: string;
-  source: "shinhan-file" | "bank-file";
+  source: "shinhan-file" | "hyundai-card-file" | "bank-file";
   kind: "card" | "bank";
 };
 
@@ -174,6 +174,10 @@ function hasAmountColumn(mapping: ColumnMapping) {
 function detectFileInstitution(fileName: string, mapping: ColumnMapping): FileInstitution {
   const normalizedFileName = fileName.toLowerCase();
   const hasBankColumns = mapping.withdrawalAmount >= 0 || mapping.depositAmount >= 0;
+  const cardInstitution =
+    normalizedFileName.includes("hyundai") || normalizedFileName.includes("현대")
+      ? { name: "현대카드", source: "hyundai-card-file" as const }
+      : { name: "신한카드", source: "shinhan-file" as const };
   const bankName =
     normalizedFileName.includes("kb") || normalizedFileName.includes("kbstar") || normalizedFileName.includes("국민")
       ? "국민은행"
@@ -192,8 +196,8 @@ function detectFileInstitution(fileName: string, mapping: ColumnMapping): FileIn
   }
 
   return {
-    name: "신한카드",
-    source: "shinhan-file",
+    name: cardInstitution.name,
+    source: cardInstitution.source,
     kind: "card",
   };
 }
