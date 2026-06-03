@@ -1,4 +1,4 @@
-// 신한카드 파일과 알림 텍스트 가져오기 화면입니다.
+// 금융기관 파일과 신한카드 알림 텍스트 가져오기 화면입니다.
 import { ChangeEvent, DragEvent, useState } from "react";
 import {
   Bell,
@@ -90,6 +90,7 @@ const shinhanCardMainUrl = "https://www.shinhancard.com/pconts/html/main.html?_r
 
 const institutionLinks = [
   { label: "신한카드", href: shinhanCardMainUrl },
+  { label: "현대카드", href: "https://www.hyundaicard.com/index.jsp" },
   { label: "국민은행", href: "https://www.kbstar.com/" },
   { label: "하나은행", href: "https://www.kebhana.com/" },
   { label: "토스뱅크", href: "https://www.tossbank.com/" },
@@ -271,7 +272,8 @@ export function ShinhanImportGuideScreen() {
                 <Upload className="mx-auto text-moss" size={24} aria-hidden="true" />
                 <p className="text-sm font-medium text-ink">파일을 여기로 드래그앤드롭하세요.</p>
                 <p className="text-sm leading-6">
-                  신한카드, 국민은행, 하나은행, 토스뱅크에서 받은 거래내역 파일을 올립니다. CSV, TSV, TXT, xls, xlsx를 지원합니다.
+                  신한카드, 현대카드, 국민은행, 하나은행, 토스뱅크에서 받은 거래내역 파일을 올립니다. CSV, TSV, TXT, xls,
+                  xlsx를 지원합니다.
                 </p>
               </div>
             </div>
