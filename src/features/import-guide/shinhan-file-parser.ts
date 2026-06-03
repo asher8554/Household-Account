@@ -204,7 +204,8 @@ async function readLegacyXlsRows(file: File): Promise<CellValue[][]> {
   const bytes = new Uint8Array(buffer);
 
   if (isCompoundBinaryFile(bytes)) {
-    throw new Error("바이너리 xls 파일은 브라우저 내 안전 파서가 없어 자동 변환하지 않습니다. 신한카드에서 다시 엑셀저장하거나 CSV로 저장해 주세요.");
+    const { parseBinaryXlsWorkbook } = await import("./shinhan-binary-xls-parser");
+    return parseBinaryXlsWorkbook(bytes);
   }
 
   const text = decodeBytes(bytes);
