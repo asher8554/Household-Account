@@ -9,6 +9,7 @@
     "preview": "vite preview --host 0.0.0.0"
   },
   "dependencies": {
+    "cfb": "^1.2.2",
     "date-fns": "^4.1.0",
     "dexie": "^4.2.1",
     "lucide-react": "^0.468.0",

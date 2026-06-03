@@ -46,7 +46,7 @@ const pcSteps: Step[] = [
   {
     title: "엑셀 저장",
     description: "조회 결과 하단이나 우측의 엑셀저장, Excel, 다운로드 버튼을 사용합니다.",
-    detail: "신한카드에서 xls로 내려받아도 드래그앤드롭으로 올리면 표 형태 파일을 자동 변환합니다.",
+    detail: "신한카드에서 xls로 내려받아도 드래그앤드롭으로 올리면 자동 변환합니다.",
   },
 ];
 
@@ -224,7 +224,7 @@ export function ShinhanImportGuideScreen() {
               <li>지출은 기본 기타 카테고리.</li>
               <li>승인취소/환급은 기본 기타수입 카테고리.</li>
               <li>날짜, 구분, 금액, 가맹점명 기준 중복 제외.</li>
-              <li>CSV, xls, xlsx 지원. xls는 표 형태 파일이면 자동 변환.</li>
+              <li>CSV, xls, xlsx 지원. 신한카드 xls 자동 변환.</li>
             </ul>
           </div>
         </div>
@@ -255,7 +255,7 @@ export function ShinhanImportGuideScreen() {
                 <Upload className="mx-auto text-moss" size={24} aria-hidden="true" />
                 <p className="text-sm font-medium text-ink">파일을 여기로 드래그앤드롭하세요.</p>
                 <p className="text-sm leading-6">
-                  신한카드에서 받은 xls도 표 형태 파일이면 자동 변환합니다. CSV, TSV, TXT, xls, xlsx를 지원합니다.
+                  신한카드에서 받은 바이너리 xls도 자동 변환합니다. CSV, TSV, TXT, xls, xlsx를 지원합니다.
                 </p>
               </div>
             </div>

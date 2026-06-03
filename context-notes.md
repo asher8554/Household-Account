@@ -115,3 +115,21 @@
 - EUC-KR, UTF-8, UTF-16 BOM/charset 기반 텍스트 디코딩을 추가했다.
 - Compound Binary `.xls`는 감지 후 CSV 또는 xlsx 재저장 안내를 표시한다.
 - `npm run build`가 통과했다.
+
+## 신한카드 바이너리 xls 작업 계획
+
+- 첨부 파일 `Shinhancard_20260604003153.xls`는 OLE Compound File Binary 형식이고 내부에 `Workbook` 스트림이 있다.
+- 신한카드 샘플 Workbook은 BIFF8이며 `SST`, `CONTINUE`, `LABELSST`, `NUMBER` 레코드로 거래 표를 구성한다.
+- 전체 SheetJS `xlsx` 패키지는 취약점 때문에 도입하지 않는다.
+- CFB 컨테이너 추출용 `cfb`만 추가하고, 거래 표 복원에 필요한 최소 BIFF 레코드만 직접 파싱한다.
+- 샘플 컬럼은 `이용일자`, `카드구분`, `승인번호`, `이용카드`, `가맹점명`, `업종`, `금액`, `이용구분`, `거래통화`, `최초결제일자`, `취소상태`다.
+
+## 신한카드 바이너리 xls 구현 결과
+
+- `cfb@1.2.2`를 추가했다.
+- `shinhan-binary-xls-parser`를 추가해 OLE `Workbook` 스트림을 추출한다.
+- BIFF8 `SST`, `CONTINUE`, `LABELSST`, `NUMBER`, `RK`, `MULRK`, `LABEL`, `FORMULA`, `BOOLERR` 레코드를 필요한 범위에서 읽는다.
+- 바이너리 `.xls`도 기존 파일 선택과 드래그앤드롭 흐름에서 같은 미리보기로 연결된다.
+- 첨부 파일 `Shinhancard_20260604003153.xls`를 빌드 산출물 파서로 읽어 242행과 신한카드 이용내역 헤더 복원을 확인했다.
+- `npm run build`가 통과했다.
+- `npm audit --audit-level=high`가 취약점 0건으로 통과했다.
