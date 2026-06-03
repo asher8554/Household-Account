@@ -1,5 +1,6 @@
 // 신한카드 가져오기 후보와 미리보기 상태 타입을 정의합니다.
 import type { CategoryType } from "../categories/category-types";
+import type { TransactionSource } from "../transactions/transaction-types";
 
 export type ShinhanImportKind = "file" | "notification";
 
@@ -13,6 +14,8 @@ export type ShinhanParsedCandidate = {
   statusText: string;
   approvalNo: string;
   cardName: string;
+  institutionName: string;
+  transactionSource: TransactionSource;
   rawText: string;
   note?: string;
 };

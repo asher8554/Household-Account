@@ -61,7 +61,7 @@ export async function importReadyShinhanItems(items: ShinhanPreviewItem[]) {
       amount: item.amount,
       categoryId: fallbackIds[item.type],
       memo: formatImportedMemo(item),
-      source: item.kind === "file" ? "shinhan-file" : "shinhan-notification",
+      source: item.transactionSource,
     })),
   );
 

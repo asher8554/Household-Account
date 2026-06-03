@@ -20,6 +20,7 @@ export function normalizeMatchText(value: string) {
   return value
     .replace(/\[[^\]]+\]/g, " ")
     .replace(/신한\s*(카드|체크|SOL페이|플레이)?/gi, " ")
+    .replace(/국민은행|KB국민은행|하나은행|토스뱅크|은행거래/gi, " ")
     .replace(/승인취소|매출취소|승인|취소|일시불|할부|국내|해외/g, " ")
     .replace(/승인번호\s*[:：]?\s*[A-Za-z0-9-]+/gi, " ")
     .replace(/카드\s*[:：]?\s*[^/|]+/gi, " ")
@@ -78,7 +79,8 @@ export function parseDateKey(value: unknown, fallbackYear = new Date().getFullYe
 
 export function detectTransactionType(statusText: string, rawText: string): CategoryType {
   const text = `${statusText} ${rawText}`;
-  return /승인\s*취소|매출\s*취소|취소|환불|환급/.test(text) ? "income" : "expense";
+  if (/승인\s*취소|매출\s*취소|취소|환불|환급|입금|입금액|맡기신|받음|이자/.test(text)) return "income";
+  return "expense";
 }
 
 export function createMatchKey(type: CategoryType, date: string, amount: number, merchant: string) {
@@ -90,19 +92,22 @@ export function formatImportedMemo({
   statusText,
   approvalNo,
   cardName,
+  institutionName,
 }: {
   merchant: string;
   statusText: string;
   approvalNo: string;
   cardName: string;
+  institutionName?: string;
 }) {
+  const sourceName = institutionName || "신한카드";
   const details = [
     statusText ? `상태 ${statusText}` : "",
     cardName ? `카드 ${cardName}` : "",
     approvalNo ? `승인번호 ${approvalNo}` : "",
   ].filter(Boolean);
 
-  return details.length > 0 ? `[신한카드] ${merchant} / ${details.join(" / ")}` : `[신한카드] ${merchant}`;
+  return details.length > 0 ? `[${sourceName}] ${merchant} / ${details.join(" / ")}` : `[${sourceName}] ${merchant}`;
 }
 
 function formatDateParts(year: number, month: number, day: number) {
