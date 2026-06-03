@@ -15,11 +15,13 @@ import { Button } from "../../shared/ui/Button";
 import { FormField } from "../../shared/ui/FormField";
 import { SectionPanel } from "../../shared/ui/SectionPanel";
 import { listTransactions } from "../transactions/transaction-service";
+import { CardImportFreshnessPanel } from "./CardImportFreshnessPanel";
 import { ShinhanImportPreview } from "./ShinhanImportPreview";
 import { parseShinhanTransactionFile } from "./shinhan-file-parser";
 import { buildShinhanPreview, importReadyShinhanItems } from "./shinhan-import-service";
 import type { ShinhanPreviewItem } from "./shinhan-import-types";
 import { parseShinhanNotificationText } from "./shinhan-notification-parser";
+import { isTrackedCardImportSource, recordCardFileLoad } from "./import-status-service";
 
 type Step = {
   title: string;
@@ -144,6 +146,7 @@ export function ShinhanImportGuideScreen() {
     try {
       const candidates = await parseShinhanTransactionFile(file);
       const preview = buildShinhanPreview(candidates, await listTransactions());
+      await recordFileLoadStatus(file.name, preview);
       setFilePreview(preview);
       setStatusMessage(`${file.name}에서 ${preview.length}건을 읽었습니다.`);
     } catch (error) {
@@ -174,6 +177,20 @@ export function ShinhanImportGuideScreen() {
     const preview = buildShinhanPreview(candidates, await listTransactions());
     setNotificationPreview(preview);
     setStatusMessage(`알림 텍스트에서 ${preview.length}건을 읽었습니다.`);
+  }
+
+  async function recordFileLoadStatus(fileName: string, preview: ShinhanPreviewItem[]) {
+    const source = preview.map((item) => item.transactionSource).find(isTrackedCardImportSource);
+    if (!source) return;
+
+    await recordCardFileLoad({
+      source,
+      fileName,
+      totalCount: preview.length,
+      readyCount: preview.filter((item) => item.previewStatus === "ready").length,
+      duplicateCount: preview.filter((item) => item.previewStatus === "duplicate").length,
+      invalidCount: preview.filter((item) => item.previewStatus === "invalid").length,
+    });
   }
 
   async function handleFileImport() {
@@ -246,6 +263,8 @@ export function ShinhanImportGuideScreen() {
           </div>
         </div>
       </section>
+
+      <CardImportFreshnessPanel />
 
       <div className="grid gap-5 xl:grid-cols-2">
         <SectionPanel title="CSV/xls/xlsx 파일 가져오기" eyebrow="카드/은행 파일">
