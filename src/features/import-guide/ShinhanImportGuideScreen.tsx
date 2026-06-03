@@ -83,6 +83,8 @@ const requiredColumns = [
   "카드명 또는 카드번호 뒤 4자리",
 ];
 
+const shinhanCardMainUrl = "https://www.shinhancard.com/pconts/html/main.html?_refer=https://www.google.com/";
+
 const roadmap = [
   {
     icon: FileSpreadsheet,
@@ -177,6 +179,15 @@ export function ShinhanImportGuideScreen() {
               카드 계정 비밀번호나 금융 API 토큰은 저장하지 않습니다. 사용자가 내려받은 CSV/xlsx 파일 또는
               붙여넣은 알림 텍스트만 브라우저 안에서 분석하고, 결과는 IndexedDB에 저장합니다.
             </p>
+            <a
+              className="mt-4 inline-flex h-10 items-center gap-2 rounded-lg bg-moss px-4 text-sm font-medium text-white transition-colors hover:bg-moss-hover"
+              href={shinhanCardMainUrl}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <ExternalLink size={16} aria-hidden="true" />
+              신한카드 홈페이지 바로가기
+            </a>
             {statusMessage ? (
               <p className="mt-4 rounded-lg border border-line bg-field px-3 py-2 text-sm text-ink">{statusMessage}</p>
             ) : null}
@@ -260,7 +271,7 @@ export function ShinhanImportGuideScreen() {
           title="신한카드 홈페이지에서 받기"
           steps={pcSteps}
           linkLabel="신한카드 홈페이지 열기"
-          linkHref="https://www.shinhancard.com/"
+          linkHref={shinhanCardMainUrl}
         />
         <GuideStepsPanel
           eyebrow="Mobile"
