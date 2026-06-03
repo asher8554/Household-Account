@@ -1,8 +1,9 @@
-// 신한카드 CSV와 xlsx 파일을 거래 후보로 변환합니다.
+// 신한카드 CSV, xlsx, HTML/XML xls 파일을 거래 후보로 변환합니다.
 import type { ShinhanParsedCandidate } from "./shinhan-import-types";
 import { detectTransactionType, normalizeLooseText, parseDateKey, parseKrwAmount } from "./shinhan-normalizers";
 
 type CellValue = string | number | boolean | Date | null;
+type TextEncoding = "utf-8" | "euc-kr" | "utf-16le" | "utf-16be";
 
 const columnAliases = {
   date: ["이용일자", "승인일자", "거래일자", "매출일자", "일자", "사용일자"],
@@ -52,12 +53,16 @@ async function readFileRows(file: File): Promise<CellValue[][]> {
     return readXlsxFile(file) as Promise<CellValue[][]>;
   }
 
+  if (lowerName.endsWith(".xls")) {
+    return readLegacyXlsRows(file);
+  }
+
   if (lowerName.endsWith(".csv") || lowerName.endsWith(".tsv") || lowerName.endsWith(".txt")) {
-    const text = await file.text();
+    const text = await decodeTextFile(file);
     return parseDelimitedText(text);
   }
 
-  throw new Error("CSV, TSV, TXT, xlsx 파일만 지원합니다. xls 파일은 CSV 또는 xlsx로 다시 저장해 주세요.");
+  throw new Error("CSV, TSV, TXT, xls, xlsx 파일만 지원합니다.");
 }
 
 function toCandidate(row: CellValue[], mapping: ColumnMapping, index: number): ShinhanParsedCandidate | null {
@@ -192,6 +197,137 @@ function parseDelimitedText(rawText: string): string[][] {
   rows.push(row);
 
   return rows.filter((cells) => cells.some((cell) => cell));
+}
+
+async function readLegacyXlsRows(file: File): Promise<CellValue[][]> {
+  const buffer = await file.arrayBuffer();
+  const bytes = new Uint8Array(buffer);
+
+  if (isCompoundBinaryFile(bytes)) {
+    throw new Error("바이너리 xls 파일은 브라우저 내 안전 파서가 없어 자동 변환하지 않습니다. 신한카드에서 다시 엑셀저장하거나 CSV로 저장해 주세요.");
+  }
+
+  const text = decodeBytes(bytes);
+  const lowerText = text.slice(0, 1000).toLowerCase();
+
+  if (lowerText.includes("<html") || lowerText.includes("<table")) {
+    return parseHtmlWorkbook(text);
+  }
+
+  if (lowerText.includes("<workbook") || lowerText.includes("urn:schemas-microsoft-com:office:spreadsheet")) {
+    return parseSpreadsheetXml(text);
+  }
+
+  return parseDelimitedText(text);
+}
+
+async function decodeTextFile(file: File) {
+  return decodeBytes(new Uint8Array(await file.arrayBuffer()));
+}
+
+function decodeBytes(bytes: Uint8Array) {
+  const bomEncoding = detectBomEncoding(bytes);
+  if (bomEncoding) return decodeWithEncoding(bytes, bomEncoding);
+
+  const utf8 = decodeWithEncoding(bytes, "utf-8");
+  const charset = detectDeclaredCharset(utf8);
+  if (charset) return decodeWithEncoding(bytes, charset);
+
+  if (utf8.includes("\uFFFD")) {
+    const eucKr = decodeWithEncoding(bytes, "euc-kr");
+    if (replacementCount(eucKr) < replacementCount(utf8)) return eucKr;
+  }
+
+  return utf8;
+}
+
+function parseHtmlWorkbook(html: string): CellValue[][] {
+  const document = new DOMParser().parseFromString(html, "text/html");
+  const tables = Array.from(document.querySelectorAll("table"));
+  if (tables.length === 0) throw new Error("xls 파일 안에서 표를 찾지 못했습니다.");
+
+  return tables.flatMap((table) =>
+    Array.from(table.querySelectorAll("tr"))
+      .map((row) =>
+        Array.from(row.querySelectorAll("th,td")).map((cell) =>
+          normalizeLooseText(cell.textContent).replace(/\u00a0/g, " "),
+        ),
+      )
+      .filter((row) => row.some((cell) => cell)),
+  );
+}
+
+function parseSpreadsheetXml(xmlText: string): CellValue[][] {
+  const document = new DOMParser().parseFromString(xmlText, "application/xml");
+  if (document.querySelector("parsererror")) {
+    throw new Error("xls XML 내용을 해석하지 못했습니다.");
+  }
+
+  return getElementsByLocalName(document, "Row")
+    .map((row) => {
+      const cells: string[] = [];
+
+      getElementsByLocalName(row, "Cell").forEach((cell) => {
+        const indexAttribute = cell.getAttribute("ss:Index") ?? cell.getAttribute("Index");
+        const targetIndex = indexAttribute ? Number(indexAttribute) - 1 : cells.length;
+
+        while (cells.length < targetIndex) {
+          cells.push("");
+        }
+
+        cells.push(normalizeLooseText(cell.textContent));
+      });
+
+      return cells;
+    })
+    .filter((row) => row.some((cell) => cell));
+}
+
+function getElementsByLocalName(root: ParentNode, localName: string) {
+  return Array.from(root.querySelectorAll("*")).filter((element) => element.localName === localName);
+}
+
+function detectBomEncoding(bytes: Uint8Array): TextEncoding | null {
+  if (bytes[0] === 0xef && bytes[1] === 0xbb && bytes[2] === 0xbf) return "utf-8";
+  if (bytes[0] === 0xff && bytes[1] === 0xfe) return "utf-16le";
+  if (bytes[0] === 0xfe && bytes[1] === 0xff) return "utf-16be";
+  return null;
+}
+
+function detectDeclaredCharset(text: string): TextEncoding | null {
+  const match = text.match(/charset=["']?\s*([A-Za-z0-9_-]+)/i);
+  const charset = match?.[1]?.toLowerCase();
+
+  if (!charset) return null;
+  if (charset.includes("euc-kr") || charset.includes("ks_c_5601") || charset.includes("ksc5601")) return "euc-kr";
+  if (charset.includes("utf-16")) return "utf-16le";
+  if (charset.includes("utf-8")) return "utf-8";
+  return null;
+}
+
+function decodeWithEncoding(bytes: Uint8Array, encoding: TextEncoding) {
+  try {
+    return new TextDecoder(encoding).decode(bytes);
+  } catch {
+    return new TextDecoder("utf-8").decode(bytes);
+  }
+}
+
+function replacementCount(text: string) {
+  return (text.match(/\uFFFD/g) ?? []).length;
+}
+
+function isCompoundBinaryFile(bytes: Uint8Array) {
+  return (
+    bytes[0] === 0xd0 &&
+    bytes[1] === 0xcf &&
+    bytes[2] === 0x11 &&
+    bytes[3] === 0xe0 &&
+    bytes[4] === 0xa1 &&
+    bytes[5] === 0xb1 &&
+    bytes[6] === 0x1a &&
+    bytes[7] === 0xe1
+  );
 }
 
 function detectDelimiter(text: string) {

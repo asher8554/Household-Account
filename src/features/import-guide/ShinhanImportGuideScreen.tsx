@@ -1,5 +1,5 @@
 // 신한카드 파일과 알림 텍스트 가져오기 화면입니다.
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, DragEvent, useState } from "react";
 import {
   Bell,
   CheckCircle2,
@@ -46,7 +46,7 @@ const pcSteps: Step[] = [
   {
     title: "엑셀 저장",
     description: "조회 결과 하단이나 우측의 엑셀저장, Excel, 다운로드 버튼을 사용합니다.",
-    detail: "PDF나 인쇄 저장은 가져오기용으로 부적합합니다. CSV 또는 xlsx 파일을 우선 사용합니다.",
+    detail: "신한카드에서 xls로 내려받아도 드래그앤드롭으로 올리면 표 형태 파일을 자동 변환합니다.",
   },
 ];
 
@@ -88,8 +88,8 @@ const shinhanCardMainUrl = "https://www.shinhancard.com/pconts/html/main.html?_r
 const roadmap = [
   {
     icon: FileSpreadsheet,
-    title: "1. 신한카드 CSV/xlsx 가져오기",
-    description: "파일 선택, 신한카드 프리셋, 자동 컬럼 매핑, 미리보기, 중복 제외, IndexedDB 저장을 지원합니다.",
+    title: "1. 신한카드 CSV/xls/xlsx 가져오기",
+    description: "파일 선택, 드래그앤드롭, xls 자동 변환, 자동 컬럼 매핑, 미리보기, 중복 제외를 지원합니다.",
   },
   {
     icon: Bell,
@@ -113,10 +113,19 @@ export function ShinhanImportGuideScreen() {
   const [isParsingFile, setIsParsingFile] = useState(false);
   const [isImportingFile, setIsImportingFile] = useState(false);
   const [isImportingNotification, setIsImportingNotification] = useState(false);
+  const [isDragActive, setIsDragActive] = useState(false);
 
   async function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
-    if (!file) return;
+    if (file) {
+      await processFile(file);
+    }
+
+    event.target.value = "";
+  }
+
+  async function processFile(file: File) {
+    if (isParsingFile) return;
 
     setIsParsingFile(true);
     setStatusMessage("");
@@ -131,7 +140,21 @@ export function ShinhanImportGuideScreen() {
       setStatusMessage(error instanceof Error ? error.message : "파일을 읽지 못했습니다.");
     } finally {
       setIsParsingFile(false);
-      event.target.value = "";
+    }
+  }
+
+  function handleDragOver(event: DragEvent<HTMLDivElement>) {
+    event.preventDefault();
+    setIsDragActive(true);
+  }
+
+  function handleDrop(event: DragEvent<HTMLDivElement>) {
+    event.preventDefault();
+    setIsDragActive(false);
+
+    const file = event.dataTransfer.files[0];
+    if (file) {
+      void processFile(file);
     }
   }
 
@@ -176,7 +199,7 @@ export function ShinhanImportGuideScreen() {
               신한카드 파일과 승인 알림을 거래로 저장합니다.
             </h2>
             <p className="mt-3 max-w-3xl text-sm leading-6 text-muted">
-              카드 계정 비밀번호나 금융 API 토큰은 저장하지 않습니다. 사용자가 내려받은 CSV/xlsx 파일 또는
+              카드 계정 비밀번호나 금융 API 토큰은 저장하지 않습니다. 사용자가 내려받은 CSV/xls/xlsx 파일 또는
               붙여넣은 알림 텍스트만 브라우저 안에서 분석하고, 결과는 IndexedDB에 저장합니다.
             </p>
             <a
@@ -201,30 +224,40 @@ export function ShinhanImportGuideScreen() {
               <li>지출은 기본 기타 카테고리.</li>
               <li>승인취소/환급은 기본 기타수입 카테고리.</li>
               <li>날짜, 구분, 금액, 가맹점명 기준 중복 제외.</li>
-              <li>CSV와 xlsx 지원. xls는 CSV 또는 xlsx로 변환.</li>
+              <li>CSV, xls, xlsx 지원. xls는 표 형태 파일이면 자동 변환.</li>
             </ul>
           </div>
         </div>
       </section>
 
       <div className="grid gap-5 xl:grid-cols-2">
-        <SectionPanel title="CSV/xlsx 파일 가져오기" eyebrow="신한카드 파일">
+        <SectionPanel title="CSV/xls/xlsx 파일 가져오기" eyebrow="신한카드 파일">
           <div className="grid gap-4">
             <FormField label="신한카드 이용내역 파일">
               <input
                 className="block w-full rounded-lg border border-line bg-field px-3 py-2 text-sm"
                 type="file"
-                accept=".csv,.tsv,.txt,.xlsx,text/csv,text/tab-separated-values,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                accept=".csv,.tsv,.txt,.xls,.xlsx,text/csv,text/tab-separated-values,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                 onChange={handleFileChange}
                 disabled={isParsingFile}
               />
             </FormField>
-            <div className="flex items-start gap-2 rounded-lg border border-line bg-field p-3 text-sm leading-6 text-muted">
-              <Upload className="mt-0.5 shrink-0 text-moss" size={17} aria-hidden="true" />
-              <p>
-                신한카드 홈페이지에서 받은 이용내역 파일을 선택합니다. 컬럼명은 자동으로 찾습니다. PDF, 화면 캡처,
-                오래된 xls 파일은 가져오기 대상이 아닙니다.
-              </p>
+            <div
+              className={`grid min-h-32 place-items-center rounded-lg border border-dashed p-4 text-center transition-colors ${
+                isDragActive ? "border-moss bg-moss-soft text-ink" : "border-line bg-field text-muted"
+              }`}
+              onDragEnter={handleDragOver}
+              onDragOver={handleDragOver}
+              onDragLeave={() => setIsDragActive(false)}
+              onDrop={handleDrop}
+            >
+              <div className="grid gap-2">
+                <Upload className="mx-auto text-moss" size={24} aria-hidden="true" />
+                <p className="text-sm font-medium text-ink">파일을 여기로 드래그앤드롭하세요.</p>
+                <p className="text-sm leading-6">
+                  신한카드에서 받은 xls도 표 형태 파일이면 자동 변환합니다. CSV, TSV, TXT, xls, xlsx를 지원합니다.
+                </p>
+              </div>
             </div>
             <ShinhanImportPreview items={filePreview} isImporting={isImportingFile} onImport={handleFileImport} />
           </div>
