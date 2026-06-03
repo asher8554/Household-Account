@@ -20,7 +20,7 @@ export const backupTransactionSchema = z.object({
   amount: z.number().int().positive(),
   categoryId: z.string().optional().default(""),
   memo: z.string().optional().default(""),
-  source: z.enum(["manual", "csv"]).optional().default("manual"),
+  source: z.enum(["manual", "csv", "shinhan-file", "shinhan-notification"]).optional().default("manual"),
   createdAt: z.string().optional(),
   updatedAt: z.string().optional(),
 });
