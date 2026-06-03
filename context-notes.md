@@ -184,3 +184,7 @@
 - 첨부 현대카드 파일은 HTML 기반 xls로 감지되며 표 44행, 헤더 11개를 확인했다.
 - 현대카드 날짜 예시 `2026년 05월 27일`이 기존 날짜 파서와 맞는 것을 확인했다.
 - `npm run build`가 통과했다.
+- `npm audit --audit-level=high`가 취약점 0건으로 통과했다.
+- 로컬 개발 서버 `http://localhost:5173/`가 200 응답을 반환했다.
+- Node REPL 환경에 Playwright 모듈이 없어 자동 렌더 상호작용 검증은 진행하지 못했다.
+- GitHub Pages 워크플로우 `26898515064`가 build와 deploy 모두 성공했고 공개 URL이 200 응답을 반환했다.
