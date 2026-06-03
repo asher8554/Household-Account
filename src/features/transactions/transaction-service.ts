@@ -8,21 +8,26 @@ export async function listTransactions() {
 }
 
 export async function addTransaction(draft: TransactionDraft) {
+  const [transaction] = await addTransactions([draft]);
+  return transaction;
+}
+
+export async function addTransactions(drafts: TransactionDraft[]) {
   const now = new Date().toISOString();
-  const transaction: Transaction = {
+  const transactions: Transaction[] = drafts.map((draft) => ({
     id: createId("tx"),
     date: draft.date,
     type: draft.type,
     amount: draft.amount,
     categoryId: draft.categoryId,
     memo: draft.memo.trim(),
-    source: "manual",
+    source: draft.source ?? "manual",
     createdAt: now,
     updatedAt: now,
-  };
+  }));
 
-  await db.transactions.put(transaction);
-  return transaction;
+  await db.transactions.bulkPut(transactions);
+  return transactions;
 }
 
 export async function deleteTransaction(id: string) {

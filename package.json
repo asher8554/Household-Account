@@ -14,6 +14,7 @@
     "lucide-react": "^0.468.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "read-excel-file": "^5.8.8",
     "recharts": "^3.8.1",
     "zod": "^3.24.1"
   },
