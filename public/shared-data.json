@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-06-04T08:18:18.975Z",
+  "exportedAt": "2026-06-04T08:20:39.593Z",
   "categories": [
     {
       "id": "expense-food",
@@ -3892,11 +3892,11 @@
       "date": "2026-04-12",
       "type": "expense",
       "amount": 792000,
-      "categoryId": "cat_033c744e-4151-48c9-9ac6-194026c26ddc",
+      "categoryId": "expense-food",
       "memo": "[신한카드] 한송정 / 상태 신용 / 카드 신용 / 승인번호 06789830",
       "source": "shinhan-file",
       "createdAt": "2026-06-04T02:47:19.205Z",
-      "updatedAt": "2026-06-04T03:52:03.760Z"
+      "updatedAt": "2026-06-04T08:20:27.120Z"
     },
     {
       "id": "tx_c7f11a9c-2d1f-441e-9fbd-9cb4e76c8e3b",
