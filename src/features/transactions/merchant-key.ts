@@ -17,14 +17,15 @@ export function normalizeTransactionMerchantKey(value: string) {
 }
 
 export function createTransactionDuplicateKey(transaction: DuplicateKeyInput) {
-  const merchantKey = normalizeTransactionMerchantKey(transaction.memo);
+  if (!transaction.date || !transaction.amount) return "";
 
-  if (!transaction.date || !transaction.amount || !merchantKey) return "";
-
-  const baseKey = [transaction.type, transaction.date, transaction.amount, merchantKey].join("|");
   const approvalNo = extractTransactionApprovalNo(transaction.memo);
+  if (approvalNo) return [transaction.type, transaction.date, transaction.amount, `approval:${approvalNo}`].join("|");
 
-  return approvalNo ? `${baseKey}|approval:${approvalNo}` : baseKey;
+  const merchantKey = normalizeTransactionMerchantKey(transaction.memo);
+  if (!merchantKey) return "";
+
+  return [transaction.type, transaction.date, transaction.amount, merchantKey].join("|");
 }
 
 export function extractTransactionApprovalNo(value: string) {
