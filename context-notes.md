@@ -295,6 +295,25 @@
 - `npm audit --audit-level=high`가 취약점 0건으로 통과했다.
 - 로컬 개발 서버 `http://127.0.0.1:5173/`가 200 응답을 반환했다.
 - Playwright 패키지가 없어 자동 브라우저 클릭 검증은 진행하지 못했다.
+
+## Playwright 설치와 현대카드 가져오기 브라우저 검증 작업 계획
+
+- 사용자가 Browser plugin 도구와 Playwright 패키지 설치 후 검증과 push를 요청했다.
+- `tool_search`와 설치 후보 목록을 확인했지만 Browser plugin 자체는 현재 세션에서 설치 가능한 도구로 나오지 않았다.
+- Playwright는 repo dev dependency로 설치하고, Chromium 브라우저까지 설치한 뒤 실제 파일 가져오기 UI에서 `hyundaicard_20260604.xls`를 업로드해 오류 0건을 검증한다.
+- 검증 스크립트와 스크린샷은 repo에 커밋하지 않고 임시 경로에 둔다.
+
+## Playwright 설치와 현대카드 가져오기 브라우저 검증 결과
+
+- `@playwright/test`를 dev dependency로 추가하고 `npx playwright install chromium`으로 Chromium 브라우저를 설치했다.
+- `npx playwright --version`은 `Version 1.60.0`을 반환했다.
+- 데스크톱 1440x1100에서 `hyundaicard_20260604.xls` 업로드 후 `hyundaicard_20260604.xls에서 39건을 읽었습니다.`, `저장 가능 0`, `중복 제외 39`, `오류 0`을 확인했다.
+- 모바일 390x844에서도 같은 파일 업로드 후 `오류 0`과 `중복 제외 39`를 확인했다.
+- Playwright 스크린샷은 임시 경로 `C:/Users/asher/AppData/Local/Temp/household-hyundai-import-playwright.png`, `C:/Users/asher/AppData/Local/Temp/household-hyundai-import-playwright-mobile.png`에 저장했다.
+- 콘솔에는 import 흐름 오류는 없고, 첫 대시보드 렌더 시 Recharts 차트 크기 warning 2건만 기록됐다.
+- `npm run build`가 통과했다.
+- `npm audit --audit-level=high`가 취약점 0건으로 통과했다.
+- 로컬 개발 서버 `http://127.0.0.1:5173/`가 200 응답을 반환했다.
 - push 전에 원격에 `data: shared-data 2026-06-04` 커밋 3개가 먼저 올라와 있어 `git fetch` 후 `git rebase origin/main`으로 사용자 공유 데이터 커밋을 보존했다.
 - GitHub Pages 워크플로우 `26940413071`이 build와 deploy 모두 성공했고 공개 앱 URL과 `shared-data.json` URL이 200 응답을 반환했다.
 - GitHub Pages 워크플로우 `26938893316`이 build와 deploy 모두 성공했고 공개 앱 URL과 `shared-data.json` URL이 200 응답을 반환했다.
