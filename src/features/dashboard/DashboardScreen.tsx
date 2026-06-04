@@ -12,6 +12,7 @@ import {
   listTransactions,
   removeDuplicateTransactions,
   updateSameMerchantCategory,
+  updateTransactionCategory,
 } from "../transactions/transaction-service";
 import { SectionPanel } from "../../shared/ui/SectionPanel";
 import {
@@ -132,6 +133,7 @@ export function DashboardScreen() {
             onNextMonth={moveToNextMonth}
             onDeleteTransaction={(id) => void deleteTransaction(id)}
             onChangeTransactionCategory={(id, categoryId) => void updateSameMerchantCategory(id, categoryId)}
+            onChangeSingleTransactionCategory={(id, categoryId) => void updateTransactionCategory(id, categoryId)}
           />
         </div>
 

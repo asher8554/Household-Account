@@ -21,6 +21,7 @@ type CategoryExpenseChartProps = {
   onNextMonth: () => void;
   onDeleteTransaction: (id: string) => void;
   onChangeTransactionCategory: (id: string, categoryId: string) => void;
+  onChangeSingleTransactionCategory: (id: string, categoryId: string) => void;
 };
 
 type ChartClickPayload = {
@@ -37,6 +38,7 @@ export function CategoryExpenseChart({
   onNextMonth,
   onDeleteTransaction,
   onChangeTransactionCategory,
+  onChangeSingleTransactionCategory,
 }: CategoryExpenseChartProps) {
   const [selectedCategoryId, setSelectedCategoryId] = useState("");
   const chartData = useMemo(() => stats, [stats]);
@@ -45,6 +47,8 @@ export function CategoryExpenseChart({
     [chartData],
   );
   const selectedCategory = chartData.find((stat) => stat.categoryId === selectedCategoryId);
+  const showsSingleItemCategoryChange =
+    selectedCategory?.categoryId === "expense-other" || selectedCategory?.name === "기타";
   const selectedTransactions = useMemo(
     () =>
       transactions
@@ -201,8 +205,10 @@ export function CategoryExpenseChart({
                 categories={categories}
                 emptyMessage="거래 없음."
                 showDate
+                showSingleItemCategoryChange={showsSingleItemCategoryChange}
                 onDeleteTransaction={onDeleteTransaction}
                 onChangeTransactionCategory={onChangeTransactionCategory}
+                onChangeSingleTransactionCategory={onChangeSingleTransactionCategory}
               />
             </div>
           ) : null}

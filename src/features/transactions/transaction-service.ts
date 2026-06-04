@@ -35,6 +35,13 @@ export async function deleteTransaction(id: string) {
   await db.transactions.delete(id);
 }
 
+export async function updateTransactionCategory(transactionId: string, categoryId: string) {
+  return db.transactions.update(transactionId, {
+    categoryId,
+    updatedAt: new Date().toISOString(),
+  });
+}
+
 export async function updateSameMerchantCategory(transactionId: string, categoryId: string) {
   return db.transaction("rw", db.transactions, async () => {
     const target = await db.transactions.get(transactionId);

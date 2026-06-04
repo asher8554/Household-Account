@@ -11,8 +11,10 @@ type TransactionListProps = {
   categories: Category[];
   emptyMessage: string;
   showDate?: boolean;
+  showSingleItemCategoryChange?: boolean;
   onDeleteTransaction: (id: string) => void;
   onChangeTransactionCategory: (id: string, categoryId: string) => void;
+  onChangeSingleTransactionCategory?: (id: string, categoryId: string) => void;
 };
 
 const sourceLabels: Record<Transaction["source"], string> = {
@@ -29,10 +31,13 @@ export function TransactionList({
   categories,
   emptyMessage,
   showDate = false,
+  showSingleItemCategoryChange = false,
   onDeleteTransaction,
   onChangeTransactionCategory,
+  onChangeSingleTransactionCategory,
 }: TransactionListProps) {
   const [expandedTransactionIds, setExpandedTransactionIds] = useState<Set<string>>(() => new Set());
+  const [singleItemCategoryChangeIds, setSingleItemCategoryChangeIds] = useState<Set<string>>(() => new Set());
   const categoryMap = new Map(categories.map((category) => [category.id, category]));
   const activeCategoriesByType = useMemo(
     () => ({
@@ -66,6 +71,29 @@ export function TransactionList({
     return [currentCategory, ...activeCategories];
   }
 
+  function toggleSingleItemCategoryChange(transactionId: string) {
+    setSingleItemCategoryChangeIds((previous) => {
+      const next = new Set(previous);
+
+      if (next.has(transactionId)) {
+        next.delete(transactionId);
+      } else {
+        next.add(transactionId);
+      }
+
+      return next;
+    });
+  }
+
+  function handleCategoryChange(transactionId: string, categoryId: string) {
+    if (showSingleItemCategoryChange && singleItemCategoryChangeIds.has(transactionId)) {
+      onChangeSingleTransactionCategory?.(transactionId, categoryId);
+      return;
+    }
+
+    onChangeTransactionCategory(transactionId, categoryId);
+  }
+
   if (transactions.length === 0) {
     return (
       <p className="rounded-lg border border-dashed border-line px-3 py-6 text-center text-sm text-muted">
@@ -79,6 +107,7 @@ export function TransactionList({
       {transactions.map((transaction) => {
         const category = categoryMap.get(transaction.categoryId);
         const isExpanded = expandedTransactionIds.has(transaction.id);
+        const isSingleItemCategoryChange = singleItemCategoryChangeIds.has(transaction.id);
         const categoryOptions = getCategoryOptions(transaction.type, category);
 
         return (
@@ -87,7 +116,7 @@ export function TransactionList({
             className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-3 border-b border-line py-2 last:border-b-0"
           >
             <div className="min-w-0">
-              <div className="flex min-w-0 items-center gap-2">
+              <div className="flex min-w-0 flex-wrap items-center gap-2">
                 <Button
                   size="sm"
                   variant="ghost"
@@ -111,7 +140,7 @@ export function TransactionList({
                   <select
                     className="h-8 min-w-0 max-w-[9.5rem] rounded-md border border-line bg-field px-2 text-xs font-medium text-ink"
                     value={transaction.categoryId}
-                    onChange={(event) => onChangeTransactionCategory(transaction.id, event.target.value)}
+                    onChange={(event) => handleCategoryChange(transaction.id, event.target.value)}
                     aria-label={`${transaction.memo || "거래"} 카테고리`}
                   >
                     {categoryOptions.map((option) => (
@@ -123,6 +152,17 @@ export function TransactionList({
                 ) : (
                   <span className="truncate text-sm font-medium">{category?.name ?? "기타"}</span>
                 )}
+                {showSingleItemCategoryChange && onChangeSingleTransactionCategory ? (
+                  <label className="flex shrink-0 items-center gap-1 text-xs text-muted">
+                    <input
+                      type="checkbox"
+                      className="h-4 w-4 rounded border-line accent-moss"
+                      checked={isSingleItemCategoryChange}
+                      onChange={() => toggleSingleItemCategoryChange(transaction.id)}
+                    />
+                    <span>한 항목만 변경</span>
+                  </label>
+                ) : null}
                 {showDate ? <span className="shrink-0 text-xs text-muted">{transaction.date}</span> : null}
               </div>
               <button
