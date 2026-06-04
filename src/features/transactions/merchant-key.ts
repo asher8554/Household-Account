@@ -1,4 +1,8 @@
 // 거래 메모에서 같은 사용처를 비교할 키를 만듭니다.
+import type { Transaction } from "./transaction-types";
+
+type DuplicateKeyInput = Pick<Transaction, "type" | "date" | "amount" | "memo">;
+
 export function normalizeTransactionMerchantKey(value: string) {
   return value
     .replace(/\[[^\]]+\]/g, " ")
@@ -10,4 +14,24 @@ export function normalizeTransactionMerchantKey(value: string) {
     .replace(/승인취소|매출취소|승인|취소|일시불|할부|국내|해외/g, " ")
     .replace(/[^\p{L}\p{N}]+/gu, "")
     .toLowerCase();
+}
+
+export function createTransactionDuplicateKey(transaction: DuplicateKeyInput) {
+  const merchantKey = normalizeTransactionMerchantKey(transaction.memo);
+
+  if (!transaction.date || !transaction.amount || !merchantKey) return "";
+
+  const baseKey = [transaction.type, transaction.date, transaction.amount, merchantKey].join("|");
+  const approvalNo = extractTransactionApprovalNo(transaction.memo);
+
+  return approvalNo ? `${baseKey}|approval:${approvalNo}` : baseKey;
+}
+
+export function extractTransactionApprovalNo(value: string) {
+  const match = value.match(/승인번호\s*[:：]?\s*([A-Za-z0-9-]+)/i);
+  return normalizeApprovalNo(match?.[1] ?? "");
+}
+
+function normalizeApprovalNo(value: string) {
+  return value.replace(/[^A-Za-z0-9]/g, "").toLowerCase();
 }
