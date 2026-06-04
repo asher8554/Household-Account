@@ -1,10 +1,10 @@
 // 신한카드 가져오기 후보의 중복 판정과 저장을 처리합니다.
 import { ensureFallbackCategory } from "../categories/category-service";
-import { extractTransactionApprovalNo } from "../transactions/merchant-key";
+import { createTransactionDuplicateKey, extractTransactionApprovalNo } from "../transactions/merchant-key";
 import { addTransactions, removeDuplicateTransactions } from "../transactions/transaction-service";
 import type { Transaction } from "../transactions/transaction-types";
 import type { ShinhanParsedCandidate, ShinhanPreviewItem } from "./shinhan-import-types";
-import { createMatchKey, formatImportedMemo, normalizeMatchText } from "./shinhan-normalizers";
+import { createMatchKey, formatImportedMemo } from "./shinhan-normalizers";
 
 export function buildShinhanPreview(
   candidates: ShinhanParsedCandidate[],
@@ -80,20 +80,14 @@ function getInvalidReason(candidate: ShinhanParsedCandidate) {
 }
 
 function toExistingMatchKey(transaction: Transaction) {
-  const merchant = normalizeMatchText(transaction.memo);
-  if (!merchant) return "";
-
-  const baseKey = createMatchKey(transaction.type, transaction.date, transaction.amount, merchant);
-  const approvalNo = extractTransactionApprovalNo(transaction.memo);
-
-  return approvalNo ? `${baseKey}|approval:${approvalNo}` : baseKey;
+  return createTransactionDuplicateKey(transaction);
 }
 
 function createCandidateMatchKey(candidate: ShinhanParsedCandidate) {
-  const baseKey = createMatchKey(candidate.type, candidate.date, candidate.amount, candidate.merchant);
   const approvalNo = normalizeApprovalNo(candidate.approvalNo);
+  if (approvalNo) return [candidate.type, candidate.date, candidate.amount, `approval:${approvalNo}`].join("|");
 
-  return approvalNo ? `${baseKey}|approval:${approvalNo}` : baseKey;
+  return createMatchKey(candidate.type, candidate.date, candidate.amount, candidate.merchant);
 }
 
 function collapseDuplicatePreviewItems(items: ShinhanPreviewItem[]) {
