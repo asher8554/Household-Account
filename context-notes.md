@@ -296,3 +296,20 @@
 - 로컬 개발 서버 `http://127.0.0.1:5173/`가 200 응답을 반환했다.
 - Playwright 패키지가 없어 자동 브라우저 클릭 검증은 진행하지 못했다.
 - GitHub Pages 워크플로우 `26932109410`이 build와 deploy 모두 성공했고 공개 URL이 200 응답을 반환했다.
+
+## 카테고리 색상 Random 버튼 작업 계획
+
+- 카테고리 추가 폼의 색상 input 옆에 `Random` 버튼을 추가한다.
+- 버튼은 form submit을 일으키지 않도록 `type="button"`으로 둔다.
+- 랜덤 색상은 HSL 기반으로 만들고 hex 문자열로 변환해 기존 color input 값에 바로 넣는다.
+- 기존 카테고리 수정 UI는 요청 범위를 넘기지 않기 위해 그대로 둔다.
+
+## 카테고리 색상 Random 버튼 구현 결과
+
+- 카테고리 추가 폼의 color input 옆에 `Random` 버튼을 추가했다.
+- Random 버튼은 `Shuffle` 아이콘과 텍스트를 같이 표시하고 form submit을 일으키지 않는다.
+- HSL 기반 랜덤 색상을 hex로 변환해 `newColor`에 반영한다.
+- `npm run build`가 통과했다.
+- `npm audit --audit-level=high`가 취약점 0건으로 통과했다.
+- 로컬 개발 서버 `http://127.0.0.1:5173/`가 200 응답을 반환했다.
+- Playwright 패키지가 없어 자동 브라우저 클릭 검증은 진행하지 못했다.
