@@ -415,3 +415,4 @@
 - 로컬 개발 서버 `http://127.0.0.1:5173/`와 `http://127.0.0.1:5173/shared-data.json`가 200 응답을 반환했다.
 - Playwright 패키지가 없어 자동 브라우저 클릭 검증은 진행하지 못했다.
 - 실제 GitHub API 커밋 호출은 사용자 GitHub 토큰이 필요한 흐름이라 자동 실행하지 않았다.
+- GitHub Pages 워크플로우 `26937684593`이 build와 deploy 모두 성공했고 공개 앱 URL과 `shared-data.json` URL이 200 응답을 반환했다.
