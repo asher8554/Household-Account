@@ -275,3 +275,4 @@
 - 스크린샷 예시 두 거래는 모두 `expense|2026-03-25|283240|approval:18765669` 키로 검증됐다.
 - `npm run build`가 통과했다.
 - `npm audit --audit-level=high`가 취약점 0건으로 통과했다.
+- GitHub Pages 워크플로우 `26931609963`이 build와 deploy 모두 성공했고 공개 URL이 200 응답을 반환했다.
