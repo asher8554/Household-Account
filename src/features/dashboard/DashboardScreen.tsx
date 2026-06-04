@@ -112,7 +112,13 @@ export function DashboardScreen() {
               setSelectedDateKey(toDateKey(today));
             }}
           />
-          <CategoryExpenseChart stats={categoryStats} />
+          <CategoryExpenseChart
+            stats={categoryStats}
+            transactions={monthlyTransactions}
+            categories={data.categories}
+            onDeleteTransaction={(id) => void deleteTransaction(id)}
+            onChangeTransactionCategory={(id, categoryId) => void updateSameMerchantCategory(id, categoryId)}
+          />
         </div>
 
         <aside className="grid content-start gap-5">
