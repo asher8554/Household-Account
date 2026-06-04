@@ -1,6 +1,6 @@
 // GitHub 공유 데이터 push 설정 UI를 제공합니다.
 import { FormEvent, useState } from "react";
-import { Github, RotateCcw, Save } from "lucide-react";
+import { Github, RotateCcw, Save, Upload } from "lucide-react";
 import { Button } from "../../shared/ui/Button";
 import { FormField } from "../../shared/ui/FormField";
 import { SectionPanel } from "../../shared/ui/SectionPanel";
@@ -9,6 +9,7 @@ import {
   defaultGitHubSharedDataSettings,
   hasGitHubSharedDataToken,
   loadGitHubSharedDataSettings,
+  pushCurrentSharedDataToGitHub,
   saveGitHubSharedDataSettings,
   type GitHubSharedDataSettings,
 } from "./github-shared-data-service";
@@ -16,6 +17,7 @@ import {
 export function GitHubSharedDataPanel() {
   const [settings, setSettings] = useState<GitHubSharedDataSettings>(() => loadGitHubSharedDataSettings());
   const [message, setMessage] = useState("");
+  const [isPushing, setIsPushing] = useState(false);
   const hasToken = hasGitHubSharedDataToken(settings);
 
   function updateField(field: keyof GitHubSharedDataSettings, value: string) {
@@ -33,6 +35,28 @@ export function GitHubSharedDataPanel() {
     clearGitHubSharedDataSettings();
     setSettings(defaultGitHubSharedDataSettings);
     setMessage("GitHub 공유 설정을 초기화했습니다.");
+  }
+
+  async function handlePushCurrentData() {
+    if (!hasToken || isPushing) return;
+
+    setIsPushing(true);
+    setMessage("현재 PC 기록을 GitHub 공유 데이터로 push 중입니다.");
+
+    try {
+      saveGitHubSharedDataSettings(settings);
+      const savedSettings = loadGitHubSharedDataSettings();
+      setSettings(savedSettings);
+
+      const result = await pushCurrentSharedDataToGitHub(savedSettings);
+      setMessage(
+        `현재 PC 기록 ${result.transactions}건을 GitHub에 push했습니다. Pages 배포가 끝난 뒤 핸드폰에서 새로고침하세요.`,
+      );
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "GitHub 공유 데이터 push에 실패했습니다.");
+    } finally {
+      setIsPushing(false);
+    }
   }
 
   return (
@@ -91,6 +115,10 @@ export function GitHubSharedDataPanel() {
           <Button variant="primary" type="submit">
             <Save size={16} aria-hidden="true" />
             설정 저장
+          </Button>
+          <Button variant="secondary" type="button" disabled={!hasToken || isPushing} onClick={handlePushCurrentData}>
+            <Upload size={16} aria-hidden="true" />
+            {isPushing ? "push 중" : "현재 PC 기록 push"}
           </Button>
           <div className="flex items-center gap-2 text-sm text-muted">
             <Github size={16} aria-hidden="true" />

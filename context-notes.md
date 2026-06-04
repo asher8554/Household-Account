@@ -416,3 +416,23 @@
 - Playwright 패키지가 없어 자동 브라우저 클릭 검증은 진행하지 못했다.
 - 실제 GitHub API 커밋 호출은 사용자 GitHub 토큰이 필요한 흐름이라 자동 실행하지 않았다.
 - GitHub Pages 워크플로우 `26937684593`이 build와 deploy 모두 성공했고 공개 앱 URL과 `shared-data.json` URL이 200 응답을 반환했다.
+
+## 현재 PC 기록 수동 공유 push 작업 계획
+
+- 공개 Pages의 `shared-data.json`은 현재 빈 초기 파일이라 핸드폰에서 기록이 보이지 않는다.
+- PC 화면에 보이는 기록은 PC 브라우저 IndexedDB 안에 있으므로 GitHub에 한 번 push해야 핸드폰에서 볼 수 있다.
+- 기존 구현은 파일 가져오기 저장 후 자동 push만 있어서 이미 저장된 PC 기록을 바로 push하는 버튼이 없다.
+- GitHub 공유 설정 패널에 `현재 PC 기록 push` 버튼을 추가해 현재 IndexedDB 전체 백업을 `public/shared-data.json`으로 커밋하게 한다.
+- push 성공 메시지에는 GitHub Pages 배포 반영까지 잠시 기다린 뒤 핸드폰에서 새로고침하라는 안내를 포함한다.
+
+## 현재 PC 기록 수동 공유 push 구현 결과
+
+- 공개 `shared-data.json`이 빈 초기 파일임을 HTTP 200 응답 내용으로 확인했다.
+- `GitHubSharedDataPanel`에 `현재 PC 기록 push` 버튼을 추가했다.
+- 버튼은 저장된 GitHub 설정을 사용해 현재 PC IndexedDB 백업 데이터를 `public/shared-data.json`으로 커밋한다.
+- 토큰이 없는 상태에서는 버튼을 비활성화한다.
+- 성공 메시지에 Pages 배포가 끝난 뒤 핸드폰에서 새로고침하라는 안내를 넣었다.
+- `npm run build`가 통과했다.
+- `npm audit --audit-level=high`가 취약점 0건으로 통과했다.
+- 로컬 개발 서버 `http://127.0.0.1:5173/`와 `http://127.0.0.1:5173/shared-data.json`가 200 응답을 반환했다.
+- Playwright 패키지가 없어 자동 브라우저 클릭 검증은 진행하지 못했다.
