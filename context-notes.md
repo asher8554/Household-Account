@@ -314,6 +314,7 @@
 - `npm run build`가 통과했다.
 - `npm audit --audit-level=high`가 취약점 0건으로 통과했다.
 - 로컬 개발 서버 `http://127.0.0.1:5173/`가 200 응답을 반환했다.
+- GitHub Pages 워크플로우 `26940960233`이 build와 deploy 모두 성공했다.
 - push 전에 원격에 `data: shared-data 2026-06-04` 커밋 3개가 먼저 올라와 있어 `git fetch` 후 `git rebase origin/main`으로 사용자 공유 데이터 커밋을 보존했다.
 - GitHub Pages 워크플로우 `26940413071`이 build와 deploy 모두 성공했고 공개 앱 URL과 `shared-data.json` URL이 200 응답을 반환했다.
 - GitHub Pages 워크플로우 `26938893316`이 build와 deploy 모두 성공했고 공개 앱 URL과 `shared-data.json` URL이 200 응답을 반환했다.
