@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { AppShell } from "./AppShell";
 import { DashboardScreen } from "../features/dashboard/DashboardScreen";
+import { AnnualTrendScreen } from "../features/dashboard/AnnualTrendScreen";
 import { ensureDefaultCategories } from "../features/categories/category-service";
 import { useTheme } from "../features/theme/theme-service";
 import type { AppView } from "./app-navigation";
@@ -23,7 +24,9 @@ export function App() {
       onChangeView={setCurrentView}
       onToggleTheme={toggleTheme}
     >
-      {currentView === "dashboard" ? <DashboardScreen /> : <ShinhanImportGuideScreen />}
+      {currentView === "dashboard" ? <DashboardScreen /> : null}
+      {currentView === "annual-trend" ? <AnnualTrendScreen /> : null}
+      {currentView === "shinhan-import" ? <ShinhanImportGuideScreen /> : null}
     </AppShell>
   );
 }
