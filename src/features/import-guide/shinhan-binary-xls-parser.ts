@@ -9,6 +9,10 @@ type BiffRecord = {
   offset: number;
 };
 
+type SstSegment = {
+  data: Uint8Array;
+};
+
 const recordIds = {
   bof: 0x0809,
   eof: 0x000a,
@@ -82,21 +86,19 @@ function parseRecords(workbook: Uint8Array): BiffRecord[] {
 function parseSharedStrings(records: BiffRecord[], codepage: number) {
   const sstIndex = records.findIndex((record) => record.id === recordIds.sst);
   if (sstIndex < 0) return [];
+  if (records[sstIndex].data.length < 8) return [];
 
-  const parts = [records[sstIndex].data];
+  const segments: SstSegment[] = [{ data: records[sstIndex].data.subarray(8) }];
   for (let index = sstIndex + 1; records[index]?.id === recordIds.continue; index += 1) {
-    parts.push(records[index].data);
+    segments.push({ data: records[index].data });
   }
 
-  const data = concatUint8Arrays(parts);
-  const uniqueCount = readUInt32(data, 4);
+  const uniqueCount = readUInt32(records[sstIndex].data, 4);
+  const reader = new SstReader(segments);
   const strings: string[] = [];
-  let offset = 8;
 
-  for (let index = 0; index < uniqueCount && offset < data.length; index += 1) {
-    const result = readBiffString(data, offset, codepage);
-    strings.push(result.text);
-    offset = result.offset;
+  for (let index = 0; index < uniqueCount && reader.hasData(); index += 1) {
+    strings.push(readSstString(reader, codepage));
   }
 
   return strings;
@@ -180,6 +182,163 @@ function parseMulRkRecord(data: Uint8Array, rows: BinaryXlsCell[][]) {
     setCell(rows, row, column, decodeRkNumber(rkValue));
     offset += 6;
   }
+}
+
+class SstReader {
+  private segmentIndex = 0;
+  private offset = 0;
+
+  constructor(private readonly segments: SstSegment[]) {}
+
+  hasData() {
+    for (let index = this.segmentIndex; index < this.segments.length; index += 1) {
+      const offset = index === this.segmentIndex ? this.offset : 0;
+      if (offset < this.segments[index].data.length) return true;
+    }
+
+    return false;
+  }
+
+  readByte() {
+    while (this.remainingInSegment() === 0) {
+      if (!this.currentSegment()) {
+        throw new Error("xls 공유 문자열 데이터가 예상보다 짧습니다.");
+      }
+
+      this.moveToNextSegment();
+    }
+
+    const segment = this.currentSegment();
+    if (!segment) {
+      throw new Error("xls 공유 문자열 데이터가 예상보다 짧습니다.");
+    }
+
+    return segment.data[this.offset++];
+  }
+
+  readUInt16() {
+    const bytes = this.readBytes(2);
+    return readUInt16(bytes, 0);
+  }
+
+  readUInt32() {
+    const bytes = this.readBytes(4);
+    return readUInt32(bytes, 0);
+  }
+
+  readText(characterCount: number, isWide: boolean, codepage: number) {
+    let text = "";
+    let remainingCharacters = characterCount;
+    let currentIsWide = isWide;
+
+    while (remainingCharacters > 0) {
+      if (this.remainingInSegment() === 0) {
+        currentIsWide = this.readContinuationStringFlags();
+        continue;
+      }
+
+      const bytesPerCharacter = currentIsWide ? 2 : 1;
+      const availableCharacters = Math.floor(this.remainingInSegment() / bytesPerCharacter);
+
+      if (availableCharacters === 0) {
+        const firstByte = this.readCurrentSegmentBytes(1);
+        currentIsWide = this.readContinuationStringFlags();
+        const secondByte = this.readCurrentSegmentBytes(1);
+        text += decodeStringBytes(new Uint8Array([firstByte[0], secondByte[0]]), true, codepage);
+        remainingCharacters -= 1;
+        continue;
+      }
+
+      const charactersToRead = Math.min(remainingCharacters, availableCharacters);
+      const textBytes = this.readCurrentSegmentBytes(charactersToRead * bytesPerCharacter);
+      text += decodeStringBytes(textBytes, currentIsWide, codepage);
+      remainingCharacters -= charactersToRead;
+    }
+
+    return text;
+  }
+
+  skipBytes(length: number) {
+    this.readBytes(length);
+  }
+
+  private readBytes(length: number) {
+    const result = new Uint8Array(length);
+    let written = 0;
+
+    while (written < length) {
+      if (this.remainingInSegment() === 0) {
+        if (!this.currentSegment()) {
+          throw new Error("xls 공유 문자열 데이터가 예상보다 짧습니다.");
+        }
+
+        this.moveToNextSegment();
+        continue;
+      }
+
+      const bytesToRead = Math.min(length - written, this.remainingInSegment());
+      result.set(this.readCurrentSegmentBytes(bytesToRead), written);
+      written += bytesToRead;
+    }
+
+    return result;
+  }
+
+  private readCurrentSegmentBytes(length: number) {
+    const segment = this.currentSegment();
+    if (!segment || this.remainingInSegment() < length) {
+      throw new Error("xls 공유 문자열 데이터가 예상보다 짧습니다.");
+    }
+
+    const bytes = segment.data.subarray(this.offset, this.offset + length);
+    this.offset += length;
+    return bytes;
+  }
+
+  private readContinuationStringFlags() {
+    this.moveToNextSegment();
+    return (this.readByte() & 0x01) === 0x01;
+  }
+
+  private currentSegment() {
+    return this.segments[this.segmentIndex];
+  }
+
+  private remainingInSegment() {
+    const segment = this.currentSegment();
+    return segment ? segment.data.length - this.offset : 0;
+  }
+
+  private moveToNextSegment() {
+    this.segmentIndex += 1;
+    this.offset = 0;
+  }
+}
+
+function readSstString(reader: SstReader, codepage: number) {
+  const characterCount = reader.readUInt16();
+  const flags = reader.readByte();
+
+  const isWide = (flags & 0x01) === 0x01;
+  const hasExtendedData = (flags & 0x04) === 0x04;
+  const hasRichText = (flags & 0x08) === 0x08;
+  let richTextRunCount = 0;
+  let extendedDataSize = 0;
+
+  if (hasRichText) {
+    richTextRunCount = reader.readUInt16();
+  }
+
+  if (hasExtendedData) {
+    extendedDataSize = reader.readUInt32();
+  }
+
+  const text = reader.readText(characterCount, isWide, codepage);
+
+  if (hasRichText) reader.skipBytes(richTextRunCount * 4);
+  if (hasExtendedData) reader.skipBytes(extendedDataSize);
+
+  return text;
 }
 
 function readBiffString(data: Uint8Array, offset: number, codepage: number) {
@@ -290,17 +449,4 @@ function readFloat64(data: Uint8Array, offset: number) {
 
 function toUint8Array(data: CFB.CFB$Blob) {
   return data instanceof Uint8Array ? data : new Uint8Array(data);
-}
-
-function concatUint8Arrays(parts: Uint8Array[]) {
-  const length = parts.reduce((sum, part) => sum + part.length, 0);
-  const result = new Uint8Array(length);
-  let offset = 0;
-
-  for (const part of parts) {
-    result.set(part, offset);
-    offset += part.length;
-  }
-
-  return result;
 }
