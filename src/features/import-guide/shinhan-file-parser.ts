@@ -94,6 +94,10 @@ function toCandidate(
   const rawText = row.map((cell) => normalizeLooseText(cell)).filter(Boolean).join(" ");
   const type = institution.kind === "bank" && depositAmount ? "income" : detectTransactionType(statusText, rawText);
 
+  if (isSummaryRow(rawText, date)) {
+    return null;
+  }
+
   if (!date || !amount || !merchant) {
     return {
       id: `file-invalid-${index}`,
@@ -126,6 +130,10 @@ function toCandidate(
     transactionSource: institution.source,
     rawText,
   } satisfies ShinhanParsedCandidate;
+}
+
+function isSummaryRow(rawText: string, date: string | null) {
+  return !date && /^(총합계|합계|총)\s*[\d,]+\s*건(?:\s|$)/.test(rawText);
 }
 
 function getOptionalAmount(row: CellValue[], index: number) {
