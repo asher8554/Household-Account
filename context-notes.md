@@ -395,3 +395,23 @@
 - 로컬 개발 서버 `http://127.0.0.1:5173/`가 200 응답을 반환했다.
 - Playwright 패키지가 없어 자동 브라우저 클릭 검증은 진행하지 못했다.
 - GitHub Pages 워크플로우 `26937249490`이 build와 deploy 모두 성공했고 공개 URL이 200 응답을 반환했다.
+
+## 파일 가져오기 후 GitHub 공유 데이터 push 작업 계획
+
+- 브라우저는 `git push` 명령을 직접 실행할 수 없으므로 GitHub Contents API로 `public/shared-data.json` 파일을 커밋한다.
+- GitHub 토큰은 앱 코드나 repo에 넣지 않고 사용자가 입력한 값을 PC 브라우저 localStorage에만 저장한다.
+- 파일 가져오기 저장 버튼을 누르면 기존 IndexedDB 저장을 먼저 끝내고, 이후 전체 백업 데이터를 만들어 GitHub에 공유 snapshot을 커밋한다.
+- GitHub push가 실패해도 가져오기 저장 결과는 롤백하지 않는다.
+- 핸드폰은 Pages 앱 시작 시 기존 `shared-data.json` 자동 로드 기능으로 최신 데이터를 확인한다.
+
+## 파일 가져오기 후 GitHub 공유 데이터 push 구현 결과
+
+- `github-shared-data-service`를 추가해 현재 IndexedDB 백업 데이터를 GitHub Contents API로 `public/shared-data.json`에 커밋하게 했다.
+- `GitHubSharedDataPanel`을 추가해 owner, repository, branch, file path, GitHub token을 PC 브라우저 localStorage에 저장할 수 있게 했다.
+- 금융기관 파일 가져오기 저장 완료 후 `pushCurrentSharedDataToGitHub`를 호출하도록 연결했다.
+- GitHub 토큰이 없거나 push가 실패해도 저장된 파일 거래는 유지하고 상태 메시지에 실패 사유를 표시한다.
+- `npm run build`가 통과했다.
+- `npm audit --audit-level=high`가 취약점 0건으로 통과했다.
+- 로컬 개발 서버 `http://127.0.0.1:5173/`와 `http://127.0.0.1:5173/shared-data.json`가 200 응답을 반환했다.
+- Playwright 패키지가 없어 자동 브라우저 클릭 검증은 진행하지 못했다.
+- 실제 GitHub API 커밋 호출은 사용자 GitHub 토큰이 필요한 흐름이라 자동 실행하지 않았다.

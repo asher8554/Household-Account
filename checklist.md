@@ -183,3 +183,14 @@
 - [x] 로컬 개발 서버 HTTP 응답을 확인한다.
 - [ ] 자동 브라우저 클릭 검증은 Playwright 부재로 미수행.
 - [x] GitHub Pages 배포를 확인한다.
+
+## 파일 가져오기 후 GitHub 공유 데이터 push
+
+- [x] GitHub 토큰과 repo 설정을 PC 브라우저 localStorage에 저장하는 UI를 추가한다.
+- [x] 현재 IndexedDB 데이터를 `shared-data.json` 형식으로 만들고 GitHub Contents API로 커밋한다.
+- [x] 파일 거래 저장 버튼을 누른 뒤 자동으로 `public/shared-data.json`을 GitHub에 push한다.
+- [x] 토큰이 없거나 push가 실패해도 파일 거래 저장 자체는 유지한다.
+- [x] 빌드와 audit 검증을 통과한다.
+- [x] 로컬 개발 서버 HTTP 응답을 확인한다.
+- [ ] 자동 브라우저 클릭 검증은 Playwright 부재로 미수행.
+- [ ] GitHub Pages 배포를 확인한다.
