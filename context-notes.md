@@ -295,6 +295,7 @@
 - `npm audit --audit-level=high`가 취약점 0건으로 통과했다.
 - 로컬 개발 서버 `http://127.0.0.1:5173/`가 200 응답을 반환했다.
 - Playwright 패키지가 없어 자동 브라우저 클릭 검증은 진행하지 못했다.
+- GitHub Pages 워크플로우 `26938893316`이 build와 deploy 모두 성공했고 공개 앱 URL과 `shared-data.json` URL이 200 응답을 반환했다.
 - GitHub Pages 워크플로우 `26932821031`이 build와 deploy 모두 성공했고 공개 URL이 200 응답을 반환했다.
 - GitHub Pages 워크플로우 `26932109410`이 build와 deploy 모두 성공했고 공개 URL이 200 응답을 반환했다.
 
