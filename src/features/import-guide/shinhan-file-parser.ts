@@ -133,7 +133,11 @@ function toCandidate(
 }
 
 function isSummaryRow(rawText: string, date: string | null) {
-  return !date && /^(총합계|합계|총)\s*[\d,]+\s*건(?:\s|$)/.test(rawText);
+  return (
+    !date &&
+    (/^(총합계|합계|총)\s*[\d,]+\s*건(?:\s|$)/.test(rawText) ||
+      /(?:^|\s)소계\s*[\d,]+\s*건(?:\s|$)/.test(rawText))
+  );
 }
 
 function getOptionalAmount(row: CellValue[], index: number) {
