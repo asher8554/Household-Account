@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-06-04T08:20:39.593Z",
+  "exportedAt": "2026-06-04T08:51:39.883Z",
   "categories": [
     {
       "id": "expense-food",
@@ -3903,11 +3903,11 @@
       "date": "2026-04-12",
       "type": "expense",
       "amount": 23800,
-      "categoryId": "expense-food",
+      "categoryId": "expense-cafe",
       "memo": "[신한카드] 롯데백평촌 )일리카페 / 상태 신용 / 카드 신용 / 승인번호 08334945",
       "source": "shinhan-file",
       "createdAt": "2026-06-04T02:47:19.205Z",
-      "updatedAt": "2026-06-04T03:52:06.574Z"
+      "updatedAt": "2026-06-04T08:50:13.719Z"
     },
     {
       "id": "tx_18a00336-72da-48c2-8d86-da4fd351b66c",
@@ -4332,22 +4332,22 @@
       "date": "2026-04-21",
       "type": "expense",
       "amount": 8200,
-      "categoryId": "expense-food",
+      "categoryId": "expense-cafe",
       "memo": "[신한카드] 이디야 청당중앙점 / 상태 신용 / 카드 신용 / 승인번호 40198929",
       "source": "shinhan-file",
       "createdAt": "2026-06-04T02:47:19.205Z",
-      "updatedAt": "2026-06-04T05:32:43.674Z"
+      "updatedAt": "2026-06-04T08:50:07.601Z"
     },
     {
       "id": "tx_d0c1395f-eb74-49ba-9f47-00370d93005e",
       "date": "2026-04-21",
       "type": "expense",
       "amount": 10900,
-      "categoryId": "expense-food",
+      "categoryId": "expense-cafe",
       "memo": "[신한카드] 이디야 청당중앙점 / 상태 신용 / 카드 신용 / 승인번호 40223411",
       "source": "shinhan-file",
       "createdAt": "2026-06-04T02:47:19.205Z",
-      "updatedAt": "2026-06-04T05:32:43.674Z"
+      "updatedAt": "2026-06-04T08:50:07.601Z"
     },
     {
       "id": "tx_91ee9cbd-aa9a-432a-a88a-430b2e5a5030",
@@ -4409,11 +4409,11 @@
       "date": "2026-04-23",
       "type": "expense",
       "amount": 32880,
-      "categoryId": "expense-food",
+      "categoryId": "expense-grocery",
       "memo": "[현대카드] 이마트천안터미널점 / 상태 본인 / 카드 본인 / 승인번호 00064490",
       "source": "hyundai-card-file",
       "createdAt": "2026-06-04T02:47:37.086Z",
-      "updatedAt": "2026-06-04T03:52:46.500Z"
+      "updatedAt": "2026-06-04T08:49:36.507Z"
     },
     {
       "id": "tx_97c45370-1baa-4e48-b7ac-702b985d738d",
@@ -4464,11 +4464,11 @@
       "date": "2026-04-25",
       "type": "expense",
       "amount": 5700,
-      "categoryId": "expense-food",
+      "categoryId": "expense-cafe",
       "memo": "[신한카드] 신세계(충청점)하프커피(천안 / 상태 신용 / 카드 신용 / 승인번호 42668255",
       "source": "shinhan-file",
       "createdAt": "2026-06-04T02:47:19.205Z",
-      "updatedAt": "2026-06-04T03:55:57.247Z"
+      "updatedAt": "2026-06-04T08:50:04.458Z"
     },
     {
       "id": "tx_f52c3881-5bc8-4fe5-872a-f4c8b3325979",
@@ -4585,11 +4585,11 @@
       "date": "2026-04-27",
       "type": "expense",
       "amount": 7960,
-      "categoryId": "expense-food",
+      "categoryId": "expense-grocery",
       "memo": "[현대카드] 이마트천안터미널점 / 상태 본인 / 카드 본인 / 승인번호 00655927",
       "source": "hyundai-card-file",
       "createdAt": "2026-06-04T02:47:37.086Z",
-      "updatedAt": "2026-06-04T03:52:46.500Z"
+      "updatedAt": "2026-06-04T08:49:36.507Z"
     },
     {
       "id": "tx_db3352f8-6dc4-41cf-b2ad-249963960e19",
@@ -5344,11 +5344,11 @@
       "date": "2026-05-18",
       "type": "expense",
       "amount": 16710,
-      "categoryId": "expense-food",
+      "categoryId": "expense-grocery",
       "memo": "[현대카드] 이마트천안터미널점 / 상태 본인 / 카드 본인 / 승인번호 00723665",
       "source": "hyundai-card-file",
       "createdAt": "2026-06-04T02:47:37.086Z",
-      "updatedAt": "2026-06-04T03:52:46.500Z"
+      "updatedAt": "2026-06-04T08:49:36.507Z"
     },
     {
       "id": "tx_e1e60f4e-4a01-461b-898b-06f5e56303dd",
