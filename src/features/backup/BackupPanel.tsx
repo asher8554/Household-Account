@@ -1,9 +1,9 @@
 // JSON 백업과 전체 초기화 UI를 제공합니다.
 import { ChangeEvent, useRef, useState } from "react";
-import { Download, RotateCcw, Upload } from "lucide-react";
+import { Download, RotateCcw, Share2, Upload } from "lucide-react";
 import { Button } from "../../shared/ui/Button";
 import { SectionPanel } from "../../shared/ui/SectionPanel";
-import { downloadBackupFile, importBackupFile, resetAllData } from "./backup-service";
+import { downloadBackupFile, downloadSharedDataFile, importBackupFile, resetAllData } from "./backup-service";
 import type { ImportSummary } from "./backup-types";
 
 function formatImportSummary(summary: ImportSummary) {
@@ -36,12 +36,21 @@ export function BackupPanel() {
     setMessage("전체 데이터를 초기화했습니다.");
   }
 
+  async function handleSharedExport() {
+    const backup = await downloadSharedDataFile();
+    setMessage(`공유용 shared-data.json을 내보냈습니다. 거래 ${backup.transactions.length}건.`);
+  }
+
   return (
     <SectionPanel title="백업" eyebrow="JSON">
       <div className="grid gap-2">
         <Button variant="secondary" onClick={() => void downloadBackupFile()}>
           <Download size={17} aria-hidden="true" />
           내보내기
+        </Button>
+        <Button variant="secondary" onClick={() => void handleSharedExport()}>
+          <Share2 size={17} aria-hidden="true" />
+          공유용 내보내기
         </Button>
         <input ref={fileInputRef} className="hidden" type="file" accept="application/json" onChange={handleImport} />
         <Button variant="secondary" onClick={() => fileInputRef.current?.click()}>

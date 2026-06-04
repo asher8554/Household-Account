@@ -161,3 +161,14 @@
 - [x] 로컬 개발 서버 HTTP 응답을 확인한다.
 - [ ] 자동 브라우저 클릭 검증은 Playwright 부재로 미수행.
 - [x] GitHub Pages 배포를 확인한다.
+
+## 공개 Pages 공유 데이터
+
+- [x] `public/shared-data.json`을 Pages 공유 데이터 파일로 추가한다.
+- [x] 앱 시작 시 공유 데이터 파일을 읽어 IndexedDB에 반영한다.
+- [x] 더 최신 로컬 거래가 있으면 오래된 공유 데이터로 덮어쓰지 않는다.
+- [x] 백업 패널에 `shared-data.json` 공유용 내보내기 버튼을 추가한다.
+- [x] 빌드와 audit 검증을 통과한다.
+- [x] 로컬 개발 서버 HTTP 응답을 확인한다.
+- [ ] 자동 브라우저 클릭 검증은 Playwright 부재로 미수행.
+- [ ] GitHub Pages 배포를 확인한다.

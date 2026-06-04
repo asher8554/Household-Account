@@ -16,3 +16,9 @@ export type ImportSummary = {
   transactionsUpdated: number;
   transactionsSkipped: number;
 };
+
+export type ReplaceSummary = {
+  exportedAt: string;
+  categoriesReplaced: number;
+  transactionsReplaced: number;
+};
