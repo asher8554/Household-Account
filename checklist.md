@@ -123,6 +123,15 @@
 - [ ] 자동 브라우저 클릭 검증은 Playwright 부재로 미수행.
 - [x] GitHub Pages 배포를 확인한다.
 
+## Playwright 설치와 현대카드 가져오기 브라우저 검증
+
+- [x] Browser plugin 설치 가능 여부를 확인한다.
+- [x] Playwright 패키지와 Chromium 브라우저를 설치한다.
+- [x] 현대카드 샘플 파일 가져오기 UI에서 오류 0건을 확인한다.
+- [x] 빌드와 audit 검증을 통과한다.
+- [x] 로컬 개발 서버 HTTP 응답을 확인한다.
+- [ ] GitHub Pages 배포를 확인한다.
+
 ## 신한카드 바이너리 xls 오류 개선
 
 - [x] 샘플 파일의 오류 81건 원인을 실제 파서로 재현한다.
