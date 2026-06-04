@@ -1,7 +1,10 @@
 // 월간 카테고리별 지출 차트를 표시합니다.
 import { useEffect, useMemo, useState } from "react";
+import { ChevronLeft, ChevronRight, RotateCcw } from "lucide-react";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
+import { formatMonthTitle } from "../../lib/date";
 import { formatKrw } from "../../lib/money";
+import { Button } from "../../shared/ui/Button";
 import { SectionPanel } from "../../shared/ui/SectionPanel";
 import type { Category } from "../categories/category-types";
 import type { Transaction } from "../transactions/transaction-types";
@@ -9,9 +12,13 @@ import type { CategoryExpenseStat } from "./dashboard-calculations";
 import { TransactionList } from "./TransactionList";
 
 type CategoryExpenseChartProps = {
+  monthDate: Date;
   stats: CategoryExpenseStat[];
   transactions: Transaction[];
   categories: Category[];
+  onPreviousMonth: () => void;
+  onCurrentMonth: () => void;
+  onNextMonth: () => void;
   onDeleteTransaction: (id: string) => void;
   onChangeTransactionCategory: (id: string, categoryId: string) => void;
 };
@@ -21,9 +28,13 @@ type ChartClickPayload = {
 };
 
 export function CategoryExpenseChart({
+  monthDate,
   stats,
   transactions,
   categories,
+  onPreviousMonth,
+  onCurrentMonth,
+  onNextMonth,
   onDeleteTransaction,
   onChangeTransactionCategory,
 }: CategoryExpenseChartProps) {
@@ -64,7 +75,24 @@ export function CategoryExpenseChart({
   }
 
   return (
-    <SectionPanel title="카테고리별 지출" eyebrow="이번 달">
+    <SectionPanel
+      title="카테고리별 지출"
+      eyebrow={formatMonthTitle(monthDate)}
+      action={
+        <div className="flex items-center gap-2">
+          <Button size="sm" variant="secondary" onClick={onPreviousMonth} aria-label="이전 달" title="이전 달">
+            <ChevronLeft size={17} aria-hidden="true" />
+          </Button>
+          <Button size="sm" variant="secondary" onClick={onCurrentMonth}>
+            <RotateCcw size={15} aria-hidden="true" />
+            이번 달
+          </Button>
+          <Button size="sm" variant="secondary" onClick={onNextMonth} aria-label="다음 달" title="다음 달">
+            <ChevronRight size={17} aria-hidden="true" />
+          </Button>
+        </div>
+      }
+    >
       {chartData.length === 0 ? (
         <p className="rounded-lg border border-dashed border-line px-3 py-8 text-center text-sm text-muted">
           지출 데이터 없음.
