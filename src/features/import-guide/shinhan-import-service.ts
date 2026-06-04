@@ -12,8 +12,8 @@ export function buildShinhanPreview(
   const existingKeys = new Set(existingTransactions.map(toExistingMatchKey).filter(Boolean));
   const seenIncomingKeys = new Set<string>();
 
-  return candidates.map((candidate) => {
-    const matchKey = createMatchKey(candidate.type, candidate.date, candidate.amount, candidate.merchant);
+  const items: ShinhanPreviewItem[] = candidates.map((candidate) => {
+    const matchKey = createCandidateMatchKey(candidate);
     const invalidReason = getInvalidReason(candidate);
 
     if (invalidReason) {
@@ -43,6 +43,8 @@ export function buildShinhanPreview(
       reason: candidate.note ?? "저장 가능.",
     };
   });
+
+  return collapseDuplicatePreviewItems(items);
 }
 
 export async function importReadyShinhanItems(items: ShinhanPreviewItem[]) {
@@ -79,5 +81,54 @@ function toExistingMatchKey(transaction: Transaction) {
   const merchant = normalizeMatchText(transaction.memo);
   if (!merchant) return "";
 
-  return createMatchKey(transaction.type, transaction.date, transaction.amount, merchant);
+  const baseKey = createMatchKey(transaction.type, transaction.date, transaction.amount, merchant);
+  const approvalNo = extractApprovalNo(transaction.memo);
+
+  return approvalNo ? `${baseKey}|approval:${approvalNo}` : baseKey;
+}
+
+function createCandidateMatchKey(candidate: ShinhanParsedCandidate) {
+  const baseKey = createMatchKey(candidate.type, candidate.date, candidate.amount, candidate.merchant);
+  const approvalNo = normalizeApprovalNo(candidate.approvalNo);
+
+  return approvalNo ? `${baseKey}|approval:${approvalNo}` : baseKey;
+}
+
+function collapseDuplicatePreviewItems(items: ShinhanPreviewItem[]) {
+  const duplicateGroups = new Map<string, { item: ShinhanPreviewItem; count: number }>();
+  const collapsedItems: ShinhanPreviewItem[] = [];
+
+  for (const item of items) {
+    if (item.previewStatus !== "duplicate") {
+      collapsedItems.push(item);
+      continue;
+    }
+
+    const group = duplicateGroups.get(item.matchKey);
+    if (group) {
+      group.count += 1;
+      continue;
+    }
+
+    const representative = { ...item };
+    duplicateGroups.set(item.matchKey, { item: representative, count: 1 });
+    collapsedItems.push(representative);
+  }
+
+  duplicateGroups.forEach(({ item, count }) => {
+    if (count > 1) {
+      item.reason = `${item.reason} 동일 중복 후보 ${count}건을 1개로 묶었습니다.`;
+    }
+  });
+
+  return collapsedItems;
+}
+
+function extractApprovalNo(value: string) {
+  const match = value.match(/승인번호\s*[:：]?\s*([A-Za-z0-9-]+)/i);
+  return normalizeApprovalNo(match?.[1] ?? "");
+}
+
+function normalizeApprovalNo(value: string) {
+  return value.replace(/[^A-Za-z0-9]/g, "").toLowerCase();
 }
