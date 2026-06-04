@@ -7,7 +7,11 @@ import { listCategories } from "../categories/category-service";
 import { CategoryManager } from "../categories/CategoryManager";
 import { BackupPanel } from "../backup/BackupPanel";
 import { TransactionForm } from "../transactions/TransactionForm";
-import { deleteTransaction, listTransactions } from "../transactions/transaction-service";
+import {
+  deleteTransaction,
+  listTransactions,
+  updateSameMerchantCategory,
+} from "../transactions/transaction-service";
 import { SectionPanel } from "../../shared/ui/SectionPanel";
 import {
   buildDailySummaries,
@@ -115,6 +119,7 @@ export function DashboardScreen() {
             transactions={selectedDateTransactions}
             categories={data.categories}
             onDeleteTransaction={(id) => void deleteTransaction(id)}
+            onChangeTransactionCategory={(id, categoryId) => void updateSameMerchantCategory(id, categoryId)}
           />
           <BackupPanel />
           <CategoryManager categories={data.categories} />

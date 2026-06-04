@@ -1,5 +1,6 @@
 // 신한카드 원본 데이터의 날짜, 금액, 텍스트를 정규화합니다.
 import type { CategoryType } from "../categories/category-types";
+import { normalizeTransactionMerchantKey } from "../transactions/merchant-key";
 
 const fullDatePatterns = [
   /(?<year>\d{4})[년.\-/\s]+(?<month>\d{1,2})[월.\-/\s]+(?<day>\d{1,2})/,
@@ -17,15 +18,7 @@ export function normalizeLooseText(value: unknown) {
 }
 
 export function normalizeMatchText(value: string) {
-  return value
-    .replace(/\[[^\]]+\]/g, " ")
-    .replace(/신한\s*(카드|체크|SOL페이|플레이)?/gi, " ")
-    .replace(/현대\s*카드|국민은행|KB국민은행|하나은행|토스뱅크|은행거래/gi, " ")
-    .replace(/승인취소|매출취소|승인|취소|일시불|할부|국내|해외/g, " ")
-    .replace(/승인번호\s*[:：]?\s*[A-Za-z0-9-]+/gi, " ")
-    .replace(/카드\s*[:：]?\s*[^/|]+/gi, " ")
-    .replace(/[^\p{L}\p{N}]+/gu, "")
-    .toLowerCase();
+  return normalizeTransactionMerchantKey(value);
 }
 
 export function parseKrwAmount(value: unknown) {
