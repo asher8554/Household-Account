@@ -131,3 +131,12 @@
 - [x] 로컬 개발 서버 HTTP 응답을 확인한다.
 - [ ] 자동 브라우저 클릭 검증은 Playwright 부재로 미수행.
 - [x] GitHub Pages 배포를 확인한다.
+
+## 카테고리 색상 Random 버튼
+
+- [x] 카테고리 추가 폼 색상 입력 옆에 Random 버튼을 추가한다.
+- [x] Random 버튼 클릭 시 새 hex 색상을 생성해 color input에 반영한다.
+- [x] 빌드와 audit 검증을 통과한다.
+- [x] 로컬 개발 서버 HTTP 응답을 확인한다.
+- [ ] 자동 브라우저 클릭 검증은 Playwright 부재로 미수행.
+- [ ] GitHub Pages 배포를 확인한다.

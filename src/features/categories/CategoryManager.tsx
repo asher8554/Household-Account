@@ -1,6 +1,6 @@
 // 카테고리 추가, 수정, 비활성화 UI를 제공합니다.
 import { FormEvent, useState } from "react";
-import { Check, Pencil, RotateCcw, Trash2, X } from "lucide-react";
+import { Check, Pencil, RotateCcw, Shuffle, Trash2, X } from "lucide-react";
 import { cx } from "../../lib/cx";
 import { Button } from "../../shared/ui/Button";
 import { FormField } from "../../shared/ui/FormField";
@@ -63,7 +63,7 @@ export function CategoryManager({ categories }: CategoryManagerProps) {
   return (
     <SectionPanel title="카테고리" eyebrow="관리">
       <form onSubmit={handleAdd} className="grid gap-2">
-        <div className="grid grid-cols-[1fr_1fr_48px] gap-2">
+        <div className="grid grid-cols-[1fr_1fr_minmax(7.5rem,auto)] gap-2">
           <select
             className="h-10 rounded-lg border border-line bg-field px-3 text-sm"
             value={newType}
@@ -78,15 +78,29 @@ export function CategoryManager({ categories }: CategoryManagerProps) {
             value={newName}
             onChange={(event) => setNewName(event.target.value)}
           />
-          <FormField label="">
-            <input
-              className="h-10 w-full rounded-lg border border-line bg-field p-1"
-              type="color"
-              value={newColor}
-              title="카테고리 색상"
-              onChange={(event) => setNewColor(event.target.value)}
-            />
-          </FormField>
+          <div className="flex min-w-0 items-center gap-2">
+            <FormField label="">
+              <input
+                className="h-10 w-12 rounded-lg border border-line bg-field p-1"
+                type="color"
+                value={newColor}
+                title="카테고리 색상"
+                onChange={(event) => setNewColor(event.target.value)}
+              />
+            </FormField>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-10 shrink-0 px-2"
+              onClick={() => setNewColor(createRandomCategoryColor())}
+              aria-label="무작위 색상"
+              title="무작위 색상"
+            >
+              <Shuffle size={15} aria-hidden="true" />
+              Random
+            </Button>
+          </div>
         </div>
         <Button type="submit" variant="secondary" size="sm">
           추가
@@ -210,4 +224,39 @@ export function CategoryManager({ categories }: CategoryManagerProps) {
       {message ? <p className="mt-3 text-sm text-muted">{message}</p> : null}
     </SectionPanel>
   );
+}
+
+function createRandomCategoryColor() {
+  const hue = Math.floor(Math.random() * 360);
+  const saturation = 42 + Math.floor(Math.random() * 22);
+  const lightness = 42 + Math.floor(Math.random() * 16);
+
+  return hslToHex(hue, saturation, lightness);
+}
+
+function hslToHex(hue: number, saturation: number, lightness: number) {
+  const normalizedSaturation = saturation / 100;
+  const normalizedLightness = lightness / 100;
+  const chroma = (1 - Math.abs(2 * normalizedLightness - 1)) * normalizedSaturation;
+  const hueSegment = hue / 60;
+  const secondLargest = chroma * (1 - Math.abs((hueSegment % 2) - 1));
+  const match = normalizedLightness - chroma / 2;
+  const [red, green, blue] = getRgbParts(hueSegment, chroma, secondLargest).map((value) =>
+    Math.round((value + match) * 255),
+  );
+
+  return `#${toHexPart(red)}${toHexPart(green)}${toHexPart(blue)}`;
+}
+
+function getRgbParts(hueSegment: number, chroma: number, secondLargest: number) {
+  if (hueSegment < 1) return [chroma, secondLargest, 0];
+  if (hueSegment < 2) return [secondLargest, chroma, 0];
+  if (hueSegment < 3) return [0, chroma, secondLargest];
+  if (hueSegment < 4) return [0, secondLargest, chroma];
+  if (hueSegment < 5) return [secondLargest, 0, chroma];
+  return [chroma, 0, secondLargest];
+}
+
+function toHexPart(value: number) {
+  return value.toString(16).padStart(2, "0");
 }
