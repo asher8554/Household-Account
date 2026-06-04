@@ -210,3 +210,4 @@
 - `npm audit --audit-level=high`가 취약점 0건으로 통과했다.
 - 로컬 개발 서버 `http://localhost:5173/`가 200 응답을 반환했다.
 - Node REPL 환경에 Playwright 모듈이 없어 자동 렌더 상호작용 검증은 진행하지 못했다.
+- GitHub Pages 워크플로우 `26926849198`이 build와 deploy 모두 성공했고 공개 URL이 200 응답을 반환했다.
