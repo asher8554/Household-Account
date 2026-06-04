@@ -194,3 +194,14 @@
 - [x] 로컬 개발 서버 HTTP 응답을 확인한다.
 - [ ] 자동 브라우저 클릭 검증은 Playwright 부재로 미수행.
 - [x] GitHub Pages 배포를 확인한다.
+
+## 현재 PC 기록 수동 공유 push
+
+- [x] 공개 `shared-data.json`이 빈 파일인 원인을 확인한다.
+- [x] GitHub 공유 설정 패널에 현재 PC 기록을 즉시 push하는 버튼을 추가한다.
+- [x] 버튼은 현재 IndexedDB 데이터를 `public/shared-data.json`으로 커밋한다.
+- [x] GitHub push 성공 후 Pages 반영 대기 안내를 표시한다.
+- [x] 빌드와 audit 검증을 통과한다.
+- [x] 로컬 개발 서버 HTTP 응답을 확인한다.
+- [ ] 자동 브라우저 클릭 검증은 Playwright 부재로 미수행.
+- [ ] GitHub Pages 배포를 확인한다.
