@@ -354,3 +354,24 @@
 - 로컬 개발 서버 `http://127.0.0.1:5173/`가 200 응답을 반환했다.
 - Playwright 패키지가 없어 자동 브라우저 클릭 검증은 진행하지 못했다.
 - GitHub Pages 워크플로우 `26933131676`이 build와 deploy 모두 성공했고 공개 URL이 200 응답을 반환했다.
+
+## 공개 Pages 공유 데이터 작업 계획
+
+- 사용자가 1번 공개 공유 방식을 선택했으므로 거래 내역 JSON이 Pages에 공개 배포되는 것을 전제로 한다.
+- 공유 데이터 파일은 Vite의 정적 파일 경로인 `public/shared-data.json`에 둔다.
+- 앱 시작 시 `${BASE_URL}shared-data.json`을 no-cache로 읽고, 유효한 백업 JSON이면 IndexedDB에 반영한다.
+- 공유 데이터는 PC에서 만든 공개 snapshot을 source of truth로 본다.
+- 다만 PC에서 아직 push하지 않은 최신 로컬 거래가 있으면 오래된 공유 데이터로 덮어쓰지 않는다.
+- 백업 패널에는 repo에 반영하기 쉬운 파일명인 `shared-data.json`으로 내보내는 버튼을 추가한다.
+
+## 공개 Pages 공유 데이터 구현 결과
+
+- `public/shared-data.json`을 추가해 GitHub Pages에 공유 snapshot을 함께 배포할 수 있게 했다.
+- 앱 시작 시 `shared-data.json`을 no-cache로 읽고 유효한 백업 JSON이면 IndexedDB에 교체 반영한다.
+- 공유 데이터 파일이 비어 있으면 기존 로컬 데이터는 건드리지 않는다.
+- 공유 데이터보다 최신 로컬 거래가 있으면 오래된 공개 snapshot으로 덮어쓰지 않는다.
+- 백업 패널에 `공유용 내보내기` 버튼을 추가해 `shared-data.json` 파일명으로 현재 데이터를 내려받을 수 있게 했다.
+- `npm run build`가 통과했다.
+- `npm audit --audit-level=high`가 취약점 0건으로 통과했다.
+- 로컬 개발 서버 `http://127.0.0.1:5173/`와 `http://127.0.0.1:5173/shared-data.json`가 200 응답을 반환했다.
+- Playwright 패키지가 없어 자동 브라우저 클릭 검증은 진행하지 못했다.

@@ -5,7 +5,7 @@ import { ensureDefaultCategories, ensureFallbackCategory } from "../categories/c
 import type { Category } from "../categories/category-types";
 import type { Transaction } from "../transactions/transaction-types";
 import { backupFileSchema, type ParsedBackupFile } from "./backup-schema";
-import type { BackupFile, ImportSummary } from "./backup-types";
+import type { BackupFile, ImportSummary, ReplaceSummary } from "./backup-types";
 
 function isIncomingNewer(incomingUpdatedAt: string, existingUpdatedAt: string) {
   return new Date(incomingUpdatedAt).getTime() >= new Date(existingUpdatedAt).getTime();
@@ -43,6 +43,53 @@ function normalizeTransaction(transaction: ParsedBackupFile["transactions"][numb
   };
 }
 
+function ensureSnapshotFallbackCategories(categories: Category[], exportedAt: string) {
+  const categoryMap = new Map(categories.map((category) => [category.id, category]));
+  const defaults = createDefaultCategories(exportedAt);
+  const fallbackIds = new Set([getFallbackCategoryId("expense"), getFallbackCategoryId("income")]);
+  let sortOrder = categories.length + 999;
+
+  for (const category of defaults) {
+    if (!fallbackIds.has(category.id) || categoryMap.has(category.id)) continue;
+
+    categoryMap.set(category.id, {
+      ...category,
+      sortOrder,
+    });
+    sortOrder += 1;
+  }
+
+  return Array.from(categoryMap.values()).sort((a, b) => a.sortOrder - b.sortOrder);
+}
+
+function normalizeBackupSnapshot(raw: unknown) {
+  const parsed = backupFileSchema.parse(raw);
+  const categories = ensureSnapshotFallbackCategories(
+    parsed.categories.map(normalizeCategory),
+    parsed.exportedAt,
+  );
+  const categoryIds = new Set(categories.map((category) => category.id));
+  const fallbackIds = {
+    expense: getFallbackCategoryId("expense"),
+    income: getFallbackCategoryId("income"),
+  };
+  const transactions = parsed.transactions.map(normalizeTransaction).map((transaction) => {
+    if (categoryIds.has(transaction.categoryId)) return transaction;
+
+    return {
+      ...transaction,
+      categoryId: fallbackIds[transaction.type],
+      updatedAt: parsed.exportedAt,
+    };
+  });
+
+  return {
+    exportedAt: parsed.exportedAt,
+    categories,
+    transactions,
+  };
+}
+
 export async function createBackupData(): Promise<BackupFile> {
   await ensureDefaultCategories();
 
@@ -59,8 +106,7 @@ export async function createBackupData(): Promise<BackupFile> {
   };
 }
 
-export async function downloadBackupFile() {
-  const backup = await createBackupData();
+function downloadJsonFile(backup: BackupFile, fileName: string) {
   const blob = new Blob([JSON.stringify(backup, null, 2)], {
     type: "application/json;charset=utf-8",
   });
@@ -68,9 +114,21 @@ export async function downloadBackupFile() {
   const link = document.createElement("a");
 
   link.href = url;
-  link.download = `household-account-${backup.exportedAt.slice(0, 10)}.json`;
+  link.download = fileName;
   link.click();
   URL.revokeObjectURL(url);
+}
+
+export async function downloadBackupFile() {
+  const backup = await createBackupData();
+  downloadJsonFile(backup, `household-account-${backup.exportedAt.slice(0, 10)}.json`);
+  return backup;
+}
+
+export async function downloadSharedDataFile() {
+  const backup = await createBackupData();
+  downloadJsonFile(backup, "shared-data.json");
+  return backup;
 }
 
 export async function importBackupData(raw: unknown): Promise<ImportSummary> {
@@ -161,6 +219,26 @@ export async function importBackupData(raw: unknown): Promise<ImportSummary> {
 export async function importBackupFile(file: File) {
   const text = await file.text();
   return importBackupData(JSON.parse(text));
+}
+
+export async function replaceWithBackupData(raw: unknown): Promise<ReplaceSummary> {
+  const snapshot = normalizeBackupSnapshot(raw);
+
+  await db.transaction("rw", db.categories, db.transactions, async () => {
+    await db.transactions.clear();
+    await db.categories.clear();
+    await db.categories.bulkPut(snapshot.categories);
+
+    if (snapshot.transactions.length > 0) {
+      await db.transactions.bulkPut(snapshot.transactions);
+    }
+  });
+
+  return {
+    exportedAt: snapshot.exportedAt,
+    categoriesReplaced: snapshot.categories.length,
+    transactionsReplaced: snapshot.transactions.length,
+  };
 }
 
 export async function resetAllData() {
