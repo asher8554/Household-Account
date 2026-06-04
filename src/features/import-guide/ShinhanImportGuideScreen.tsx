@@ -22,6 +22,11 @@ import { buildShinhanPreview, importReadyShinhanItems } from "./shinhan-import-s
 import type { ShinhanPreviewItem } from "./shinhan-import-types";
 import { parseShinhanNotificationText } from "./shinhan-notification-parser";
 import { isTrackedCardImportSource, recordCardFileLoad } from "./import-status-service";
+import { GitHubSharedDataPanel } from "../shared-data/GitHubSharedDataPanel";
+import {
+  loadGitHubSharedDataSettings,
+  pushCurrentSharedDataToGitHub,
+} from "../shared-data/github-shared-data-service";
 
 type Step = {
   title: string;
@@ -199,7 +204,22 @@ export function ShinhanImportGuideScreen() {
     try {
       const count = await importReadyShinhanItems(filePreview);
       setFilePreview(buildShinhanPreview(filePreview, await listTransactions()));
-      setStatusMessage(`파일 거래 ${count}건을 저장했습니다.`);
+      if (count === 0) {
+        setStatusMessage("저장할 새 파일 거래가 없습니다.");
+        return;
+      }
+
+      setStatusMessage(`파일 거래 ${count}건을 저장했습니다. GitHub 공유 데이터 push 중입니다.`);
+
+      try {
+        const result = await pushCurrentSharedDataToGitHub(loadGitHubSharedDataSettings());
+        setStatusMessage(
+          `파일 거래 ${count}건을 저장했고 GitHub 공유 데이터도 push했습니다. 공유 거래 ${result.transactions}건.`,
+        );
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "GitHub push 실패.";
+        setStatusMessage(`파일 거래 ${count}건을 저장했습니다. ${message}`);
+      }
     } finally {
       setIsImportingFile(false);
     }
@@ -265,6 +285,7 @@ export function ShinhanImportGuideScreen() {
       </section>
 
       <CardImportFreshnessPanel />
+      <GitHubSharedDataPanel />
 
       <div className="grid gap-5 xl:grid-cols-2">
         <SectionPanel title="CSV/xls/xlsx 파일 가져오기" eyebrow="카드/은행 파일">
