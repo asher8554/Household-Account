@@ -1,7 +1,7 @@
 // 거래 추가, 삭제, 조회 같은 저장소 작업을 제공합니다.
 import { db } from "../../db/db";
 import { createId } from "../../lib/id";
-import { normalizeTransactionMerchantKey } from "./merchant-key";
+import { createTransactionDuplicateKey, normalizeTransactionMerchantKey } from "./merchant-key";
 import type { Transaction, TransactionDraft } from "./transaction-types";
 
 export async function listTransactions() {
@@ -66,6 +66,75 @@ export async function updateSameMerchantCategory(transactionId: string, category
   });
 }
 
+export async function removeDuplicateTransactions() {
+  return db.transaction("rw", db.transactions, async () => {
+    const transactions = await db.transactions.toArray();
+    const groups = new Map<string, Transaction[]>();
+
+    for (const transaction of transactions) {
+      const duplicateKey = createTransactionDuplicateKey(transaction);
+      if (!duplicateKey) continue;
+
+      const group = groups.get(duplicateKey) ?? [];
+      group.push(transaction);
+      groups.set(duplicateKey, group);
+    }
+
+    const transactionUpdates: Transaction[] = [];
+    const transactionIdsToDelete: string[] = [];
+
+    for (const group of groups.values()) {
+      if (group.length < 2) continue;
+
+      const keeper = [...group].sort(compareOldestTransaction)[0];
+      const latest = [...group].sort(compareNewestTransaction)[0];
+      const keeperPatch =
+        keeper.categoryId !== latest.categoryId || keeper.updatedAt !== latest.updatedAt
+          ? { ...keeper, categoryId: latest.categoryId, updatedAt: latest.updatedAt }
+          : null;
+
+      if (keeperPatch) {
+        transactionUpdates.push(keeperPatch);
+      }
+
+      transactionIdsToDelete.push(
+        ...group.filter((transaction) => transaction.id !== keeper.id).map((transaction) => transaction.id),
+      );
+    }
+
+    if (transactionUpdates.length > 0) {
+      await db.transactions.bulkPut(transactionUpdates);
+    }
+
+    if (transactionIdsToDelete.length > 0) {
+      await db.transactions.bulkDelete(transactionIdsToDelete);
+    }
+
+    return transactionIdsToDelete.length;
+  });
+}
+
 export async function clearTransactions() {
   await db.transactions.clear();
+}
+
+function compareOldestTransaction(a: Transaction, b: Transaction) {
+  return (
+    toTime(a.createdAt) - toTime(b.createdAt) ||
+    toTime(a.updatedAt) - toTime(b.updatedAt) ||
+    a.id.localeCompare(b.id)
+  );
+}
+
+function compareNewestTransaction(a: Transaction, b: Transaction) {
+  return (
+    toTime(b.updatedAt) - toTime(a.updatedAt) ||
+    toTime(b.createdAt) - toTime(a.createdAt) ||
+    b.id.localeCompare(a.id)
+  );
+}
+
+function toTime(value: string) {
+  const time = new Date(value).getTime();
+  return Number.isFinite(time) ? time : 0;
 }

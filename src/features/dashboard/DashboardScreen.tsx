@@ -1,5 +1,5 @@
 // 단일 화면 대시보드를 조립하고 각 기능 모듈을 연결합니다.
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { addMonths, startOfMonth, subMonths } from "date-fns";
 import { getTodayKey, isDateKeyInMonth, toDateKey } from "../../lib/date";
 import { useLiveQuery } from "../../db/use-live-query";
@@ -10,6 +10,7 @@ import { TransactionForm } from "../transactions/TransactionForm";
 import {
   deleteTransaction,
   listTransactions,
+  removeDuplicateTransactions,
   updateSameMerchantCategory,
 } from "../transactions/transaction-service";
 import { SectionPanel } from "../../shared/ui/SectionPanel";
@@ -41,6 +42,10 @@ export function DashboardScreen() {
     [],
     initialData,
   );
+
+  useEffect(() => {
+    void removeDuplicateTransactions();
+  }, []);
 
   const monthlyTransactions = useMemo(
     () => getTransactionsForMonth(data.transactions, currentMonth),

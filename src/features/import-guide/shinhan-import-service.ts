@@ -1,6 +1,7 @@
 // 신한카드 가져오기 후보의 중복 판정과 저장을 처리합니다.
 import { ensureFallbackCategory } from "../categories/category-service";
-import { addTransactions } from "../transactions/transaction-service";
+import { extractTransactionApprovalNo } from "../transactions/merchant-key";
+import { addTransactions, removeDuplicateTransactions } from "../transactions/transaction-service";
 import type { Transaction } from "../transactions/transaction-types";
 import type { ShinhanParsedCandidate, ShinhanPreviewItem } from "./shinhan-import-types";
 import { createMatchKey, formatImportedMemo, normalizeMatchText } from "./shinhan-normalizers";
@@ -66,6 +67,7 @@ export async function importReadyShinhanItems(items: ShinhanPreviewItem[]) {
       source: item.transactionSource,
     })),
   );
+  await removeDuplicateTransactions();
 
   return readyItems.length;
 }
@@ -82,7 +84,7 @@ function toExistingMatchKey(transaction: Transaction) {
   if (!merchant) return "";
 
   const baseKey = createMatchKey(transaction.type, transaction.date, transaction.amount, merchant);
-  const approvalNo = extractApprovalNo(transaction.memo);
+  const approvalNo = extractTransactionApprovalNo(transaction.memo);
 
   return approvalNo ? `${baseKey}|approval:${approvalNo}` : baseKey;
 }
@@ -122,11 +124,6 @@ function collapseDuplicatePreviewItems(items: ShinhanPreviewItem[]) {
   });
 
   return collapsedItems;
-}
-
-function extractApprovalNo(value: string) {
-  const match = value.match(/승인번호\s*[:：]?\s*([A-Za-z0-9-]+)/i);
-  return normalizeApprovalNo(match?.[1] ?? "");
 }
 
 function normalizeApprovalNo(value: string) {
