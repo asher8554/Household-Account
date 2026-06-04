@@ -77,6 +77,20 @@ export function DashboardScreen() {
     }
   }
 
+  function moveToPreviousMonth() {
+    moveMonth(subMonths(currentMonth, 1));
+  }
+
+  function moveToNextMonth() {
+    moveMonth(addMonths(currentMonth, 1));
+  }
+
+  function moveToCurrentMonth() {
+    const today = new Date();
+    setCurrentMonth(startOfMonth(today));
+    setSelectedDateKey(toDateKey(today));
+  }
+
   if (error) {
     return (
       <SectionPanel title="오류">
@@ -104,18 +118,18 @@ export function DashboardScreen() {
                 setCurrentMonth(startOfMonth(date));
               }
             }}
-            onPreviousMonth={() => moveMonth(subMonths(currentMonth, 1))}
-            onNextMonth={() => moveMonth(addMonths(currentMonth, 1))}
-            onCurrentMonth={() => {
-              const today = new Date();
-              setCurrentMonth(startOfMonth(today));
-              setSelectedDateKey(toDateKey(today));
-            }}
+            onPreviousMonth={moveToPreviousMonth}
+            onNextMonth={moveToNextMonth}
+            onCurrentMonth={moveToCurrentMonth}
           />
           <CategoryExpenseChart
+            monthDate={currentMonth}
             stats={categoryStats}
             transactions={monthlyTransactions}
             categories={data.categories}
+            onPreviousMonth={moveToPreviousMonth}
+            onCurrentMonth={moveToCurrentMonth}
+            onNextMonth={moveToNextMonth}
             onDeleteTransaction={(id) => void deleteTransaction(id)}
             onChangeTransactionCategory={(id, categoryId) => void updateSameMerchantCategory(id, categoryId)}
           />
