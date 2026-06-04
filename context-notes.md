@@ -436,3 +436,5 @@
 - `npm audit --audit-level=high`가 취약점 0건으로 통과했다.
 - 로컬 개발 서버 `http://127.0.0.1:5173/`와 `http://127.0.0.1:5173/shared-data.json`가 200 응답을 반환했다.
 - Playwright 패키지가 없어 자동 브라우저 클릭 검증은 진행하지 못했다.
+- GitHub Pages 워크플로우 `26938160716`이 build와 deploy 모두 성공했고 공개 앱 URL과 `shared-data.json` URL이 200 응답을 반환했다.
+- 배포 직후 `shared-data.json`은 여전히 빈 초기 파일이므로 PC 화면에서 `현재 PC 기록 push` 버튼을 눌러야 실제 거래가 공개 파일로 커밋된다.
