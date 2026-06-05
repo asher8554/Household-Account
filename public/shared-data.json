@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-06-05T10:36:09.433Z",
+  "exportedAt": "2026-06-05T11:56:48.702Z",
   "categories": [
     {
       "id": "expense-food",
@@ -6070,66 +6070,66 @@
       "date": "2026-06-03",
       "type": "expense",
       "amount": 22400,
-      "categoryId": "expense-other",
+      "categoryId": "expense-food",
       "memo": "[신한카드] 쿠팡이츠 / 상태 신용 / 카드 신용 / 승인번호 43102610",
       "source": "shinhan-file",
       "createdAt": "2026-06-05T10:36:09.414Z",
-      "updatedAt": "2026-06-05T10:36:09.414Z"
+      "updatedAt": "2026-06-05T10:36:38.619Z"
     },
     {
       "id": "tx_819263af-d139-4e31-839e-001d844fe48b",
       "date": "2026-06-04",
       "type": "expense",
       "amount": 2900,
-      "categoryId": "expense-other",
+      "categoryId": "expense-medical",
       "memo": "[신한카드] 우리아이약국 / 상태 신용 / 카드 신용 / 승인번호 49800579",
       "source": "shinhan-file",
       "createdAt": "2026-06-05T10:36:09.414Z",
-      "updatedAt": "2026-06-05T10:36:09.414Z"
+      "updatedAt": "2026-06-05T10:36:35.263Z"
     },
     {
       "id": "tx_ba68083d-8390-4207-911f-3aff328321fb",
       "date": "2026-06-04",
       "type": "expense",
       "amount": 2900,
-      "categoryId": "expense-other",
+      "categoryId": "expense-medical",
       "memo": "[신한카드] 미래아이소아청소년과의원 / 상태 신용 / 카드 신용 / 승인번호 49744186",
       "source": "shinhan-file",
       "createdAt": "2026-06-05T10:36:09.414Z",
-      "updatedAt": "2026-06-05T10:36:09.414Z"
+      "updatedAt": "2026-06-05T10:36:32.572Z"
     },
     {
       "id": "tx_58543ec4-872d-46f0-a40a-8db89a726ff7",
       "date": "2026-06-05",
       "type": "expense",
       "amount": 224800,
-      "categoryId": "expense-other",
+      "categoryId": "expense-medical",
       "memo": "[신한카드] 이수내과의원 / 상태 신용 / 카드 신용 / 승인번호 13168765",
       "source": "shinhan-file",
       "createdAt": "2026-06-05T10:36:09.414Z",
-      "updatedAt": "2026-06-05T10:36:09.414Z"
+      "updatedAt": "2026-06-05T10:36:30.501Z"
     },
     {
       "id": "tx_865f7657-933a-413a-9dbd-ea993d0b885f",
       "date": "2026-06-05",
       "type": "expense",
       "amount": 15100,
-      "categoryId": "expense-other",
+      "categoryId": "expense-medical",
       "memo": "[신한카드] 하임약국 / 상태 신용 / 카드 신용 / 승인번호 14092826",
       "source": "shinhan-file",
       "createdAt": "2026-06-05T10:36:09.414Z",
-      "updatedAt": "2026-06-05T10:36:09.414Z"
+      "updatedAt": "2026-06-05T10:36:28.636Z"
     },
     {
       "id": "tx_cbd75655-f7eb-4b5e-8e0c-f764d4d4f285",
       "date": "2026-06-05",
       "type": "expense",
       "amount": 82400,
-      "categoryId": "expense-other",
+      "categoryId": "expense-medical",
       "memo": "[신한카드] 주식회사 한솔페이에스 / 상태 신용 / 카드 신용 / 승인번호 16273622",
       "source": "shinhan-file",
       "createdAt": "2026-06-05T10:36:09.414Z",
-      "updatedAt": "2026-06-05T10:36:09.414Z"
+      "updatedAt": "2026-06-05T10:36:43.678Z"
     }
   ]
 }
