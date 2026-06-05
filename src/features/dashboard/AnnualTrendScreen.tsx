@@ -13,6 +13,7 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
+  Legend,
   ReferenceLine,
   ResponsiveContainer,
   Tooltip,
@@ -23,31 +24,18 @@ import { useLiveQuery } from "../../db/use-live-query";
 import { formatCompactKrw, formatKrw, formatSignedKrw } from "../../lib/money";
 import { Button } from "../../shared/ui/Button";
 import { SectionPanel } from "../../shared/ui/SectionPanel";
+import { listCategories } from "../categories/category-service";
 import { listTransactions } from "../transactions/transaction-service";
-import type { Transaction } from "../transactions/transaction-types";
-
-type AnnualTrendMonth = {
-  month: number;
-  label: string;
-  income: number;
-  expense: number;
-  net: number;
-  transactionCount: number;
-  expenseDelta: number | null;
-  maxExpenseShare: number;
-};
-
-type AnnualTrendSummary = {
-  totalIncome: number;
-  totalExpense: number;
-  net: number;
-  monthlyAverageExpense: number;
-  expenseMonths: number;
-  transactionCount: number;
-  peakMonth: AnnualTrendMonth | null;
-};
+import {
+  buildAnnualCategoryTrends,
+  buildAnnualMonthTrends,
+  getAnnualTrendSummary,
+  type AnnualCategoryTrendResult,
+  type AnnualTrendSummary,
+} from "./annual-trend-calculations";
 
 const initialData = {
+  categories: [],
   transactions: [],
 };
 
@@ -56,6 +44,7 @@ export function AnnualTrendScreen() {
   const [year, setYear] = useState(currentYear);
   const { data, error, isLoading } = useLiveQuery(
     async () => ({
+      categories: await listCategories(),
       transactions: await listTransactions(),
     }),
     [],
@@ -66,6 +55,10 @@ export function AnnualTrendScreen() {
     [data.transactions, year],
   );
   const summary = useMemo(() => getAnnualTrendSummary(monthlyTrends), [monthlyTrends]);
+  const categoryTrends = useMemo(
+    () => buildAnnualCategoryTrends(data.transactions, data.categories, year),
+    [data.transactions, data.categories, year],
+  );
 
   if (error) {
     return (
@@ -170,6 +163,8 @@ export function AnnualTrendScreen() {
         )}
       </SectionPanel>
 
+      <CategoryTrendSection trend={categoryTrends} year={year} />
+
       <SectionPanel title="월별 상세" eyebrow={`${summary.expenseMonths}개월 소비 기록`}>
         <div className="grid gap-2">
           {monthlyTrends.map((month) => (
@@ -209,6 +204,125 @@ export function AnnualTrendScreen() {
         </div>
       </SectionPanel>
     </div>
+  );
+}
+
+function CategoryTrendSection({ trend, year }: { trend: AnnualCategoryTrendResult; year: number }) {
+  const categoryNameMap = useMemo(
+    () => new Map(trend.categories.map((category) => [category.categoryId, category.name])),
+    [trend.categories],
+  );
+
+  return (
+    <SectionPanel title="카테고리별 소비 변화" eyebrow={`${year}년 상위 카테고리`}>
+      {trend.totalExpense === 0 ? (
+        <p className="rounded-lg border border-dashed border-line px-3 py-10 text-center text-sm text-muted">
+          카테고리별 지출 데이터 없음.
+        </p>
+      ) : (
+        <div className="grid gap-4">
+          <div className="h-[360px] min-w-0">
+            <ResponsiveContainer
+              width="100%"
+              height="100%"
+              minWidth={240}
+              minHeight={300}
+              initialDimension={{ width: 720, height: 360 }}
+            >
+              <BarChart data={trend.months} margin={{ top: 12, right: 12, bottom: 0, left: 0 }}>
+                <CartesianGrid stroke="rgb(var(--color-line))" strokeDasharray="4 4" vertical={false} />
+                <XAxis
+                  dataKey="label"
+                  tickLine={false}
+                  axisLine={false}
+                  tick={{ fill: "rgb(var(--color-muted))", fontSize: 12 }}
+                />
+                <YAxis
+                  width={56}
+                  tickLine={false}
+                  axisLine={false}
+                  tickFormatter={(value) => formatCompactKrw(Number(value))}
+                  tick={{ fill: "rgb(var(--color-muted))", fontSize: 12 }}
+                />
+                <Tooltip
+                  formatter={(value, name) => [
+                    formatKrw(Number(value)),
+                    categoryNameMap.get(String(name)) ?? String(name),
+                  ]}
+                  labelFormatter={(label) => `${year}년 ${label}`}
+                  contentStyle={{
+                    backgroundColor: "rgb(var(--color-panel))",
+                    border: "1px solid rgb(var(--color-line))",
+                    borderRadius: 8,
+                    color: "rgb(var(--color-ink))",
+                    boxShadow: "0 10px 24px rgba(32,35,31,0.08)",
+                  }}
+                  labelStyle={{ color: "rgb(var(--color-muted))" }}
+                />
+                <Legend
+                  formatter={(value) => (
+                    <span className="text-xs text-muted">{categoryNameMap.get(String(value)) ?? String(value)}</span>
+                  )}
+                />
+                {trend.categories.map((category) => (
+                  <Bar
+                    key={category.categoryId}
+                    dataKey={category.categoryId}
+                    stackId="expense"
+                    name={category.name}
+                    fill={category.color}
+                    isAnimationActive={false}
+                  />
+                ))}
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+
+          <div className="grid gap-2 lg:grid-cols-2">
+            {trend.categories.map((category) => (
+              <article
+                key={category.categoryId}
+                className="grid gap-3 rounded-lg border border-line bg-surface px-3 py-3"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex min-w-0 items-center gap-2">
+                    <span
+                      className="h-2.5 w-2.5 shrink-0 rounded-full"
+                      style={{ backgroundColor: category.color }}
+                    />
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold text-ink">{category.name}</p>
+                      <p className="text-xs text-muted">연간 {category.share.toFixed(1)}%</p>
+                    </div>
+                  </div>
+                  <p className="shrink-0 text-sm font-semibold text-coral">{formatKrw(category.totalExpense)}</p>
+                </div>
+                <div className="h-2 overflow-hidden rounded-full bg-field">
+                  <div
+                    className="h-full rounded-full"
+                    style={{ width: `${category.share}%`, backgroundColor: category.color }}
+                  />
+                </div>
+                <div className="grid gap-2 text-sm text-muted sm:grid-cols-2">
+                  <p>
+                    최고 지출월{" "}
+                    <span className="font-semibold text-ink">
+                      {category.peakMonthLabel}
+                    </span>
+                  </p>
+                  <p>
+                    {formatRecentWindowLabel(trend)}{" "}
+                    <span className={getDeltaClassName(category.recentDelta)}>
+                      {formatCategoryDelta(category.recentDelta)}
+                    </span>
+                  </p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      )}
+    </SectionPanel>
   );
 }
 
@@ -261,72 +375,26 @@ function AnnualTrendSummaryCards({ summary }: { summary: AnnualTrendSummary }) {
   );
 }
 
-function buildAnnualMonthTrends(transactions: Transaction[], year: number): AnnualTrendMonth[] {
-  const months: AnnualTrendMonth[] = Array.from({ length: 12 }, (_, index) => ({
-    month: index + 1,
-    label: `${index + 1}월`,
-    income: 0,
-    expense: 0,
-    net: 0,
-    transactionCount: 0,
-    expenseDelta: null,
-    maxExpenseShare: 0,
-  }));
-
-  for (const transaction of transactions) {
-    if (!transaction.date.startsWith(`${year}-`)) continue;
-
-    const monthIndex = Number(transaction.date.slice(5, 7)) - 1;
-    const month = months[monthIndex];
-    if (!month) continue;
-
-    month.transactionCount += 1;
-
-    if (transaction.type === "income") {
-      month.income += transaction.amount;
-    } else {
-      month.expense += transaction.amount;
-    }
-  }
-
-  const maxExpense = Math.max(0, ...months.map((month) => month.expense));
-
-  return months.map((month, index) => {
-    const previous = index > 0 ? months[index - 1] : null;
-    const net = month.income - month.expense;
-
-    return {
-      ...month,
-      net,
-      expenseDelta: previous ? month.expense - previous.expense : null,
-      maxExpenseShare: maxExpense > 0 ? Math.round((month.expense / maxExpense) * 100) : 0,
-    };
-  });
-}
-
-function getAnnualTrendSummary(months: AnnualTrendMonth[]): AnnualTrendSummary {
-  const totalIncome = months.reduce((sum, month) => sum + month.income, 0);
-  const totalExpense = months.reduce((sum, month) => sum + month.expense, 0);
-  const expenseMonths = months.filter((month) => month.expense > 0).length;
-  const peakMonth = months.reduce<AnnualTrendMonth | null>(
-    (currentPeak, month) => (month.expense > (currentPeak?.expense ?? 0) ? month : currentPeak),
-    null,
-  );
-
-  return {
-    totalIncome,
-    totalExpense,
-    net: totalIncome - totalExpense,
-    monthlyAverageExpense: expenseMonths > 0 ? Math.round(totalExpense / expenseMonths) : 0,
-    expenseMonths,
-    transactionCount: months.reduce((sum, month) => sum + month.transactionCount, 0),
-    peakMonth: peakMonth && peakMonth.expense > 0 ? peakMonth : null,
-  };
-}
-
 function formatExpenseDelta(delta: number | null) {
   if (delta === null) return "전월 없음";
   if (delta === 0) return "전월 동일";
   const direction = delta > 0 ? "증가" : "감소";
   return `${formatKrw(Math.abs(delta))} ${direction}`;
+}
+
+function formatRecentWindowLabel(trend: AnnualCategoryTrendResult) {
+  if (!trend.previousWindowLabel) return trend.recentWindowLabel;
+  return `${trend.previousWindowLabel} 대비 ${trend.recentWindowLabel}`;
+}
+
+function formatCategoryDelta(delta: number | null) {
+  if (delta === null) return "비교 없음";
+  if (delta === 0) return "동일";
+  const direction = delta > 0 ? "증가" : "감소";
+  return `${formatKrw(Math.abs(delta))} ${direction}`;
+}
+
+function getDeltaClassName(delta: number | null) {
+  if (delta === null || delta === 0) return "font-semibold text-muted";
+  return delta > 0 ? "font-semibold text-coral" : "font-semibold text-mint";
 }
