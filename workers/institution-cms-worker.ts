@@ -132,7 +132,11 @@ async function handleBackupRequest(request: Request, env: WorkerEnv): Promise<Re
       await updateNotionDataSourceSchema(notionEnv, schemaPatch);
     }
 
-    const existingPages = await fetchAllInstitutionPages(notionEnv);
+    const existingPages = await fetchAllInstitutionPages(
+      notionEnv,
+      "notion_backup_page_query_failed",
+      "Notion backup pages query failed.",
+    );
     const legacyRemoved = await trashLegacyBackupSummaryPages(notionEnv, existingPages, titlePropertyName);
     const existingPageById = mapExistingPagesByTitle(existingPages, titlePropertyName);
     const rows = buildNotionBackupRows(backup, titlePropertyName);
@@ -160,7 +164,11 @@ async function handleBackupRequest(request: Request, env: WorkerEnv): Promise<Re
   }
 }
 
-async function fetchAllInstitutionPages(env: RequiredNotionEnv): Promise<NotionInstitutionPage[]> {
+async function fetchAllInstitutionPages(
+  env: RequiredNotionEnv,
+  notionErrorCode = "notion_request_failed",
+  notionErrorMessage = NOTION_REQUEST_FAILED_MESSAGE,
+): Promise<NotionInstitutionPage[]> {
   const pages: NotionInstitutionPage[] = [];
   const seenCursors = new Set<string>();
   let startCursor: string | null = null;
@@ -179,7 +187,7 @@ async function fetchAllInstitutionPages(env: RequiredNotionEnv): Promise<NotionI
       seenCursors.add(startCursor);
     }
 
-    const payload = await queryInstitutionPages(env, startCursor);
+    const payload = await queryInstitutionPages(env, startCursor, notionErrorCode, notionErrorMessage);
     pages.push(...payload.results);
     startCursor = payload.hasMore ? payload.nextCursor : null;
     pageCount += 1;
@@ -191,6 +199,8 @@ async function fetchAllInstitutionPages(env: RequiredNotionEnv): Promise<NotionI
 async function queryInstitutionPages(
   env: RequiredNotionEnv,
   startCursor: string | null,
+  notionErrorCode: string,
+  notionErrorMessage: string,
 ): Promise<{ results: NotionInstitutionPage[]; hasMore: boolean; nextCursor: string | null }> {
   const body: { page_size: number; start_cursor?: string } = { page_size: 100 };
 
@@ -212,7 +222,7 @@ async function queryInstitutionPages(
   );
 
   if (!response.ok) {
-    throw await notionErrorResponse(response, env);
+    throw await notionErrorResponse(response, env, notionErrorCode, notionErrorMessage);
   }
 
   const payload = (await response.json()) as NotionQueryResponse;
@@ -241,7 +251,12 @@ async function retrieveNotionDataSource(env: RequiredNotionEnv): Promise<{ prope
   );
 
   if (!response.ok) {
-    throw await notionErrorResponse(response, env);
+    throw await notionErrorResponse(
+      response,
+      env,
+      "notion_backup_schema_read_failed",
+      "Notion data source schema read failed.",
+    );
   }
 
   const dataSource = (await response.json()) as NotionDataSourceResponse;
@@ -273,7 +288,12 @@ async function updateNotionDataSourceSchema(
   );
 
   if (!response.ok) {
-    throw await notionErrorResponse(response, env);
+    throw await notionErrorResponse(
+      response,
+      env,
+      "notion_backup_schema_update_failed",
+      "Notion data source schema update failed.",
+    );
   }
 }
 
@@ -321,7 +341,12 @@ async function createNotionBackupPage(
   });
 
   if (!response.ok) {
-    throw await notionErrorResponse(response, env);
+    throw await notionErrorResponse(
+      response,
+      env,
+      "notion_backup_page_create_failed",
+      "Notion backup page create failed.",
+    );
   }
 
   const page = (await response.json()) as NotionPageResponse;
@@ -351,7 +376,12 @@ async function updateNotionBackupPage(
   });
 
   if (!response.ok) {
-    throw await notionErrorResponse(response, env);
+    throw await notionErrorResponse(
+      response,
+      env,
+      "notion_backup_page_update_failed",
+      "Notion backup page update failed.",
+    );
   }
 }
 
@@ -406,7 +436,12 @@ async function trashNotionPage(env: RequiredNotionEnv, pageId: string): Promise<
   });
 
   if (!response.ok) {
-    throw await notionErrorResponse(response, env);
+    throw await notionErrorResponse(
+      response,
+      env,
+      "notion_backup_legacy_cleanup_failed",
+      "Notion legacy backup cleanup failed.",
+    );
   }
 }
 
@@ -414,7 +449,12 @@ function textFragmentsValue(fragments: Array<{ plain_text?: string; text?: { con
   return fragments?.map((fragment) => fragment.plain_text ?? fragment.text?.content ?? "").join("").trim() ?? "";
 }
 
-async function notionErrorResponse(response: Response, env: WorkerEnv): Promise<Response> {
+async function notionErrorResponse(
+  response: Response,
+  env: WorkerEnv,
+  errorCode = "notion_request_failed",
+  message = NOTION_REQUEST_FAILED_MESSAGE,
+): Promise<Response> {
   if (response.status === 429) {
     const retryAfter = response.headers.get("Retry-After");
     const headers = retryAfter ? { "Retry-After": retryAfter } : undefined;
@@ -422,7 +462,7 @@ async function notionErrorResponse(response: Response, env: WorkerEnv): Promise<
     return jsonResponse({ error: "notion_rate_limited", message: NOTION_RATE_LIMITED_MESSAGE }, 429, env, headers);
   }
 
-  return jsonResponse({ error: "notion_request_failed", message: NOTION_REQUEST_FAILED_MESSAGE }, 502, env);
+  return jsonResponse({ error: errorCode, message, notionStatus: response.status }, 502, env);
 }
 
 function jsonResponse(

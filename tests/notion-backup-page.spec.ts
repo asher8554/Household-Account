@@ -124,3 +124,73 @@ test("backup endpoint requires the Worker write key", async () => {
   expect(response.headers.get("Access-Control-Allow-Methods")).toContain("POST");
   expect(response.headers.get("Access-Control-Allow-Headers")).toContain("X-Household-Backup-Key");
 });
+
+test("backup endpoint reports data source schema update failures", async () => {
+  const originalFetch = globalThis.fetch;
+  const calls: string[] = [];
+
+  globalThis.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = String(input);
+    const method = init?.method ?? "GET";
+    calls.push(`${method} ${url}`);
+
+    if (method === "GET" && url.includes("/v1/data_sources/")) {
+      return new Response(JSON.stringify({ properties: { id: { type: "title" } } }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (method === "PATCH" && url.includes("/v1/data_sources/")) {
+      return new Response(
+        JSON.stringify({
+          object: "error",
+          status: 403,
+          code: "restricted_resource",
+          message: "Insufficient permissions.",
+        }),
+        {
+          status: 403,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    }
+
+    throw new Error(`Unexpected fetch: ${method} ${url}`);
+  };
+
+  try {
+    const response = await worker.fetch(
+      new Request("https://worker.test/backups", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Household-Backup-Key": "secret",
+        },
+        body: JSON.stringify({
+          version: 1,
+          exportedAt: "2026-06-07T10:20:30.000Z",
+          categories: [],
+          transactions: [],
+        }),
+      }),
+      {
+        NOTION_TOKEN: "ntn_test",
+        NOTION_DATA_SOURCE_ID: "3783d76f-8874-8055-af3a-000befc853fc",
+        NOTION_BACKUP_WRITE_KEY: "secret",
+      },
+    );
+
+    expect(response.status).toBe(502);
+    await expect(response.json()).resolves.toMatchObject({
+      error: "notion_backup_schema_update_failed",
+      notionStatus: 403,
+    });
+    expect(calls).toEqual([
+      "GET https://api.notion.com/v1/data_sources/3783d76f-8874-8055-af3a-000befc853fc",
+      "PATCH https://api.notion.com/v1/data_sources/3783d76f-8874-8055-af3a-000befc853fc",
+    ]);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});

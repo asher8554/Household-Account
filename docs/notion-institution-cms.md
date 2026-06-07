@@ -140,6 +140,14 @@ VITE_INSTITUTION_CMS_URL=https://household-account-institution-cms.<account>.wor
 
 백업 패널의 Notion 기록 버튼은 이 URL에서 `/institutions`를 `/backups`로 바꿔 호출합니다. 별도 Vite 환경 변수는 필요 없습니다.
 
+## Notion 백업 오류 확인
+
+- `Notion data source를 읽지 못했습니다.`가 나오면 `NOTION_DATA_SOURCE_ID` 값과 Notion data source 공유 상태를 확인합니다.
+- `Notion data source 컬럼 추가에 실패했습니다.`가 나오면 integration의 `Update Content` 권한을 켜고 Worker를 다시 배포합니다.
+- `Notion 백업 행 생성에 실패했습니다.`가 나오면 integration의 `Insert Content` 권한과 Notion 컬럼 타입을 확인합니다.
+- `Notion 백업 행 수정에 실패했습니다.`가 나오면 integration의 `Update Content` 권한과 기존 컬럼 타입을 확인합니다.
+- 문구 끝의 `Notion HTTP 403`은 대체로 integration 권한 문제이고, `Notion HTTP 404`는 ID 오류나 공유 누락 가능성이 큽니다.
+
 ## iPhone 사용 흐름
 
 1. iPhone Safari에서 GitHub Pages 앱을 엽니다.
