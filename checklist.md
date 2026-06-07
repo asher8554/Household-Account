@@ -253,3 +253,13 @@
 - [x] 카테고리별 요약 목록을 추가한다.
 - [x] 단위 테스트와 빌드 검증을 통과한다.
 - [x] Playwright로 렌더와 화면 전환을 검증한다.
+
+## iPhone private GitHub API 동기화 설계
+
+- [x] iPhone에서도 데이터 입력과 GitHub push가 필요하다는 목표를 확정한다.
+- [x] 동기화 방식을 private GitHub API 동기화로 확정한다.
+- [x] push 방식을 수동 push로 확정한다.
+- [x] token은 브라우저 저장으로 확정한다.
+- [x] 데이터 저장소는 앱 저장소와 분리된 별도 private repo로 확정한다.
+- [x] private sync 설계 문서를 작성한다.
+- [ ] 사용자가 설계 문서를 검토하고 구현 계획 작성 여부를 승인한다.

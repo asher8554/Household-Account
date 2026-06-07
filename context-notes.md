@@ -539,3 +539,17 @@
 - `npx playwright test tests/annual-trend-calculations.spec.ts`가 1개 테스트 통과로 완료됐다.
 - `npm run build`가 타입 체크와 프로덕션 빌드를 통과했다.
 - Playwright 렌더 검증에서 연간 소비 추세 진입, 새 섹션 표시, 식비/교통 요약, 최고 지출월, 최근 기간 대비 문구, 콘솔 오류 없음, 데스크톱/모바일 스크린샷을 확인했다.
+
+## iPhone private GitHub API 동기화 설계 결정
+
+- 목표는 iPhone에서 거래를 직접 입력하고 GitHub에 수동 push까지 하는 것이다.
+- 동기화 방식은 공개 `public/shared-data.json`이 아니라 별도 private GitHub repo의 JSON 파일을 GitHub Contents API로 읽고 쓰는 방식으로 확정했다.
+- push 방식은 자동 push가 아니라 사용자가 누르는 수동 push로 확정했다.
+- token은 fine-grained personal access token을 사용하고, 브라우저에 저장하는 1차 구현으로 확정했다.
+- token 권한은 데이터 private repo 하나의 `Contents: Read and write`로 제한한다.
+- 데이터 파일 기본 경로는 `data/household-account.json`로 계획한다.
+- 병합 정책은 같은 id에서 `updatedAt` 최신 승, 다른 id는 유지, 삭제는 tombstone으로 유지하는 방식으로 잡았다.
+- 삭제 tombstone은 필수다. tombstone이 없으면 한 기기에서 삭제한 거래가 다른 기기의 병합 과정에서 다시 살아날 수 있다.
+- 앱은 기존 GitHub Pages 정적 배포를 유지하되, private 데이터는 인증된 API를 통해서만 접근한다.
+- iPhone 입력을 1급 워크플로로 지원하므로 PWA manifest, Apple touch icon, standalone meta, safe-area CSS, iPhone viewport QA가 필요하다.
+- 설계 문서는 `docs/superpowers/specs/2026-06-07-private-github-sync-design.md`에 기록했다.
