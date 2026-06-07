@@ -944,3 +944,19 @@
 - 수정 후 세 viewport 모두 console error가 없었고, 달력 `다음 달` 버튼 클릭 시 `2026년 6월`에서 `2026년 7월`로 변경되는 상호작용을 확인했다.
 - 거래 입력 영역까지 스크롤한 iPhone 16과 iPhone 15 Pro 화면에서도 `현재 기록 업데이트` 버튼이 폭 343px로 잘리지 않고 표시되는 것을 확인했다.
 - `npx playwright test` 42개와 `npm run build`를 통과했다. Vite는 기존 chunk size 경고만 표시했다.
+
+## 카테고리별 소비 변화 표시 개수 조절 계획
+
+- 사용자는 `카테고리별 소비 변화`의 표시 개수를 up/down 버튼으로 조절하길 원한다.
+- 기존 집계 함수 `buildAnnualCategoryTrends`는 네 번째 인자로 `topCategoryLimit`을 이미 받는다. 새 계산 로직을 만들지 않고 이 값을 UI 상태로 연결한다.
+- 표시 개수는 현재 선택 연도의 실제 지출 카테고리 개수 이하로 제한한다. 제한보다 낮은 카테고리는 기존처럼 `기타 묶음`으로 집계한다.
+- 이 설정은 화면 표시 전용이다. IndexedDB, 백업, GitHub 공유 데이터, Notion 동기화 데이터는 변경하지 않는다.
+
+## 카테고리별 소비 변화 표시 개수 조절 결과
+
+- `AnnualTrendScreen`에 `categoryTrendLimit` 상태를 추가하고 `buildAnnualCategoryTrends`의 `topCategoryLimit` 인자로 연결했다.
+- `카테고리별 소비 변화` 패널 action에 `상위 N개` 표시와 감소, 증가 아이콘 버튼을 추가했다.
+- 표시 개수는 최소 1개, 선택 연도의 실제 지출 카테고리 수 이하로 제한한다. 데이터가 없으면 표시 개수는 0개로 보이고 버튼은 비활성화된다.
+- Playwright 임시 컨텍스트에 2026년 지출 카테고리 10개를 넣어 데스크톱 1280px과 iPhone 16 393px에서 검증했다.
+- 두 viewport 모두 `상위 8개`에서 감소 버튼 클릭 시 `상위 7개`, 증가 버튼 클릭 시 다시 `상위 8개`로 바뀌었다. 카드 수는 9개, 8개, 9개로 함께 바뀌었다.
+- `npm run build`와 `npx playwright test` 42개를 통과했다. Vite는 기존 chunk size 경고만 표시했다.

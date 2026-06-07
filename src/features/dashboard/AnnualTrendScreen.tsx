@@ -3,8 +3,10 @@ import { useMemo, useState } from "react";
 import {
   ArrowDownRight,
   CalendarRange,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
+  ChevronUp,
   ReceiptText,
   RotateCcw,
   TrendingUp,
@@ -26,6 +28,7 @@ import { Button } from "../../shared/ui/Button";
 import { SectionPanel } from "../../shared/ui/SectionPanel";
 import { listCategories } from "../categories/category-service";
 import { listTransactions } from "../transactions/transaction-service";
+import type { Transaction } from "../transactions/transaction-types";
 import {
   buildAnnualCategoryTrends,
   buildAnnualMonthTrends,
@@ -39,9 +42,13 @@ const initialData = {
   transactions: [],
 };
 
+const DEFAULT_CATEGORY_TREND_LIMIT = 8;
+const MIN_CATEGORY_TREND_LIMIT = 1;
+
 export function AnnualTrendScreen() {
   const currentYear = new Date().getFullYear();
   const [year, setYear] = useState(currentYear);
+  const [categoryTrendLimit, setCategoryTrendLimit] = useState(DEFAULT_CATEGORY_TREND_LIMIT);
   const { data, error, isLoading } = useLiveQuery(
     async () => ({
       categories: await listCategories(),
@@ -55,10 +62,32 @@ export function AnnualTrendScreen() {
     [data.transactions, year],
   );
   const summary = useMemo(() => getAnnualTrendSummary(monthlyTrends), [monthlyTrends]);
-  const categoryTrends = useMemo(
-    () => buildAnnualCategoryTrends(data.transactions, data.categories, year),
-    [data.transactions, data.categories, year],
+  const maxCategoryTrendLimit = useMemo(
+    () => getAnnualExpenseCategoryCount(data.transactions, year),
+    [data.transactions, year],
   );
+  const effectiveCategoryTrendLimit = Math.min(
+    Math.max(MIN_CATEGORY_TREND_LIMIT, categoryTrendLimit),
+    Math.max(MIN_CATEGORY_TREND_LIMIT, maxCategoryTrendLimit),
+  );
+  const categoryTrends = useMemo(
+    () => buildAnnualCategoryTrends(data.transactions, data.categories, year, effectiveCategoryTrendLimit),
+    [data.transactions, data.categories, year, effectiveCategoryTrendLimit],
+  );
+
+  function decreaseCategoryTrendLimit() {
+    setCategoryTrendLimit((value) => {
+      const cappedValue = Math.min(value, Math.max(MIN_CATEGORY_TREND_LIMIT, maxCategoryTrendLimit));
+      return Math.max(MIN_CATEGORY_TREND_LIMIT, cappedValue - 1);
+    });
+  }
+
+  function increaseCategoryTrendLimit() {
+    setCategoryTrendLimit((value) => {
+      const cappedMax = Math.max(MIN_CATEGORY_TREND_LIMIT, maxCategoryTrendLimit);
+      return Math.min(cappedMax, Math.max(MIN_CATEGORY_TREND_LIMIT, value) + 1);
+    });
+  }
 
   if (error) {
     return (
@@ -163,7 +192,14 @@ export function AnnualTrendScreen() {
         )}
       </SectionPanel>
 
-      <CategoryTrendSection trend={categoryTrends} year={year} />
+      <CategoryTrendSection
+        trend={categoryTrends}
+        year={year}
+        categoryLimit={effectiveCategoryTrendLimit}
+        maxCategoryLimit={maxCategoryTrendLimit}
+        onDecreaseCategoryLimit={decreaseCategoryTrendLimit}
+        onIncreaseCategoryLimit={increaseCategoryTrendLimit}
+      />
 
       <SectionPanel title="월별 상세" eyebrow={`${summary.expenseMonths}개월 소비 기록`}>
         <div className="grid gap-2">
@@ -207,14 +243,64 @@ export function AnnualTrendScreen() {
   );
 }
 
-function CategoryTrendSection({ trend, year }: { trend: AnnualCategoryTrendResult; year: number }) {
+type CategoryTrendSectionProps = {
+  trend: AnnualCategoryTrendResult;
+  year: number;
+  categoryLimit: number;
+  maxCategoryLimit: number;
+  onDecreaseCategoryLimit: () => void;
+  onIncreaseCategoryLimit: () => void;
+};
+
+function CategoryTrendSection({
+  trend,
+  year,
+  categoryLimit,
+  maxCategoryLimit,
+  onDecreaseCategoryLimit,
+  onIncreaseCategoryLimit,
+}: CategoryTrendSectionProps) {
   const categoryNameMap = useMemo(
     () => new Map(trend.categories.map((category) => [category.categoryId, category.name])),
     [trend.categories],
   );
+  const hasTrendData = trend.totalExpense > 0;
+  const displayLimit = hasTrendData ? categoryLimit : 0;
+  const canDecreaseLimit = hasTrendData && categoryLimit > MIN_CATEGORY_TREND_LIMIT;
+  const canIncreaseLimit = hasTrendData && categoryLimit < maxCategoryLimit;
 
   return (
-    <SectionPanel title="카테고리별 소비 변화" eyebrow={`${year}년 상위 카테고리`}>
+    <SectionPanel
+      title="카테고리별 소비 변화"
+      eyebrow={`${year}년 상위 카테고리`}
+      action={
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="inline-flex h-8 items-center rounded-lg border border-line bg-field px-3 text-xs font-medium text-muted">
+            상위 {displayLimit}개
+          </span>
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={onDecreaseCategoryLimit}
+            disabled={!canDecreaseLimit}
+            aria-label="표시 개수 줄이기"
+            title="표시 개수 줄이기"
+          >
+            <ChevronDown size={16} aria-hidden="true" />
+          </Button>
+          <Button
+            size="sm"
+            variant="secondary"
+            onClick={onIncreaseCategoryLimit}
+            disabled={!canIncreaseLimit}
+            aria-label="표시 개수 늘리기"
+            title="표시 개수 늘리기"
+          >
+            <ChevronUp size={16} aria-hidden="true" />
+          </Button>
+        </div>
+      }
+    >
       {trend.totalExpense === 0 ? (
         <p className="rounded-lg border border-dashed border-line px-3 py-10 text-center text-sm text-muted">
           카테고리별 지출 데이터 없음.
@@ -324,6 +410,14 @@ function CategoryTrendSection({ trend, year }: { trend: AnnualCategoryTrendResul
       )}
     </SectionPanel>
   );
+}
+
+function getAnnualExpenseCategoryCount(transactions: Transaction[], year: number) {
+  return new Set(
+    transactions
+      .filter((transaction) => transaction.type === "expense" && transaction.date.startsWith(`${year}-`))
+      .map((transaction) => transaction.categoryId),
+  ).size;
 }
 
 function AnnualTrendSummaryCards({ summary }: { summary: AnnualTrendSummary }) {
