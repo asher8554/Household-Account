@@ -311,3 +311,13 @@
 - [x] 관련 Playwright 테스트를 통과한다.
 - [x] 앱 production build를 통과한다.
 - [x] 변경사항을 커밋하고 GitHub에 push한다.
+
+## Notion 백업 JSON 기록
+
+- [x] 백업 JSON을 Notion data source page 생성 payload로 변환하는 실패 테스트를 추가한다.
+- [x] Worker에 `POST /backups` endpoint를 추가한다.
+- [x] 앱 백업 패널에 현재 백업 JSON을 Notion으로 보내는 버튼을 추가한다.
+- [x] Notion 백업 요청은 기존 Worker secret만 사용하고 브라우저에 Notion token을 노출하지 않는다.
+- [x] 관련 Playwright 테스트와 앱 빌드를 통과한다.
+- [x] Worker TypeScript 검증을 통과한다.
+- [x] 변경사항을 커밋하고 GitHub에 push한다.
