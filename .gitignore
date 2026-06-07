@@ -10,3 +10,4 @@ pnpm-debug.log*
 .DS_Store
 *.tsbuildinfo
 dashboard-screenshot.png
+.dev.vars
