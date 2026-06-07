@@ -87,11 +87,40 @@ test("buildNotionBackupSchemaPatch adds missing meaningful backup columns", () =
       memo: { rich_text: {} },
       source: { select: {} },
       date: { rich_text: {} },
+      type: {
+        select: {
+          options: [
+            { name: "expense", color: "red" },
+            { name: "income", color: "green" },
+          ],
+        },
+      },
     },
   });
   expect(patch.properties).not.toHaveProperty("id");
-  expect(patch.properties).not.toHaveProperty("type");
   expect(patch.properties).not.toHaveProperty("name");
+});
+
+test("buildNotionBackupSchemaPatch preserves existing select options and adds missing backup options", () => {
+  const patch = buildNotionBackupSchemaPatch({
+    id: { type: "title" },
+    source: {
+      type: "select",
+      select: {
+        options: [{ id: "existing-option", name: "manual", color: "red" }],
+      },
+    },
+  });
+
+  expect(patch.properties.source).toMatchObject({
+    select: {
+      options: expect.arrayContaining([
+        { id: "existing-option", name: "manual", color: "red" },
+        { name: "shinhan-file", color: "blue" },
+        { name: "hyundai-card-file", color: "purple" },
+      ]),
+    },
+  });
 });
 
 test("parseBackupPayload accepts only backup JSON shape", () => {
@@ -190,6 +219,144 @@ test("backup endpoint reports data source schema update failures", async () => {
       "GET https://api.notion.com/v1/data_sources/3783d76f-8874-8055-af3a-000befc853fc",
       "PATCH https://api.notion.com/v1/data_sources/3783d76f-8874-8055-af3a-000befc853fc",
     ]);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("backup endpoint includes safe Notion error details for page update failures", async () => {
+  const originalFetch = globalThis.fetch;
+
+  globalThis.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = String(input);
+    const method = init?.method ?? "GET";
+
+    if (method === "GET" && url.includes("/v1/data_sources/")) {
+      return new Response(
+        JSON.stringify({
+          properties: {
+            id: { type: "title" },
+            recordType: {
+              type: "select",
+              select: { options: [{ name: "category", color: "blue" }, { name: "transaction", color: "green" }] },
+            },
+            type: {
+              type: "select",
+              select: { options: [{ name: "expense", color: "red" }, { name: "income", color: "green" }] },
+            },
+            name: { type: "rich_text" },
+            color: { type: "rich_text" },
+            isDefault: { type: "checkbox" },
+            isActive: { type: "checkbox" },
+            sortOrder: { type: "number" },
+            createdAt: { type: "rich_text" },
+            updatedAt: { type: "rich_text" },
+            date: { type: "rich_text" },
+            amount: { type: "number" },
+            categoryId: { type: "rich_text" },
+            memo: { type: "rich_text" },
+            source: {
+              type: "select",
+              select: { options: [{ name: "shinhan-file", color: "blue" }] },
+            },
+          },
+        }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    }
+
+    if (method === "POST" && url.includes("/v1/data_sources/") && url.endsWith("/query")) {
+      return new Response(
+        JSON.stringify({
+          results: [
+            {
+              id: "page-category",
+              properties: {
+                id: {
+                  title: [{ plain_text: "expense-food" }],
+                },
+              },
+            },
+          ],
+          has_more: false,
+          next_cursor: null,
+        }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    }
+
+    if (method === "PATCH" && url.includes("/v1/data_sources/")) {
+      return new Response(JSON.stringify({ properties: {} }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (method === "PATCH" && url.includes("/v1/pages/page-category")) {
+      return new Response(
+        JSON.stringify({
+          object: "error",
+          status: 400,
+          code: "validation_error",
+          message: "body.properties.name.rich_text should be defined, instead was undefined.",
+        }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    }
+
+    throw new Error(`Unexpected fetch: ${method} ${url}`);
+  };
+
+  try {
+    const response = await worker.fetch(
+      new Request("https://worker.test/backups", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Household-Backup-Key": "secret",
+        },
+        body: JSON.stringify({
+          version: 1,
+          exportedAt: "2026-06-07T10:20:30.000Z",
+          categories: [
+            {
+              id: "expense-food",
+              type: "expense",
+              name: "식비",
+              color: "#c85645",
+              isDefault: true,
+              isActive: true,
+              sortOrder: 0,
+              createdAt: "2026-06-07T06:50:48.696Z",
+              updatedAt: "2026-06-07T06:50:48.696Z",
+            },
+          ],
+          transactions: [],
+        }),
+      }),
+      {
+        NOTION_TOKEN: "ntn_test",
+        NOTION_DATA_SOURCE_ID: "3783d76f-8874-8055-af3a-000befc853fc",
+        NOTION_BACKUP_WRITE_KEY: "secret",
+      },
+    );
+
+    expect(response.status).toBe(502);
+    await expect(response.json()).resolves.toMatchObject({
+      error: "notion_backup_page_update_failed",
+      notionStatus: 400,
+      notionCode: "validation_error",
+      notionMessage: "body.properties.name.rich_text should be defined, instead was undefined.",
+    });
   } finally {
     globalThis.fetch = originalFetch;
   }
