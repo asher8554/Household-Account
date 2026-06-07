@@ -263,3 +263,12 @@
 - [x] 데이터 저장소는 앱 저장소와 분리된 별도 private repo로 확정한다.
 - [x] private sync 설계 문서를 작성한다.
 - [ ] 사용자가 설계 문서를 검토하고 구현 계획 작성 여부를 승인한다.
+
+## Notion 금융기관 CMS 설계
+
+- [x] Notion은 거래 데이터가 아니라 금융기관 안내 CMS로 사용한다는 범위를 확정한다.
+- [x] Notion에는 안내 문구와 읽기 전용 파서 힌트만 둔다고 확정한다.
+- [x] iPhone에서도 GitHub Pages UI가 최신 Notion 기준으로 보여야 한다고 확정한다.
+- [x] Notion token은 iPhone에 입력하지 않고 Worker secret으로 보관한다고 확정한다.
+- [x] `Notion 금융기관 CMS + Worker` 설계 문서를 작성한다.
+- [ ] 사용자가 설계 문서를 검토하고 구현 계획 작성 여부를 승인한다.

@@ -553,3 +553,15 @@
 - 앱은 기존 GitHub Pages 정적 배포를 유지하되, private 데이터는 인증된 API를 통해서만 접근한다.
 - iPhone 입력을 1급 워크플로로 지원하므로 PWA manifest, Apple touch icon, standalone meta, safe-area CSS, iPhone viewport QA가 필요하다.
 - 설계 문서는 `docs/superpowers/specs/2026-06-07-private-github-sync-design.md`에 기록했다.
+
+## Notion 금융기관 CMS 설계 결정
+
+- 사용자의 의도는 거래 데이터 저장소를 Notion으로 옮기는 것이 아니라, 금융기관 안내와 가져오기 설정 정보를 Notion에서 관리하고 GitHub Pages UI가 이를 기준으로 화면을 구성하는 것이다.
+- Notion에는 안내 문구와 읽기 전용 파서 힌트를 둔다. 예를 들면 기관명, 홈페이지 URL, 지원 파일 형식, 필수 컬럼, 날짜/금액/가맹점 후보 컬럼명, PC와 모바일 안내 단계, 주의사항이다.
+- 금액 부호, 승인 취소, 환불, 중복 판단 같은 위험한 파서 규칙은 Notion에 두지 않고 코드에 둔다.
+- iPhone에서도 최신 Notion 기준 UI를 보여야 하므로 GitHub Actions 빌드타임 JSON보다 Worker 경유 실시간 조회를 우선 설계로 잡았다.
+- Notion token은 iPhone 브라우저에 입력하거나 저장하지 않는다. Worker secret에 저장하고, Worker는 정제된 공개 기관 설정 JSON만 반환한다.
+- GitHub Pages UI는 Worker의 기관 설정을 캐시하고, 네트워크 실패 시 마지막 캐시 또는 내장 fallback으로 가져오기 화면을 유지한다.
+- 카드사 `xls`, `xlsx`, `csv` 파일 업로드와 실제 파싱은 계속 브라우저 앱이 담당한다.
+- 개인 거래 데이터는 Notion으로 가지 않고 private GitHub sync 설계를 따른다.
+- 설계 문서는 `docs/superpowers/specs/2026-06-07-notion-institution-cms-design.md`에 기록했다.
