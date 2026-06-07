@@ -1,9 +1,12 @@
 // Notion 기관 카탈로그를 HTTP JSON API로 제공하는 Cloudflare Worker입니다.
 import { normalizeNotionInstitutionPages } from "./notion-institution-normalizer";
 import {
-  buildNotionBackupPagePayload,
+  buildNotionBackupRows,
+  buildNotionBackupSchemaPatch,
+  getTitlePropertyName,
   parseBackupPayload,
-  type NotionBackupPagePayload,
+  type NotionBackupRow,
+  type NotionPropertySchema,
 } from "./notion-backup-page";
 import type { NotionInstitutionPage } from "./notion-institution-types";
 
@@ -21,9 +24,14 @@ interface NotionQueryResponse {
   next_cursor?: string | null;
 }
 
-interface NotionCreatePageResponse {
+interface NotionDataSourceResponse {
+  properties?: Record<string, NotionPropertySchema>;
+}
+
+interface NotionPageResponse {
   id?: string;
   url?: string;
+  properties?: Record<string, NotionInstitutionPage["properties"][string] | undefined>;
 }
 
 const DEFAULT_NOTION_VERSION = "2026-03-11";
@@ -114,23 +122,29 @@ async function handleBackupRequest(request: Request, env: WorkerEnv): Promise<Re
   }
 
   const syncedAt = new Date().toISOString();
-  let notionPayload: NotionBackupPagePayload;
 
   try {
-    notionPayload = buildNotionBackupPagePayload(env.NOTION_DATA_SOURCE_ID, backup, syncedAt);
-  } catch {
-    return jsonResponse({ error: "backup_json_too_large" }, 413, env);
-  }
+    const dataSource = await retrieveNotionDataSource(notionEnv);
+    const titlePropertyName = getTitlePropertyName(dataSource.properties);
+    const schemaPatch = buildNotionBackupSchemaPatch(dataSource.properties);
 
-  try {
-    const page = await createNotionBackupPage(notionEnv, notionPayload);
+    if (Object.keys(schemaPatch.properties).length > 0) {
+      await updateNotionDataSourceSchema(notionEnv, schemaPatch);
+    }
+
+    const existingPages = await fetchAllInstitutionPages(notionEnv);
+    const legacyRemoved = await trashLegacyBackupSummaryPages(notionEnv, existingPages, titlePropertyName);
+    const existingPageById = mapExistingPagesByTitle(existingPages, titlePropertyName);
+    const rows = buildNotionBackupRows(backup, titlePropertyName);
+    const result = await upsertNotionBackupRows(notionEnv, rows, existingPageById);
 
     return jsonResponse(
       {
         version: 1,
         syncedAt,
-        pageId: page.id ?? "",
-        pageUrl: page.url ?? "",
+        created: result.created,
+        updated: result.updated,
+        legacyRemoved,
         categories: backup.categories.length,
         transactions: backup.transactions.length,
       },
@@ -214,10 +228,83 @@ async function queryInstitutionPages(
   };
 }
 
+async function retrieveNotionDataSource(env: RequiredNotionEnv): Promise<{ properties: Record<string, NotionPropertySchema> }> {
+  const response = await fetch(
+    `https://api.notion.com/v1/data_sources/${encodeURIComponent(env.NOTION_DATA_SOURCE_ID)}`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${env.NOTION_TOKEN}`,
+        "Notion-Version": env.NOTION_VERSION || DEFAULT_NOTION_VERSION,
+      },
+    },
+  );
+
+  if (!response.ok) {
+    throw await notionErrorResponse(response, env);
+  }
+
+  const dataSource = (await response.json()) as NotionDataSourceResponse;
+
+  if (!dataSource.properties || typeof dataSource.properties !== "object") {
+    throw new Error("Notion data source response did not include properties.");
+  }
+
+  return {
+    properties: dataSource.properties,
+  };
+}
+
+async function updateNotionDataSourceSchema(
+  env: RequiredNotionEnv,
+  patch: { properties: Record<string, unknown> },
+): Promise<void> {
+  const response = await fetch(
+    `https://api.notion.com/v1/data_sources/${encodeURIComponent(env.NOTION_DATA_SOURCE_ID)}`,
+    {
+      method: "PATCH",
+      headers: {
+        Authorization: `Bearer ${env.NOTION_TOKEN}`,
+        "Content-Type": "application/json",
+        "Notion-Version": env.NOTION_VERSION || DEFAULT_NOTION_VERSION,
+      },
+      body: JSON.stringify(patch),
+    },
+  );
+
+  if (!response.ok) {
+    throw await notionErrorResponse(response, env);
+  }
+}
+
+async function upsertNotionBackupRows(
+  env: RequiredNotionEnv,
+  rows: NotionBackupRow[],
+  existingPageById: Map<string, string>,
+): Promise<{ created: number; updated: number }> {
+  let created = 0;
+  let updated = 0;
+
+  for (const row of rows) {
+    const pageId = existingPageById.get(row.id);
+
+    if (pageId) {
+      await updateNotionBackupPage(env, pageId, row);
+      updated += 1;
+      continue;
+    }
+
+    await createNotionBackupPage(env, row);
+    created += 1;
+  }
+
+  return { created, updated };
+}
+
 async function createNotionBackupPage(
   env: RequiredNotionEnv,
-  payload: NotionBackupPagePayload,
-): Promise<NotionCreatePageResponse> {
+  row: NotionBackupRow,
+): Promise<NotionPageResponse> {
   const response = await fetch("https://api.notion.com/v1/pages", {
     method: "POST",
     headers: {
@@ -225,20 +312,106 @@ async function createNotionBackupPage(
       "Content-Type": "application/json",
       "Notion-Version": env.NOTION_VERSION || DEFAULT_NOTION_VERSION,
     },
-    body: JSON.stringify(payload),
+    body: JSON.stringify({
+      parent: {
+        data_source_id: env.NOTION_DATA_SOURCE_ID,
+      },
+      properties: row.properties,
+    }),
   });
 
   if (!response.ok) {
     throw await notionErrorResponse(response, env);
   }
 
-  const page = (await response.json()) as NotionCreatePageResponse;
+  const page = (await response.json()) as NotionPageResponse;
 
   if (!page.id) {
     throw new Error("Notion create page response did not include an id.");
   }
 
   return page;
+}
+
+async function updateNotionBackupPage(
+  env: RequiredNotionEnv,
+  pageId: string,
+  row: NotionBackupRow,
+): Promise<void> {
+  const response = await fetch(`https://api.notion.com/v1/pages/${encodeURIComponent(pageId)}`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${env.NOTION_TOKEN}`,
+      "Content-Type": "application/json",
+      "Notion-Version": env.NOTION_VERSION || DEFAULT_NOTION_VERSION,
+    },
+    body: JSON.stringify({
+      properties: row.properties,
+    }),
+  });
+
+  if (!response.ok) {
+    throw await notionErrorResponse(response, env);
+  }
+}
+
+function mapExistingPagesByTitle(pages: NotionInstitutionPage[], titlePropertyName: string) {
+  const pageMap = new Map<string, string>();
+
+  for (const page of pages) {
+    const id = page.id;
+    const rowId = textFragmentsValue(page.properties?.[titlePropertyName]?.title);
+
+    if (id && rowId) {
+      pageMap.set(rowId, id);
+    }
+  }
+
+  return pageMap;
+}
+
+async function trashLegacyBackupSummaryPages(
+  env: RequiredNotionEnv,
+  pages: NotionInstitutionPage[],
+  titlePropertyName: string,
+) {
+  let removed = 0;
+
+  for (const page of pages) {
+    const id = page.id;
+    const rowId = textFragmentsValue(page.properties?.[titlePropertyName]?.title);
+
+    if (!id || !rowId.startsWith("Household account backup ")) {
+      continue;
+    }
+
+    await trashNotionPage(env, id);
+    removed += 1;
+  }
+
+  return removed;
+}
+
+async function trashNotionPage(env: RequiredNotionEnv, pageId: string): Promise<void> {
+  const response = await fetch(`https://api.notion.com/v1/pages/${encodeURIComponent(pageId)}`, {
+    method: "PATCH",
+    headers: {
+      Authorization: `Bearer ${env.NOTION_TOKEN}`,
+      "Content-Type": "application/json",
+      "Notion-Version": env.NOTION_VERSION || DEFAULT_NOTION_VERSION,
+    },
+    body: JSON.stringify({
+      in_trash: true,
+    }),
+  });
+
+  if (!response.ok) {
+    throw await notionErrorResponse(response, env);
+  }
+}
+
+function textFragmentsValue(fragments: Array<{ plain_text?: string; text?: { content?: string } }> | undefined): string {
+  return fragments?.map((fragment) => fragment.plain_text ?? fragment.text?.content ?? "").join("").trim() ?? "";
 }
 
 async function notionErrorResponse(response: Response, env: WorkerEnv): Promise<Response> {

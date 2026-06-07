@@ -63,7 +63,9 @@ export function BackupPanel() {
     try {
       saveNotionBackupWriteKey(notionBackupKey);
       const result = await pushCurrentBackupToNotion(notionBackupKey);
-      setMessage(`Notion에 백업 JSON을 기록했습니다. 거래 ${result.transactions}건, 카테고리 ${result.categories}개.`);
+      setMessage(
+        `Notion에 백업 행을 동기화했습니다. 생성 ${result.created}건, 업데이트 ${result.updated}건, 이전 요약 제거 ${result.legacyRemoved}건. 거래 ${result.transactions}건, 카테고리 ${result.categories}개.`,
+      );
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Notion 백업 기록에 실패했습니다.");
     } finally {

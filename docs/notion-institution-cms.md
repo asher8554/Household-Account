@@ -1,11 +1,11 @@
 # Notion 금융기관 CMS 설정
 
-이 문서는 Notion을 금융기관 안내문과 파서 힌트 CMS로 쓰고, 필요할 때 GitHub Pages UI의 백업 JSON을 Cloudflare Worker를 통해 Notion data source에 기록하는 절차를 정리합니다.
+이 문서는 Notion을 금융기관 안내문과 파서 힌트 CMS로 쓰고, 필요할 때 GitHub Pages UI의 백업 데이터를 Cloudflare Worker를 통해 Notion data source 행으로 동기화하는 절차를 정리합니다.
 
 ## 역할
 
 - Notion은 기본적으로 금융기관별 안내 문구와 읽기 전용 파서 힌트를 저장합니다.
-- 사용자가 백업 패널에서 실행한 경우에만 현재 가계부 백업 JSON을 별도 Notion page 본문에 기록합니다.
+- 사용자가 백업 패널에서 실행한 경우에만 현재 가계부 카테고리와 거래를 Notion data source 행으로 기록합니다.
 - 카드번호, 계좌번호, 로그인 정보, Notion token은 Notion 데이터베이스에 넣지 않습니다.
 - GitHub Pages 앱은 Notion-backed 원격 데이터를 `VITE_INSTITUTION_CMS_URL`로 지정된 Worker의 `/institutions` JSON을 통해서만 읽고, 실패 시 공개 가능한 브라우저 캐시 또는 내장 기본값을 사용합니다.
 - Notion token은 Cloudflare Worker secret에만 저장합니다.
@@ -44,7 +44,7 @@
 ## Notion connection
 
 1. Notion developer portal에서 internal connection을 만듭니다.
-2. connection capability는 기관 catalog 조회만 쓸 경우 읽기 권한으로 충분합니다. 백업 JSON 기록까지 쓰려면 Insert Content 권한도 켭니다.
+2. connection capability는 기관 catalog 조회만 쓸 경우 읽기 권한으로 충분합니다. 백업 행 동기화까지 쓰려면 Insert Content와 Update Content 권한도 켭니다.
 3. `Financial Institutions` 데이터베이스 또는 상위 페이지를 connection에 공유합니다.
 4. 데이터베이스의 data source ID를 확인합니다.
 
@@ -79,6 +79,28 @@ Invoke-WebRequest -Uri http://localhost:8787/institutions | Select-Object -Expan
 ```
 
 백업 endpoint는 `POST /backups`입니다. 이 endpoint는 `X-Household-Backup-Key` header가 `NOTION_BACKUP_WRITE_KEY`와 일치해야 동작합니다.
+
+백업 동기화는 data source schema를 조회하고, 부족한 컬럼을 추가한 뒤 같은 `id` 행은 업데이트하고 없는 `id` 행은 새로 만듭니다. 이전 텍스트 백업 방식으로 생긴 `Household account backup ...` 요약 행은 새 동기화 시 휴지통으로 보냅니다.
+
+백업용 권장 컬럼.
+
+| 속성 | 타입 | 용도 |
+| --- | --- | --- |
+| `id` | Title | 카테고리 또는 거래 고유 id. 실제 title 속성명이 다르면 Worker가 title 속성을 찾아 사용합니다. |
+| `recordType` | Select | `category`, `transaction`. |
+| `type` | Select | `expense`, `income`. |
+| `name` | Text | 카테고리명 또는 거래 메모. |
+| `color` | Text | 카테고리 색상. |
+| `isDefault` | Checkbox | 기본 카테고리 여부. |
+| `isActive` | Checkbox | 활성 카테고리 여부. |
+| `sortOrder` | Number | 카테고리 정렬 순서. |
+| `date` | Text | 거래 날짜. |
+| `amount` | Number | 거래 금액. |
+| `categoryId` | Text | 거래가 연결된 카테고리 id. |
+| `memo` | Text | 거래 메모. |
+| `source` | Select | `manual`, `shinhan-file`, `hyundai-card-file`, `bank-file`, `naver-pay-file` 등. |
+| `createdAt` | Text | 생성 시각. |
+| `updatedAt` | Text | 수정 시각. |
 
 ## Cloudflare Worker production secrets
 
@@ -126,13 +148,13 @@ VITE_INSTITUTION_CMS_URL=https://household-account-institution-cms.<account>.wor
 4. 금융기관을 선택하면 안내 문구, 필수 컬럼, 파서 힌트가 선택 기관 기준으로 바뀝니다.
 5. 카드사나 은행 앱에서 내려받거나 공유한 `csv`, `xls`, `xlsx` 파일을 업로드합니다.
 6. 파일은 브라우저 안에서 파싱되고, 거래 데이터는 IndexedDB에 저장됩니다.
-7. 백업 패널에서 `NOTION_BACKUP_WRITE_KEY`와 같은 Notion 백업 키를 입력하고 `Notion 기록`을 누르면 현재 백업 JSON이 Notion data source에 새 page로 기록됩니다.
+7. 백업 패널에서 `NOTION_BACKUP_WRITE_KEY`와 같은 Notion 백업 키를 입력하고 `Notion 기록`을 누르면 현재 카테고리와 거래가 Notion data source 행으로 동기화됩니다.
 
 ## 보안 기준
 
 - Notion token을 GitHub Pages, 브라우저 localStorage, IndexedDB에 저장하지 않습니다.
 - `NOTION_BACKUP_WRITE_KEY`는 Notion token이 아니라 Worker 쓰기 요청 보호용 키입니다. 그래도 브라우저 localStorage에 저장되므로 무작위 긴 값으로 만들고 필요하면 회전합니다.
 - Worker 응답에는 Notion raw page id, raw `properties`, token, integration 정보가 포함되지 않아야 합니다.
-- Notion 백업 page에는 현재 백업 JSON의 거래 데이터가 들어갑니다. 금융 인증 정보와 Notion token은 넣지 않습니다.
+- Notion 백업 행에는 현재 카테고리와 거래 데이터가 들어갑니다. 금융 인증 정보와 Notion token은 넣지 않습니다.
 - Browser localStorage cache에는 공개 가능한 금융기관 catalog만 저장합니다.
 - Parser hints는 컬럼을 찾기 위한 별칭일 뿐이며, 거래 저장 규칙을 우회하지 않습니다.

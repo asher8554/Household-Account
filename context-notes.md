@@ -673,3 +673,25 @@
 - Worker TypeScript 명시 검증도 통과했다.
 - 로컬 화면 스모크에서 Notion 백업 키 입력과 `Notion 기록` 버튼이 보이고 콘솔 오류가 없음을 확인했다.
 - 이 Codex 환경에는 `CLOUDFLARE_API_TOKEN`이 없어 `wrangler secret list`와 Worker deploy는 실행하지 못했다.
+
+## Notion 백업 행 단위 동기화 계획
+
+- 사용자는 백업 JSON이 Notion page 본문 텍스트로 들어가는 방식이 아니라, Notion 데이터베이스 컬럼에 의미 있게 채워지길 원한다.
+- 새 방식은 `categories`와 `transactions`를 각각 Notion data source row로 풀어 쓴다.
+- title 컬럼은 data source에서 실제 `title` 타입인 속성을 찾아 사용한다. 화면에서는 `id` 컬럼일 수 있다.
+- category row는 `recordType=category`, `id`, `type`, `name`, `color`, `isDefault`, `isActive`, `sortOrder`, `createdAt`, `updatedAt`를 채운다.
+- transaction row는 `recordType=transaction`, `id`, `date`, `type`, `amount`, `categoryId`, `name`, `memo`, `source`, `createdAt`, `updatedAt`를 채운다.
+- Worker는 data source schema를 조회하고 부족한 백업 컬럼을 추가한다.
+- 같은 `id` row가 이미 있으면 update하고, 없으면 create한다.
+- 이전 구현으로 생긴 `Household account backup ...` 요약 row는 새 동기화 시 휴지통으로 보낸다.
+
+## Notion 백업 행 단위 동기화 결과
+
+- `buildNotionBackupRows`로 category와 transaction을 Notion page properties로 변환하게 했다.
+- `buildNotionBackupSchemaPatch`로 `recordType`, `date`, `amount`, `categoryId`, `memo`, `source` 등 부족한 컬럼 schema를 추가하도록 했다.
+- Worker `/backups`는 data source 조회, schema patch, 기존 row 조회, legacy summary row 제거, 행 단위 upsert 순서로 동작한다.
+- 응답은 `created`, `updated`, `legacyRemoved`, `categories`, `transactions` 건수를 반환한다.
+- 백업 패널 성공 메시지도 생성, 업데이트, 이전 요약 제거 건수를 표시하도록 바꿨다.
+- `npx playwright test`는 17개 테스트 통과로 완료됐다.
+- `npm run build`가 TypeScript check와 Vite production build를 통과했다. 기존처럼 500 kB 초과 chunk warning은 출력됐다.
+- Worker TypeScript 명시 검증도 통과했다.

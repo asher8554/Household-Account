@@ -1,31 +1,97 @@
-// Notion 백업 page 생성 payload 변환을 검증합니다.
+// Notion 백업 행 단위 payload 변환을 검증합니다.
 import { expect, test } from "@playwright/test";
 import worker from "../workers/institution-cms-worker";
-import { buildNotionBackupPagePayload, parseBackupPayload } from "../workers/notion-backup-page";
+import {
+  buildNotionBackupRows,
+  buildNotionBackupSchemaPatch,
+  parseBackupPayload,
+} from "../workers/notion-backup-page";
 
-test("buildNotionBackupPagePayload stores backup JSON as a disabled data source page", () => {
+test("buildNotionBackupRows maps categories and transactions to data source row properties", () => {
   const backup = {
     version: 1,
     exportedAt: "2026-06-07T10:20:30.000Z",
-    categories: [{ id: "food", name: "식비" }],
-    transactions: [{ id: "tx-1", amount: 12000 }],
+    categories: [
+      {
+        id: "expense-food",
+        type: "expense",
+        name: "식비",
+        color: "#c85645",
+        isDefault: true,
+        isActive: true,
+        sortOrder: 0,
+        createdAt: "2026-06-07T06:50:48.696Z",
+        updatedAt: "2026-06-07T06:50:48.696Z",
+      },
+    ],
+    transactions: [
+      {
+        id: "tx-1",
+        date: "2026-06-07",
+        type: "expense",
+        amount: 12000,
+        categoryId: "expense-food",
+        memo: "스타벅스",
+        source: "shinhan-file",
+        createdAt: "2026-06-07T07:00:00.000Z",
+        updatedAt: "2026-06-07T07:00:00.000Z",
+      },
+    ],
   };
 
-  const payload = buildNotionBackupPagePayload(
-    "3783d76f-8874-8055-af3a-000befc853fc",
-    backup,
-    "2026-06-07T11:22:33.000Z",
-  );
+  const rows = buildNotionBackupRows(backup, "id");
 
-  expect(payload.parent).toEqual({
-    data_source_id: "3783d76f-8874-8055-af3a-000befc853fc",
+  expect(rows).toHaveLength(2);
+  expect(rows[0]).toMatchObject({
+    id: "expense-food",
+    recordType: "category",
   });
-  expect(payload.properties.Name.title[0]?.text.content).toBe("Household account backup 2026-06-07 10:20");
-  expect(payload.properties.Enabled).toEqual({ checkbox: false });
-  expect(payload.markdown).toContain("거래 1건");
-  expect(payload.markdown).toContain("카테고리 1개");
-  expect(payload.markdown).toContain("```json");
-  expect(payload.markdown).toContain('"transactions"');
+  expect(rows[0].properties.id.title[0]?.text.content).toBe("expense-food");
+  expect(rows[0].properties.recordType.select.name).toBe("category");
+  expect(rows[0].properties.type.select.name).toBe("expense");
+  expect(rows[0].properties.name.rich_text[0]?.text.content).toBe("식비");
+  expect(rows[0].properties.color.rich_text[0]?.text.content).toBe("#c85645");
+  expect(rows[0].properties.isDefault.checkbox).toBe(true);
+  expect(rows[0].properties.isActive.checkbox).toBe(true);
+  expect(rows[0].properties.sortOrder.number).toBe(0);
+  expect(rows[0].properties.createdAt.rich_text[0]?.text.content).toBe("2026-06-07T06:50:48.696Z");
+  expect(rows[0].properties.updatedAt.rich_text[0]?.text.content).toBe("2026-06-07T06:50:48.696Z");
+
+  expect(rows[1]).toMatchObject({
+    id: "tx-1",
+    recordType: "transaction",
+  });
+  expect(rows[1].properties.id.title[0]?.text.content).toBe("tx-1");
+  expect(rows[1].properties.recordType.select.name).toBe("transaction");
+  expect(rows[1].properties.date.rich_text[0]?.text.content).toBe("2026-06-07");
+  expect(rows[1].properties.type.select.name).toBe("expense");
+  expect(rows[1].properties.amount.number).toBe(12000);
+  expect(rows[1].properties.categoryId.rich_text[0]?.text.content).toBe("expense-food");
+  expect(rows[1].properties.name.rich_text[0]?.text.content).toBe("스타벅스");
+  expect(rows[1].properties.memo.rich_text[0]?.text.content).toBe("스타벅스");
+  expect(rows[1].properties.source.select.name).toBe("shinhan-file");
+});
+
+test("buildNotionBackupSchemaPatch adds missing meaningful backup columns", () => {
+  const patch = buildNotionBackupSchemaPatch({
+    id: { type: "title" },
+    type: { type: "select" },
+    name: { type: "rich_text" },
+  });
+
+  expect(patch).toMatchObject({
+    properties: {
+      recordType: { select: {} },
+      amount: { number: {} },
+      categoryId: { rich_text: {} },
+      memo: { rich_text: {} },
+      source: { select: {} },
+      date: { rich_text: {} },
+    },
+  });
+  expect(patch.properties).not.toHaveProperty("id");
+  expect(patch.properties).not.toHaveProperty("type");
+  expect(patch.properties).not.toHaveProperty("name");
 });
 
 test("parseBackupPayload accepts only backup JSON shape", () => {

@@ -321,3 +321,13 @@
 - [x] 관련 Playwright 테스트와 앱 빌드를 통과한다.
 - [x] Worker TypeScript 검증을 통과한다.
 - [x] 변경사항을 커밋하고 GitHub에 push한다.
+
+## Notion 백업 행 단위 동기화
+
+- [x] 백업 category와 transaction을 Notion row properties로 변환하는 실패 테스트를 추가한다.
+- [x] Worker가 백업용 data source 컬럼을 보강하도록 수정한다.
+- [x] Worker가 기존 id row는 업데이트하고 없는 id row는 생성하도록 수정한다.
+- [x] 텍스트 JSON page 생성 방식을 제거하고 의미 있는 컬럼 값으로 기록한다.
+- [x] 관련 Playwright 테스트와 앱 빌드를 통과한다.
+- [x] Worker TypeScript 검증을 통과한다.
+- [x] 변경사항을 커밋하고 GitHub에 push한다.
