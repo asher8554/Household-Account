@@ -122,6 +122,7 @@ async function handleBackupRequest(request: Request, env: WorkerEnv): Promise<Re
   }
 
   const syncedAt = new Date().toISOString();
+  let workerStage = "schema_read";
 
   try {
     const dataSource = await retrieveNotionDataSource(notionEnv);
@@ -129,22 +130,28 @@ async function handleBackupRequest(request: Request, env: WorkerEnv): Promise<Re
     const schemaPatch = buildNotionBackupSchemaPatch(dataSource.properties);
 
     if (Object.keys(schemaPatch.properties).length > 0) {
+      workerStage = "schema_update";
       await updateNotionDataSourceSchema(notionEnv, schemaPatch);
     }
 
+    workerStage = "page_query";
     const existingPages = await fetchAllInstitutionPages(
       notionEnv,
       "notion_backup_page_query_failed",
       "Notion backup pages query failed.",
     );
+    workerStage = "row_build";
     const rows = buildNotionBackupRows(backup, titlePropertyName, dataSource.properties);
+    workerStage = "legacy_cleanup";
     const obsoleteRemoved = await trashObsoleteBackupPages(notionEnv, existingPages, titlePropertyName);
+    workerStage = "dedupe";
     const existingPagesResult = await mapExistingPagesByTitle(
       notionEnv,
       existingPages,
       titlePropertyName,
       new Set(rows.map((row) => row.id)),
     );
+    workerStage = "upsert";
     const result = await upsertNotionBackupRows(notionEnv, rows, existingPagesResult.pageMap);
 
     return jsonResponse(
@@ -165,7 +172,7 @@ async function handleBackupRequest(request: Request, env: WorkerEnv): Promise<Re
       return error;
     }
 
-    return jsonResponse({ error: "notion_timeout", message: "Notion request failed." }, 504, env);
+    return workerExceptionResponse(error, workerStage, env);
   }
 }
 
@@ -571,6 +578,33 @@ function notionErrorDetails(payload: unknown) {
   }
 
   return details;
+}
+
+function workerExceptionResponse(error: unknown, workerStage: string, env: WorkerEnv): Response {
+  return jsonResponse(
+    {
+      error: "notion_backup_worker_exception",
+      message: "Notion backup Worker failed.",
+      workerStage,
+      ...workerExceptionDetails(error),
+    },
+    500,
+    env,
+  );
+}
+
+function workerExceptionDetails(error: unknown) {
+  if (!(error instanceof Error) || !error.message) {
+    return {};
+  }
+
+  return {
+    workerMessage: sanitizeWorkerErrorText(error.message, 240),
+  };
+}
+
+function sanitizeWorkerErrorText(value: string, maxLength: number) {
+  return sanitizeNotionErrorText(value.replace(/Bearer\s+[A-Za-z0-9._-]+/g, "Bearer [redacted]"), maxLength);
 }
 
 function sanitizeNotionErrorText(value: string, maxLength: number) {

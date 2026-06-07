@@ -413,6 +413,46 @@ test("backup endpoint includes safe Notion error details for page update failure
   }
 });
 
+test("backup endpoint reports Worker exceptions with stage and safe message", async () => {
+  const originalFetch = globalThis.fetch;
+
+  globalThis.fetch = async () => {
+    throw new Error("Notion pagination limit exceeded.");
+  };
+
+  try {
+    const response = await worker.fetch(
+      new Request("https://worker.test/backups", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Household-Backup-Key": "secret",
+        },
+        body: JSON.stringify({
+          version: 1,
+          exportedAt: "2026-06-07T10:20:30.000Z",
+          categories: [],
+          transactions: [],
+        }),
+      }),
+      {
+        NOTION_TOKEN: "ntn_test",
+        NOTION_DATA_SOURCE_ID: "3783d76f-8874-8055-af3a-000befc853fc",
+        NOTION_BACKUP_WRITE_KEY: "secret",
+      },
+    );
+
+    expect(response.status).toBe(500);
+    await expect(response.json()).resolves.toMatchObject({
+      error: "notion_backup_worker_exception",
+      workerStage: "schema_read",
+      workerMessage: "Notion pagination limit exceeded.",
+    });
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
 test("backup endpoint removes category rows and duplicate transaction rows before upsert", async () => {
   const originalFetch = globalThis.fetch;
   const patchCalls: Array<{ url: string; body: unknown }> = [];
