@@ -43,6 +43,17 @@ test("app icon long press opens the hidden admin screen", () => {
   expect(appShellSource).toContain("onBlur={clearAdminPressTimer}");
 });
 
+test("app icon does not expose clickable visual feedback", () => {
+  const appShellSource = readSource("src/app/AppShell.tsx");
+
+  expect(appShellSource).toContain("cursor-default");
+  expect(appShellSource).toContain("[-webkit-tap-highlight-color:transparent]");
+  expect(appShellSource).toContain("hover:bg-moss active:bg-moss");
+  expect(appShellSource).toContain("focus-visible:ring-0");
+  expect(appShellSource).not.toContain("hover:bg-moss-hover");
+  expect(appShellSource).not.toContain("focus:ring");
+});
+
 test("transaction form shows current record update below transaction add", () => {
   const transactionFormSource = readSource("src/features/transactions/TransactionForm.tsx");
   const pushButtonSource = readSource("src/features/shared-data/CurrentPcRecordPushButton.tsx");

@@ -497,3 +497,12 @@
 - [x] 모바일 iPhone 폭에서 long-press 동작과 화면 전환을 검증한다.
 - [x] 관련 테스트와 production build를 통과시킨다.
 - [x] 변경사항을 커밋하고 push한다.
+
+## 앱 아이콘 비밀 진입 시각 상태 제거
+
+- [x] 앱 아이콘의 hover, focus, active 시각 변화 원인을 확인한다.
+- [x] 짧은 클릭이나 터치 중에는 아이콘 배경, 테두리, ring, tap highlight가 변하지 않도록 한다.
+- [x] 5초 long-press 관리자 진입 동작은 유지한다.
+- [x] iPhone 16 폭에서 짧은 터치와 5초 long-press를 검증한다.
+- [x] 관련 테스트와 production build를 통과시킨다.
+- [x] 변경사항을 커밋하고 push한다.
