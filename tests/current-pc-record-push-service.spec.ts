@@ -1,4 +1,4 @@
-// 현재 PC 기록 push가 GitHub와 Notion 기록을 함께 실행하는지 검증합니다.
+// 현재 기록 업데이트가 GitHub와 Notion 기록을 함께 실행하는지 검증합니다.
 import { expect, test } from "@playwright/test";
 import {
   formatCurrentPcRecordPushResult,
@@ -72,7 +72,7 @@ test("pushCurrentPcRecords pushes GitHub data and then records the same backup t
   expect(progressUpdates).toEqual(["github_start", "github_success:3", "notion_start", "notion_batch:3"]);
   expect(result.notion.status).toBe("success");
   expect(formatCurrentPcRecordPushResult(result)).toBe(
-    "현재 PC 기록 3건을 GitHub Pages 공유 파일에 push했고 Notion에도 거래 백업 3건을 기록했습니다.",
+    "현재 기록 3건을 GitHub Pages 공유 파일에 업데이트했고 Notion에도 거래 백업 3건을 기록했습니다.",
   );
 });
 
@@ -95,6 +95,6 @@ test("pushCurrentPcRecords keeps the GitHub success result when Notion backup fa
     message: "Notion 백업 키를 입력하세요.",
   });
   expect(formatCurrentPcRecordPushResult(result)).toBe(
-    "현재 PC 기록 3건을 GitHub Pages 공유 파일에 push했습니다. Notion 기록은 실패했습니다. Notion 백업 키를 입력하세요.",
+    "현재 기록 3건을 GitHub Pages 공유 파일에 업데이트했습니다. Notion 기록은 실패했습니다. Notion 백업 키를 입력하세요.",
   );
 });

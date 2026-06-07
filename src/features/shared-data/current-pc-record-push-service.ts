@@ -1,4 +1,4 @@
-// 현재 PC 기록을 GitHub와 Notion으로 순차 동기화합니다.
+// 현재 기록 업데이트를 GitHub와 Notion으로 순차 동기화합니다.
 import {
   loadNotionBackupWriteKey,
   pushCurrentBackupToNotion,
@@ -75,19 +75,19 @@ export async function pushCurrentPcRecords(
 
 export function formatCurrentPcRecordPushResult(result: CurrentPcRecordPushResult) {
   if (result.notion.status === "success") {
-    return `현재 PC 기록 ${result.gitHub.transactions}건을 GitHub Pages 공유 파일에 push했고 Notion에도 거래 백업 ${result.notion.result.transactions}건을 기록했습니다.`;
+    return `현재 기록 ${result.gitHub.transactions}건을 GitHub Pages 공유 파일에 업데이트했고 Notion에도 거래 백업 ${result.notion.result.transactions}건을 기록했습니다.`;
   }
 
-  return `현재 PC 기록 ${result.gitHub.transactions}건을 GitHub Pages 공유 파일에 push했습니다. Notion 기록은 실패했습니다. ${result.notion.message}`;
+  return `현재 기록 ${result.gitHub.transactions}건을 GitHub Pages 공유 파일에 업데이트했습니다. Notion 기록은 실패했습니다. ${result.notion.message}`;
 }
 
 export function formatCurrentPcRecordPushProgress(progress: CurrentPcRecordPushProgress) {
   if (progress.phase === "github_start") {
-    return "현재 PC 기록을 GitHub Pages 공유 파일로 커밋하는 중입니다.";
+    return "현재 기록을 GitHub Pages 공유 파일로 업데이트하는 중입니다.";
   }
 
   if (progress.phase === "github_success") {
-    return `GitHub Pages 공유 파일 push 완료. 거래 ${progress.result.transactions}건. 이어서 Notion에 기록합니다.`;
+    return `GitHub Pages 공유 파일 업데이트 완료. 거래 ${progress.result.transactions}건. 이어서 Notion에 기록합니다.`;
   }
 
   if (progress.phase === "notion_start") {

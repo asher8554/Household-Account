@@ -45,7 +45,7 @@ export function GitHubSharedDataPanel() {
     if (!hasToken || isPushing) return;
 
     setIsPushing(true);
-    setMessage("현재 PC 기록을 GitHub 공유 데이터로 push 중입니다.");
+    setMessage("현재 기록을 업데이트 중입니다.");
     let isActive = true;
     const slowNoticeTimer = window.setTimeout(() => {
       if (isActive) {
@@ -65,7 +65,7 @@ export function GitHubSharedDataPanel() {
       });
       setMessage(formatCurrentPcRecordPushResult(result));
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "GitHub 공유 데이터 push에 실패했습니다.");
+      setMessage(error instanceof Error ? error.message : "현재 기록 업데이트에 실패했습니다.");
     } finally {
       isActive = false;
       window.clearTimeout(slowNoticeTimer);
@@ -76,7 +76,7 @@ export function GitHubSharedDataPanel() {
   return (
     <SectionPanel
       title="GitHub 공유 설정"
-      eyebrow={hasToken ? "수동 push 준비됨" : "토큰 필요"}
+      eyebrow={hasToken ? "수동 업데이트 준비됨" : "토큰 필요"}
       action={
         <Button size="sm" variant="ghost" onClick={handleReset}>
           <RotateCcw size={15} aria-hidden="true" />
@@ -137,7 +137,7 @@ export function GitHubSharedDataPanel() {
             onClick={handlePushCurrentData}
           >
             <Upload size={16} aria-hidden="true" />
-            {isPushing ? "push 중" : "현재 PC 기록 push"}
+            {isPushing ? "업데이트 중" : "현재 기록 업데이트"}
           </Button>
           <div className="flex items-center gap-2 text-sm text-muted">
             <Github size={16} aria-hidden="true" />
