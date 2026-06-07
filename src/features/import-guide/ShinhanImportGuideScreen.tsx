@@ -54,7 +54,7 @@ const requiredColumns = [
 const roadmap = [
   {
     icon: FileSpreadsheet,
-    title: "1. 카드/은행 파일 가져오기",
+    title: "1. 카드/은행/페이 파일 가져오기",
     description: "파일 선택, 드래그앤드롭, xls 자동 변환, 입출금 컬럼 매핑, 미리보기, 중복 제외를 지원합니다.",
   },
   {
@@ -209,7 +209,7 @@ export function ShinhanImportGuideScreen() {
           <div>
             <p className="text-sm font-medium text-moss">금융기관 가져오기</p>
             <h2 className="mt-2 text-2xl font-semibold tracking-normal md:text-3xl">
-              카드와 은행 거래내역을 대시보드 거래로 저장합니다.
+              카드, 은행, 페이 거래내역을 대시보드 거래로 저장합니다.
             </h2>
             <p className="mt-3 max-w-3xl text-sm leading-6 text-muted">
               금융기관 계정 비밀번호나 API 토큰은 저장하지 않습니다. 사용자가 내려받은 CSV/xls/xlsx 파일 또는
@@ -248,7 +248,7 @@ export function ShinhanImportGuideScreen() {
               <li>승인취소/환급은 기본 기타수입 카테고리.</li>
               <li>은행 출금액은 지출, 입금액은 수입.</li>
               <li>날짜, 구분, 금액, 가맹점명 기준 중복 제외.</li>
-              <li>CSV, xls, xlsx 지원. 카드/은행 파일 자동 변환.</li>
+              <li>CSV, TSV, TXT, xls, xlsx 지원. 카드/은행/페이 파일 자동 변환.</li>
             </ul>
           </div>
         </div>
@@ -258,7 +258,7 @@ export function ShinhanImportGuideScreen() {
       <GitHubSharedDataPanel />
 
       <div className="grid gap-5 xl:grid-cols-2">
-        <SectionPanel title="CSV/xls/xlsx 파일 가져오기" eyebrow="카드/은행 파일">
+        <SectionPanel title="CSV/TSV/TXT/xls/xlsx 파일 가져오기" eyebrow="카드/은행/페이 파일">
           <div className="grid gap-4">
             <div className="grid gap-3 border-b border-line pb-4">
               <div className="flex flex-wrap items-start justify-between gap-3">
@@ -318,8 +318,8 @@ export function ShinhanImportGuideScreen() {
                 <Upload className="mx-auto text-moss" size={24} aria-hidden="true" />
                 <p className="text-sm font-medium text-ink">파일을 여기로 드래그앤드롭하세요.</p>
                 <p className="text-sm leading-6">
-                  신한카드, 현대카드, 국민은행, 하나은행, 토스뱅크에서 받은 거래내역 파일을 올립니다. CSV, TSV, TXT, xls,
-                  xlsx를 지원합니다.
+                  신한카드, 현대카드, 국민은행, 하나은행, 토스뱅크, 네이버페이 거래내역 파일을 올립니다. CSV, TSV,
+                  TXT, xls, xlsx를 지원합니다.
                 </p>
               </div>
             </div>
@@ -402,7 +402,7 @@ export function ShinhanImportGuideScreen() {
 
         <SectionPanel title="메뉴를 못 찾을 때" eyebrow="검색어">
           <div className="grid gap-3">
-            {["이용내역", "카드이용내역", "매출전표", "엑셀저장", "이용대금명세서"].map((keyword) => (
+            {["이용내역", "결제내역", "Npay 머니 내역", "매출전표", "엑셀저장", "이용대금명세서"].map((keyword) => (
               <div key={keyword} className="flex items-center gap-2 rounded-lg bg-field px-3 py-2 text-sm">
                 <Search className="text-moss" size={16} aria-hidden="true" />
                 <span>{keyword}</span>
@@ -410,8 +410,8 @@ export function ShinhanImportGuideScreen() {
             ))}
           </div>
           <p className="mt-4 text-sm leading-6 text-muted">
-            신한카드 웹과 SOL페이는 메뉴명이 바뀔 수 있습니다. 메뉴 경로가 다르면 위 검색어로 찾고, 파일 저장
-            버튼이 없으면 PC 홈페이지에서 다시 시도합니다.
+            금융기관 웹과 앱은 메뉴명이 바뀔 수 있습니다. 메뉴 경로가 다르면 위 검색어로 찾고, 파일 저장 버튼이
+            없으면 PC 홈페이지에서 다시 시도합니다.
           </p>
         </SectionPanel>
       </div>

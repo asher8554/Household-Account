@@ -21,7 +21,7 @@ export const backupTransactionSchema = z.object({
   categoryId: z.string().optional().default(""),
   memo: z.string().optional().default(""),
   source: z
-    .enum(["manual", "csv", "shinhan-file", "hyundai-card-file", "shinhan-notification", "bank-file"])
+    .enum(["manual", "csv", "shinhan-file", "hyundai-card-file", "shinhan-notification", "bank-file", "naver-pay-file"])
     .optional()
     .default("manual"),
   createdAt: z.string().optional(),

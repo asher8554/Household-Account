@@ -7,7 +7,8 @@ export type TransactionSource =
   | "shinhan-file"
   | "hyundai-card-file"
   | "shinhan-notification"
-  | "bank-file";
+  | "bank-file"
+  | "naver-pay-file";
 
 export type Transaction = {
   id: string;
