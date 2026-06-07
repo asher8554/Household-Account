@@ -813,6 +813,24 @@
 - `npx playwright test`는 29개 테스트 통과로 완료됐다.
 - `npm run build`가 TypeScript check와 Vite production build를 통과했다. 기존처럼 500 kB 초과 chunk warning은 출력됐다.
 - Browser QA에서 `http://127.0.0.1:5173/` 데스크톱과 390px 모바일 폭 모두 백업 패널, `Notion 백업 키`, `Notion 기록` 버튼 렌더링을 확인했고 콘솔 오류는 없었다.
+## Notion 캘린더 title 표시 name 변경 계획
+
+- 사용자는 Notion calendar view `3783d76f-8874-80cb-8afd-000c6b9638ec`에서 id 대신 name이 보이기를 원한다.
+- 해당 view는 `displayProperties`가 `userDefined:id` 중심이고, data source의 title property 자체도 `id`다.
+- Notion calendar card는 title property를 항상 보여주므로 view에서 `id`를 숨기는 것만으로는 id 노출이 사라지지 않는다.
+- view에는 `SHOW "name"`을 적용했지만 MCP 응답상 title property `userDefined:id`는 계속 displayProperties에 남는다.
+- 지속적인 해결은 title property 값에는 거래 name/memo를 쓰고, 실제 upsert 식별자는 별도 `recordId` rich_text 속성에 보관하는 것이다.
+- 기존 row는 `recordId`가 없으므로 Worker 매칭은 `recordId` 우선, 없으면 기존 title id fallback으로 해야 다음 백업 때 기존 row를 업데이트할 수 있다.
+
+## Notion 캘린더 title 표시 name 변경 결과
+
+- Notion view `3783d76f-8874-80cb-8afd-000c6b9638ec`에 `SHOW "name"`을 적용했다.
+- 백업 row title 값은 거래 memo/name으로 쓰고, 실제 transaction id는 `recordId` rich_text 속성에 저장하도록 바꿨다.
+- 기존 row 매칭은 `recordId`를 우선 사용하고, 없으면 기존 title id를 fallback으로 사용한다.
+- 다음 Notion 백업 실행 때 기존 row도 같은 id로 찾아 title이 name/memo로 갱신된다.
+- `npx playwright test` 37개, `npm run build`, Worker TypeScript 명시 검증을 통과했다.
+- Cloudflare Worker `household-account-institution-cms`를 배포했다. Version ID는 `0be9a300-99a6-4005-9304-f5afbb17f734`이다.
+
 ## 현재 PC 기록 push 진행 상태 표시 계획
 
 - 사용자는 `현재 PC 기록을 GitHub 공유 데이터로 push 중입니다.` 상태에서 변화가 없다고 보고했다.

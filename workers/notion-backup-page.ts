@@ -87,6 +87,7 @@ const requiredBackupSchema: Record<string, unknown> = {
   updatedAt: { rich_text: {} },
   date: { rich_text: {} },
   "날짜": { date: {} },
+  recordId: { rich_text: {} },
   amount: { number: {} },
   categoryId: { rich_text: {} },
   memo: { rich_text: {} },
@@ -188,7 +189,8 @@ function buildTransactionRow(
     id: transaction.id,
     recordType: "transaction",
     properties: {
-      [titlePropertyName]: titleValue(transaction.id),
+      [titlePropertyName]: titleValue(transaction.memo || transaction.id),
+      recordId: richTextValue(transaction.id),
       recordType: optionValue("recordType", "transaction", schema),
       date: richTextValue(transaction.date),
       "날짜": dateValue(transaction.date),

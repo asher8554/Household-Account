@@ -545,7 +545,7 @@ function mapExistingPagesByTitle(
   const allDuplicatePages: NotionInstitutionPage[] = [];
 
   for (const page of pages) {
-    const rowId = textFragmentsValue(page.properties?.[titlePropertyName]?.title);
+    const rowId = getBackupRowId(page, titlePropertyName);
 
     if (!page.id || !targetRowIds.has(rowId)) {
       continue;
@@ -567,6 +567,10 @@ function mapExistingPagesByTitle(
   }
 
   return { pageMap, duplicatePages: allDuplicatePages };
+}
+
+function getBackupRowId(page: NotionInstitutionPage, titlePropertyName: string) {
+  return textFragmentsValue(page.properties?.recordId?.rich_text) || textFragmentsValue(page.properties?.[titlePropertyName]?.title);
 }
 
 function backupCleanupPages(
