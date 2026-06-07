@@ -453,6 +453,166 @@ test("backup endpoint reports Worker exceptions with stage and safe message", as
   }
 });
 
+test("backup endpoint chunks upserts to stay under the Worker subrequest limit", async () => {
+  const originalFetch = globalThis.fetch;
+  const createCalls: unknown[] = [];
+  const backup = backupWithTransactions(25);
+
+  globalThis.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = String(input);
+    const method = init?.method ?? "GET";
+
+    if (method === "GET" && url.includes("/v1/data_sources/")) {
+      return new Response(JSON.stringify({ properties: completeBackupSchema() }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (method === "POST" && url.includes("/v1/data_sources/") && url.endsWith("/query")) {
+      return new Response(
+        JSON.stringify({
+          results: [],
+          has_more: false,
+          next_cursor: null,
+        }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    }
+
+    if (method === "POST" && url === "https://api.notion.com/v1/pages") {
+      createCalls.push(JSON.parse(String(init?.body ?? "{}")));
+
+      return new Response(JSON.stringify({ id: `created-${createCalls.length}` }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    throw new Error(`Unexpected fetch: ${method} ${url}`);
+  };
+
+  try {
+    const response = await worker.fetch(
+      new Request("https://worker.test/backups", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Household-Backup-Key": "secret",
+        },
+        body: JSON.stringify({ backup }),
+      }),
+      {
+        NOTION_TOKEN: "ntn_test",
+        NOTION_DATA_SOURCE_ID: "3783d76f-8874-8055-af3a-000befc853fc",
+        NOTION_BACKUP_WRITE_KEY: "secret",
+      },
+    );
+
+    expect(response.status).toBe(201);
+    await expect(response.json()).resolves.toMatchObject({
+      created: 20,
+      updated: 0,
+      legacyRemoved: 0,
+      categories: 0,
+      transactions: 25,
+      processed: 20,
+      hasMore: true,
+      nextCursor: { phase: "upsert", offset: 20 },
+    });
+    expect(createCalls).toHaveLength(20);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("backup endpoint chunks legacy cleanup before upserting rows", async () => {
+  const originalFetch = globalThis.fetch;
+  const patchCalls: Array<{ url: string; body: unknown }> = [];
+  const backup = backupWithTransactions(1);
+
+  globalThis.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = String(input);
+    const method = init?.method ?? "GET";
+
+    if (method === "GET" && url.includes("/v1/data_sources/")) {
+      return new Response(JSON.stringify({ properties: completeBackupSchema() }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (method === "POST" && url.includes("/v1/data_sources/") && url.endsWith("/query")) {
+      return new Response(
+        JSON.stringify({
+          results: Array.from({ length: 25 }, (_, index) => ({
+            id: `page-category-${index}`,
+            last_edited_time: "2026-06-07T07:00:00.000Z",
+            properties: {
+              id: { title: [{ plain_text: `expense-legacy-${index}` }] },
+              recordType: { select: { name: "category" } },
+            },
+          })),
+          has_more: false,
+          next_cursor: null,
+        }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    }
+
+    if (method === "PATCH" && url.includes("/v1/pages/")) {
+      patchCalls.push({ url, body: JSON.parse(String(init?.body ?? "{}")) });
+
+      return new Response(JSON.stringify({ id: url.split("/").pop() }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    throw new Error(`Unexpected fetch: ${method} ${url}`);
+  };
+
+  try {
+    const response = await worker.fetch(
+      new Request("https://worker.test/backups", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Household-Backup-Key": "secret",
+        },
+        body: JSON.stringify({ backup }),
+      }),
+      {
+        NOTION_TOKEN: "ntn_test",
+        NOTION_DATA_SOURCE_ID: "3783d76f-8874-8055-af3a-000befc853fc",
+        NOTION_BACKUP_WRITE_KEY: "secret",
+      },
+    );
+
+    expect(response.status).toBe(201);
+    await expect(response.json()).resolves.toMatchObject({
+      created: 0,
+      updated: 0,
+      legacyRemoved: 20,
+      categories: 0,
+      transactions: 1,
+      processed: 0,
+      hasMore: true,
+      nextCursor: { phase: "cleanup" },
+    });
+    expect(patchCalls).toHaveLength(20);
+    expect(patchCalls.every((call) => JSON.stringify(call.body) === JSON.stringify({ in_trash: true }))).toBe(true);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
 test("backup endpoint removes category rows and duplicate transaction rows before upsert", async () => {
   const originalFetch = globalThis.fetch;
   const patchCalls: Array<{ url: string; body: unknown }> = [];
@@ -629,3 +789,69 @@ test("backup endpoint removes category rows and duplicate transaction rows befor
     globalThis.fetch = originalFetch;
   }
 });
+
+function completeBackupSchema() {
+  return {
+    id: { type: "title" },
+    recordType: {
+      type: "select",
+      select: { options: [{ name: "category", color: "blue" }, { name: "transaction", color: "green" }] },
+    },
+    type: {
+      type: "select",
+      select: { options: [{ name: "expense", color: "red" }, { name: "income", color: "green" }] },
+    },
+    name: { type: "rich_text" },
+    createdAt: { type: "rich_text" },
+    updatedAt: { type: "rich_text" },
+    date: { type: "rich_text" },
+    amount: { type: "number" },
+    categoryId: { type: "rich_text" },
+    memo: { type: "rich_text" },
+    source: {
+      type: "select",
+      select: {
+        options: [
+          { name: "manual", color: "default" },
+          { name: "csv", color: "gray" },
+          { name: "shinhan-file", color: "blue" },
+          { name: "hyundai-card-file", color: "purple" },
+          { name: "shinhan-notification", color: "yellow" },
+          { name: "bank-file", color: "green" },
+          { name: "naver-pay-file", color: "orange" },
+        ],
+      },
+    },
+  };
+}
+
+function backupWithTransactions(count: number) {
+  return {
+    version: 1,
+    exportedAt: "2026-06-07T10:20:30.000Z",
+    categories: [
+      {
+        id: "expense-food",
+        type: "expense",
+        name: "식비",
+        color: "#c85645",
+        isDefault: true,
+        isActive: true,
+        sortOrder: 0,
+        createdAt: "2026-06-07T06:50:48.696Z",
+        updatedAt: "2026-06-07T06:50:48.696Z",
+      },
+    ],
+    transactions: Array.from({ length: count }, (_, index) => ({
+      id: `tx-${index + 1}`,
+      date: "2026-06-07",
+      type: "expense",
+      amount: 12000 + index,
+      categoryId: "expense-food",
+      memo: `가맹점 ${index + 1}`,
+      source: "shinhan-file",
+      createdAt: "2026-06-07T07:00:00.000Z",
+      updatedAt: "2026-06-07T07:00:00.000Z",
+    })),
+  };
+}

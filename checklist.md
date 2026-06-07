@@ -371,3 +371,11 @@
 - [x] GitHub Pages UI가 새 오류 코드를 조치 가능한 문구로 표시한다.
 - [x] 관련 테스트와 빌드를 통과시킨다.
 - [x] 변경사항을 커밋하고 push한다.
+
+## Notion 백업 subrequest 한도 대응
+
+- [x] Worker가 한 요청에서 Notion 변경 요청을 제한하도록 실패 테스트를 추가한다.
+- [x] Worker `/backups`가 cursor 기반 chunk 응답을 반환하도록 수정한다.
+- [x] GitHub Pages UI 호출부가 cursor를 따라 여러 번 백업 요청을 이어 보내도록 수정한다.
+- [x] 관련 테스트와 빌드를 통과시킨다.
+- [x] 변경사항을 커밋하고 push한다.
