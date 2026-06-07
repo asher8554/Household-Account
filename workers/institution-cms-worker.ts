@@ -17,6 +17,9 @@ interface NotionQueryResponse {
 
 const DEFAULT_NOTION_VERSION = "2026-03-11";
 const DEFAULT_ALLOWED_ORIGIN = "*";
+const MAX_NOTION_PAGE_COUNT = 50;
+const NOTION_REQUEST_FAILED_MESSAGE = "Notion request failed.";
+const NOTION_RATE_LIMITED_MESSAGE = "Notion request was rate limited.";
 
 export default {
   async fetch(request: Request, env: WorkerEnv): Promise<Response> {
@@ -64,12 +67,27 @@ export default {
 
 async function fetchAllInstitutionPages(env: RequiredNotionEnv): Promise<NotionInstitutionPage[]> {
   const pages: NotionInstitutionPage[] = [];
+  const seenCursors = new Set<string>();
   let startCursor: string | null = null;
+  let pageCount = 0;
 
   do {
+    if (pageCount >= MAX_NOTION_PAGE_COUNT) {
+      throw new Error("Notion pagination limit exceeded.");
+    }
+
+    if (startCursor) {
+      if (seenCursors.has(startCursor)) {
+        throw new Error("Notion pagination cursor repeated.");
+      }
+
+      seenCursors.add(startCursor);
+    }
+
     const payload = await queryInstitutionPages(env, startCursor);
     pages.push(...payload.results);
     startCursor = payload.hasMore ? payload.nextCursor : null;
+    pageCount += 1;
   } while (startCursor);
 
   return pages;
@@ -116,30 +134,14 @@ async function queryInstitutionPages(
 }
 
 async function notionErrorResponse(response: Response, env: WorkerEnv): Promise<Response> {
-  const message = await readNotionErrorMessage(response);
-
   if (response.status === 429) {
     const retryAfter = response.headers.get("Retry-After");
     const headers = retryAfter ? { "Retry-After": retryAfter } : undefined;
 
-    return jsonResponse({ error: "notion_rate_limited", message }, 429, env, headers);
+    return jsonResponse({ error: "notion_rate_limited", message: NOTION_RATE_LIMITED_MESSAGE }, 429, env, headers);
   }
 
-  return jsonResponse({ error: "notion_request_failed", message }, 502, env);
-}
-
-async function readNotionErrorMessage(response: Response): Promise<string> {
-  try {
-    const payload = (await response.json()) as { message?: unknown };
-
-    if (typeof payload.message === "string" && payload.message.trim()) {
-      return payload.message;
-    }
-  } catch {
-    // Fall back to the status text below when Notion does not return JSON.
-  }
-
-  return response.statusText || "Notion request failed.";
+  return jsonResponse({ error: "notion_request_failed", message: NOTION_REQUEST_FAILED_MESSAGE }, 502, env);
 }
 
 function jsonResponse(
