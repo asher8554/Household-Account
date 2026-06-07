@@ -41,6 +41,9 @@ export interface NotionSelectOption {
 export interface NotionInstitutionProperty {
   title?: NotionTextFragment[];
   rich_text?: NotionTextFragment[];
+  date?: {
+    start?: string | null;
+  } | null;
   select?: NotionSelectOption | null;
   status?: NotionSelectOption | null;
   multi_select?: NotionSelectOption[];

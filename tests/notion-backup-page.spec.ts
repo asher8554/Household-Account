@@ -525,9 +525,100 @@ test("backup endpoint chunks upserts to stay under the Worker subrequest limit",
       transactions: 25,
       processed: 20,
       hasMore: true,
-      nextCursor: { phase: "upsert", offset: 20 },
+      nextCursor: { phase: "upsert", offset: 0 },
     });
     expect(createCalls).toHaveLength(20);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("backup endpoint skips already migrated rows and continues pending title updates", async () => {
+  const originalFetch = globalThis.fetch;
+  const patchCalls: Array<{ url: string; body: unknown }> = [];
+  const backup = backupWithTransactions(25);
+
+  globalThis.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = String(input);
+    const method = init?.method ?? "GET";
+
+    if (method === "GET" && url.includes("/v1/data_sources/")) {
+      return new Response(JSON.stringify({ properties: completeBackupSchema() }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (method === "POST" && url.includes("/v1/data_sources/") && url.endsWith("/query")) {
+      return new Response(
+        JSON.stringify({
+          results: backup.transactions.map((transaction, index) => ({
+            id: `page-${index + 1}`,
+            last_edited_time: `2026-06-07T07:${String(index).padStart(2, "0")}:00.000Z`,
+            properties: index < 20 ? currentTransactionPageProperties(transaction) : legacyTransactionPageProperties(transaction),
+          })),
+          has_more: false,
+          next_cursor: null,
+        }),
+        {
+          status: 200,
+          headers: { "Content-Type": "application/json" },
+        },
+      );
+    }
+
+    if (method === "PATCH" && url.includes("/v1/pages/")) {
+      patchCalls.push({ url, body: JSON.parse(String(init?.body ?? "{}")) });
+
+      return new Response(JSON.stringify({ id: url.split("/").pop() }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    throw new Error(`Unexpected fetch: ${method} ${url}`);
+  };
+
+  try {
+    const response = await worker.fetch(
+      new Request("https://worker.test/backups", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-Household-Backup-Key": "secret",
+        },
+        body: JSON.stringify({ backup }),
+      }),
+      {
+        NOTION_TOKEN: "ntn_test",
+        NOTION_DATA_SOURCE_ID: "3783d76f-8874-8055-af3a-000befc853fc",
+        NOTION_BACKUP_WRITE_KEY: "secret",
+      },
+    );
+
+    expect(response.status).toBe(201);
+    await expect(response.json()).resolves.toMatchObject({
+      created: 0,
+      updated: 5,
+      processed: 5,
+      transactions: 25,
+      hasMore: false,
+      nextCursor: null,
+    });
+    expect(patchCalls).toHaveLength(5);
+    expect(patchCalls.map((call) => call.url.split("/").pop())).toEqual([
+      "page-21",
+      "page-22",
+      "page-23",
+      "page-24",
+      "page-25",
+    ]);
+    expect(patchCalls[0].body).toMatchObject({
+      properties: {
+        id: { title: [{ type: "text", text: { content: "가맹점 21" } }] },
+        recordId: { rich_text: [{ type: "text", text: { content: "tx-21" } }] },
+      },
+    });
   } finally {
     globalThis.fetch = originalFetch;
   }
@@ -863,4 +954,38 @@ function backupWithTransactions(count: number) {
       updatedAt: "2026-06-07T07:00:00.000Z",
     })),
   };
+}
+
+function currentTransactionPageProperties(transaction: ReturnType<typeof backupWithTransactions>["transactions"][number]) {
+  return {
+    id: title(transaction.memo),
+    recordId: richText(transaction.id),
+    recordType: { select: { name: "transaction" } },
+    date: richText(transaction.date),
+    "날짜": { date: { start: transaction.date } },
+    type: { multi_select: [{ name: transaction.type }] },
+    amount: { number: transaction.amount },
+    categoryId: richText(transaction.categoryId),
+    name: richText(transaction.memo),
+    memo: richText(transaction.memo),
+    source: { select: { name: transaction.source } },
+    createdAt: richText(transaction.createdAt),
+    updatedAt: richText(transaction.updatedAt),
+  };
+}
+
+function legacyTransactionPageProperties(transaction: ReturnType<typeof backupWithTransactions>["transactions"][number]) {
+  return {
+    ...currentTransactionPageProperties(transaction),
+    id: title(transaction.id),
+    recordId: { rich_text: [] },
+  };
+}
+
+function title(value: string) {
+  return { title: [{ plain_text: value }] };
+}
+
+function richText(value: string) {
+  return { rich_text: [{ plain_text: value }] };
 }

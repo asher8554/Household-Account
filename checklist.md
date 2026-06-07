@@ -455,3 +455,11 @@
 - [x] 상단 설명 문구를 `가계부 달력`으로 정리한다.
 - [x] 관련 테스트와 production build를 통과시킨다.
 - [x] 변경사항을 커밋하고 push한다.
+
+## Notion title migration 재시작 개선
+
+- [x] Notion 캘린더에서 아직 `tx_...` title 행이 남아 있는지 확인한다.
+- [x] 기존 `recordId`가 비어 있는 legacy row가 남아 있는지 확인한다.
+- [x] 이미 name title로 migration된 row는 다음 push에서 다시 업데이트하지 않도록 Worker를 수정한다.
+- [x] 관련 테스트와 production build를 통과시킨다.
+- [x] Worker를 배포하고 변경사항을 커밋, push한다.

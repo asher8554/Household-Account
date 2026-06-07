@@ -911,3 +911,19 @@
 - `visibleAppViews`를 도입해 상단 메뉴에서 `금융기관 가져오기`를 숨겼고, `#admin-import` hash로 직접 접근하면 기존 가져오기 화면을 열도록 했다.
 - 헤더 보조 문구를 `가계부 달력`로 변경했다.
 - `npx playwright test` 41개, `npm run build`, Playwright 브라우저 smoke를 통과했다.
+
+## Notion title migration 재시작 개선 계획
+
+- 사용자는 Notion 캘린더의 `tx_...` title이 name으로 바뀌다가 멈췄다고 보고했다.
+- Notion fetch 결과 data source에는 `recordId` 컬럼이 생겼고, 아직 `recordId`가 비어 있으며 title이 `tx_...`인 legacy 거래 row가 남아 있다.
+- 기존 Worker는 cursor offset 기준으로 앞쪽 row부터 계속 처리한다. 사용자가 중간에 멈춘 뒤 다시 push하면 이미 migration된 앞쪽 row도 다시 PATCH해 Notion rate limit과 시간 소모가 커진다.
+- Worker는 매 batch마다 기존 page 값을 읽고, 이미 title, `recordId`, 날짜, 금액 등 row 속성이 최신이면 mutation 대상에서 제외해야 한다.
+- 남은 pending row만 앞에서부터 최대 20개 처리하고, 다음 cursor는 offset 대신 pending row 재계산을 의미하는 `{ phase: "upsert", offset: 0 }`로 유지한다.
+
+## Notion title migration 재시작 개선 결과
+
+- Worker가 기존 Notion page의 title, `recordId`, 날짜, 금액, category, memo, source 값이 이미 최신이면 PATCH 대상에서 제외하도록 수정했다.
+- 중간에 멈춘 뒤 다시 `현재 PC 기록 push`를 눌러도 이미 name으로 바뀐 row는 건너뛰고 남은 `tx_...` legacy row부터 업데이트한다.
+- Notion 캘린더 view `3783d76f-8874-80cb-8afd-000c6b9638ec`는 `SHOW "id"`로 되돌려 title만 표시되게 했다.
+- `npx playwright test` 42개, `npm run build`, Worker TypeScript 검증을 통과했다.
+- Cloudflare Worker `household-account-institution-cms`를 배포했다. Version ID는 `c615c98e-f51f-4398-b838-73d518378452`이다.
