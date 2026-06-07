@@ -61,7 +61,6 @@ export function BackupPanel() {
     setMessage("백업 JSON을 Notion에 기록 중입니다.");
 
     try {
-      saveNotionBackupWriteKey(notionBackupKey);
       const result = await pushCurrentBackupToNotion(notionBackupKey);
       setMessage(
         `Notion에 거래 백업 행을 동기화했습니다. 생성 ${result.created}건, 업데이트 ${result.updated}건, 불필요/중복 행 정리 ${result.legacyRemoved}건. 거래 ${result.transactions}건.`,

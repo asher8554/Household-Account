@@ -8,6 +8,7 @@ import {
   clearGitHubSharedDataSettings,
   defaultGitHubSharedDataSettings,
   hasGitHubSharedDataToken,
+  isUnsafePublicSharedDataTarget,
   loadGitHubSharedDataSettings,
   pushCurrentSharedDataToGitHub,
   saveGitHubSharedDataSettings,
@@ -19,6 +20,7 @@ export function GitHubSharedDataPanel() {
   const [message, setMessage] = useState("");
   const [isPushing, setIsPushing] = useState(false);
   const hasToken = hasGitHubSharedDataToken(settings);
+  const isUnsafeTarget = isUnsafePublicSharedDataTarget(settings);
 
   function updateField(field: keyof GitHubSharedDataSettings, value: string) {
     setSettings((previous) => ({ ...previous, [field]: value }));
@@ -44,13 +46,9 @@ export function GitHubSharedDataPanel() {
     setMessage("현재 PC 기록을 GitHub 공유 데이터로 push 중입니다.");
 
     try {
-      saveGitHubSharedDataSettings(settings);
-      const savedSettings = loadGitHubSharedDataSettings();
-      setSettings(savedSettings);
-
-      const result = await pushCurrentSharedDataToGitHub(savedSettings);
+      const result = await pushCurrentSharedDataToGitHub(settings);
       setMessage(
-        `현재 PC 기록 ${result.transactions}건을 GitHub에 push했습니다. Pages 배포가 끝난 뒤 핸드폰에서 새로고침하세요.`,
+        `현재 PC 기록 ${result.transactions}건을 GitHub data repo에 push했습니다.`,
       );
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "GitHub 공유 데이터 push에 실패했습니다.");
@@ -62,7 +60,7 @@ export function GitHubSharedDataPanel() {
   return (
     <SectionPanel
       title="GitHub 공유 설정"
-      eyebrow={hasToken ? "자동 push 준비됨" : "토큰 필요"}
+      eyebrow={isUnsafeTarget ? "private repo 필요" : hasToken ? "수동 push 준비됨" : "토큰 필요"}
       action={
         <Button size="sm" variant="ghost" onClick={handleReset}>
           <RotateCcw size={15} aria-hidden="true" />
@@ -116,20 +114,30 @@ export function GitHubSharedDataPanel() {
             <Save size={16} aria-hidden="true" />
             설정 저장
           </Button>
-          <Button variant="secondary" type="button" disabled={!hasToken || isPushing} onClick={handlePushCurrentData}>
+          <Button
+            variant="secondary"
+            type="button"
+            disabled={!hasToken || isPushing || isUnsafeTarget}
+            onClick={handlePushCurrentData}
+          >
             <Upload size={16} aria-hidden="true" />
             {isPushing ? "push 중" : "현재 PC 기록 push"}
           </Button>
           <div className="flex items-center gap-2 text-sm text-muted">
             <Github size={16} aria-hidden="true" />
-            <span>파일 저장 후 공유 데이터가 자동 커밋됩니다.</span>
+            <span>버튼을 누르면 data repo JSON이 커밋됩니다.</span>
           </div>
         </div>
       </form>
       {message ? <p className="mt-3 text-sm text-muted">{message}</p> : null}
       <p className="mt-3 text-sm leading-6 text-muted">
-        토큰은 이 브라우저 localStorage에만 저장됩니다. 권한은 이 repo의 Contents read/write로 제한하세요.
+        토큰은 이 브라우저 localStorage에만 저장됩니다. 권한은 private data repo의 Contents read/write로 제한하세요.
       </p>
+      {isUnsafeTarget ? (
+        <p className="mt-2 text-sm leading-6 text-coral">
+          공개 GitHub Pages 파일 경로로는 거래 내역을 push하지 않습니다.
+        </p>
+      ) : null}
     </SectionPanel>
   );
 }

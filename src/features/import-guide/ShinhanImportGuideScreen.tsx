@@ -23,10 +23,6 @@ import type { ShinhanPreviewItem } from "./shinhan-import-types";
 import { parseShinhanNotificationText } from "./shinhan-notification-parser";
 import { isTrackedCardImportSource, recordCardFileLoad } from "./import-status-service";
 import { GitHubSharedDataPanel } from "../shared-data/GitHubSharedDataPanel";
-import {
-  loadGitHubSharedDataSettings,
-  pushCurrentSharedDataToGitHub,
-} from "../shared-data/github-shared-data-service";
 import { useInstitutionCatalog } from "../institutions/use-institution-catalog";
 import type { InstitutionConfig } from "../institutions/institution-types";
 import { BackupPanel } from "../backup/BackupPanel";
@@ -159,17 +155,7 @@ export function ShinhanImportGuideScreen() {
         return;
       }
 
-      setStatusMessage(`파일 거래 ${count}건을 저장했습니다. GitHub 공유 데이터 push 중입니다.`);
-
-      try {
-        const result = await pushCurrentSharedDataToGitHub(loadGitHubSharedDataSettings());
-        setStatusMessage(
-          `파일 거래 ${count}건을 저장했고 GitHub 공유 데이터도 push했습니다. 공유 거래 ${result.transactions}건.`,
-        );
-      } catch (error) {
-        const message = error instanceof Error ? error.message : "GitHub push 실패.";
-        setStatusMessage(`파일 거래 ${count}건을 저장했습니다. ${message}`);
-      }
+      setStatusMessage(`파일 거래 ${count}건을 저장했습니다.`);
     } finally {
       setIsImportingFile(false);
     }

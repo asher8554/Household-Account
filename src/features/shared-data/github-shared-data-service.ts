@@ -28,12 +28,15 @@ type GitHubCommitResponse = {
 };
 
 const settingsKey = "household-account-github-shared-data-settings";
+const unsafeAppRepositoryOwner = "asher8554";
+const unsafeAppRepositoryName = "Household-Account";
+const unsafePublicSharedDataPath = "public/shared-data.json";
 
 export const defaultGitHubSharedDataSettings: GitHubSharedDataSettings = {
   owner: "asher8554",
-  repo: "Household-Account",
+  repo: "Household-Account-Data",
   branch: "main",
-  path: "public/shared-data.json",
+  path: "data/household-account.json",
   token: "",
 };
 
@@ -60,6 +63,17 @@ export function hasGitHubSharedDataToken(settings: GitHubSharedDataSettings) {
   return settings.token.trim().length > 0;
 }
 
+export function isUnsafePublicSharedDataTarget(settings: GitHubSharedDataSettings) {
+  const normalizedSettings = normalizeSettings(settings);
+  const normalizedPath = normalizedSettings.path.replace(/\\/g, "/").toLowerCase();
+
+  return (
+    normalizedSettings.owner.toLowerCase() === unsafeAppRepositoryOwner.toLowerCase() &&
+    normalizedSettings.repo.toLowerCase() === unsafeAppRepositoryName.toLowerCase() &&
+    normalizedPath === unsafePublicSharedDataPath
+  );
+}
+
 export async function pushCurrentSharedDataToGitHub(
   settings: GitHubSharedDataSettings,
 ): Promise<GitHubSharedDataPushResult> {
@@ -67,6 +81,10 @@ export async function pushCurrentSharedDataToGitHub(
 
   if (!hasGitHubSharedDataToken(normalizedSettings)) {
     throw new Error("GitHub 토큰을 먼저 저장하세요.");
+  }
+
+  if (isUnsafePublicSharedDataTarget(normalizedSettings)) {
+    throw new Error("공개 GitHub Pages 파일로 거래 내역을 push하지 않습니다. private repo 경로를 사용하세요.");
   }
 
   const backup = await createBackupData();
