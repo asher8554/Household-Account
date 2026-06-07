@@ -139,7 +139,7 @@ async function handleBackupRequest(request: Request, env: WorkerEnv): Promise<Re
     );
     const legacyRemoved = await trashLegacyBackupSummaryPages(notionEnv, existingPages, titlePropertyName);
     const existingPageById = mapExistingPagesByTitle(existingPages, titlePropertyName);
-    const rows = buildNotionBackupRows(backup, titlePropertyName);
+    const rows = buildNotionBackupRows(backup, titlePropertyName, dataSource.properties);
     const result = await upsertNotionBackupRows(notionEnv, rows, existingPageById);
 
     return jsonResponse(

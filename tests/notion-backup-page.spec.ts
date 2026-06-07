@@ -72,6 +72,50 @@ test("buildNotionBackupRows maps categories and transactions to data source row 
   expect(rows[1].properties.source.select.name).toBe("shinhan-file");
 });
 
+test("buildNotionBackupRows uses multi_select values for existing multi-select Notion fields", () => {
+  const backup = {
+    version: 1,
+    exportedAt: "2026-06-07T10:20:30.000Z",
+    categories: [
+      {
+        id: "expense-food",
+        type: "expense",
+        name: "식비",
+        color: "#c85645",
+        isDefault: true,
+        isActive: true,
+        sortOrder: 0,
+        createdAt: "2026-06-07T06:50:48.696Z",
+        updatedAt: "2026-06-07T06:50:48.696Z",
+      },
+    ],
+    transactions: [
+      {
+        id: "tx-1",
+        date: "2026-06-07",
+        type: "expense",
+        amount: 12000,
+        categoryId: "expense-food",
+        memo: "스타벅스",
+        source: "shinhan-file",
+        createdAt: "2026-06-07T07:00:00.000Z",
+        updatedAt: "2026-06-07T07:00:00.000Z",
+      },
+    ],
+  };
+
+  const rows = buildNotionBackupRows(backup, "id", {
+    recordType: { type: "multi_select" },
+    type: { type: "multi_select" },
+    source: { type: "multi_select" },
+  });
+
+  expect(rows[0].properties.recordType).toEqual({ multi_select: [{ name: "category" }] });
+  expect(rows[0].properties.type).toEqual({ multi_select: [{ name: "expense" }] });
+  expect(rows[1].properties.type).toEqual({ multi_select: [{ name: "expense" }] });
+  expect(rows[1].properties.source).toEqual({ multi_select: [{ name: "shinhan-file" }] });
+});
+
 test("buildNotionBackupSchemaPatch adds missing meaningful backup columns", () => {
   const patch = buildNotionBackupSchemaPatch({
     id: { type: "title" },
@@ -118,6 +162,27 @@ test("buildNotionBackupSchemaPatch preserves existing select options and adds mi
         { id: "existing-option", name: "manual", color: "red" },
         { name: "shinhan-file", color: "blue" },
         { name: "hyundai-card-file", color: "purple" },
+      ]),
+    },
+  });
+});
+
+test("buildNotionBackupSchemaPatch preserves existing multi-select options and adds missing backup options", () => {
+  const patch = buildNotionBackupSchemaPatch({
+    id: { type: "title" },
+    type: {
+      type: "multi_select",
+      multi_select: {
+        options: [{ id: "existing-option", name: "expense", color: "red" }],
+      },
+    },
+  });
+
+  expect(patch.properties.type).toMatchObject({
+    multi_select: {
+      options: expect.arrayContaining([
+        { id: "existing-option", name: "expense", color: "red" },
+        { name: "income", color: "green" },
       ]),
     },
   });

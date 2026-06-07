@@ -147,6 +147,7 @@ VITE_INSTITUTION_CMS_URL=https://household-account-institution-cms.<account>.wor
 - `Notion 백업 행 생성에 실패했습니다.`가 나오면 integration의 `Insert Content` 권한과 Notion 컬럼 타입을 확인합니다.
 - `Notion 백업 행 수정에 실패했습니다.`가 나오면 integration의 `Update Content` 권한과 기존 컬럼 타입을 확인합니다.
 - 문구 끝의 `Notion HTTP 403`은 대체로 integration 권한 문제이고, `Notion HTTP 404`는 ID 오류나 공유 누락 가능성이 큽니다.
+- `type is expected to be multi_select`가 나오면 Worker가 최신 배포인지 확인합니다. 최신 Worker는 기존 `type`, `source`, `recordType` 컬럼이 multi-select여도 해당 타입에 맞춰 기록합니다.
 
 ## iPhone 사용 흐름
 
