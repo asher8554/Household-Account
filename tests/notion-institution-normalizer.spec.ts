@@ -18,6 +18,10 @@ const multiSelect = (names: string[]) => ({
   multi_select: names.map((name) => ({ name })),
 });
 
+const status = (name: string) => ({
+  status: { name },
+});
+
 test("normalizes a Notion page with guide text, hints, urls, and sort order", () => {
   const fetchedAt = "2026-06-07T10:00:00.000Z";
   const catalog = normalizeNotionInstitutionPages(
@@ -148,7 +152,7 @@ test("filters disabled and nameless entries and sorts enabled entries by order a
   });
 });
 
-test("normalizes parser key from a Notion select property", () => {
+test("normalizes parser key from Notion option-like properties", () => {
   const catalog = normalizeNotionInstitutionPages(
     [
       {
@@ -160,9 +164,29 @@ test("normalizes parser key from a Notion select property", () => {
           "Parser Key": select("shinhan-card"),
         },
       },
+      {
+        properties: {
+          Name: title("Status Card"),
+          "Institution Type": select("card"),
+          Enabled: { checkbox: true },
+          "Sort Order": { number: 2 },
+          "Parser Key": status("hyundai-card"),
+        },
+      },
+      {
+        properties: {
+          Name: title("Multi Select Card"),
+          "Institution Type": select("card"),
+          Enabled: { checkbox: true },
+          "Sort Order": { number: 3 },
+          "Parser Key": multiSelect(["bank-file"]),
+        },
+      },
     ],
     "2026-06-07T10:00:00.000Z",
   );
 
   expect(catalog.institutions[0]?.parserKey).toBe("shinhan-card");
+  expect(catalog.institutions[1]?.parserKey).toBe("hyundai-card");
+  expect(catalog.institutions[2]?.parserKey).toBe("bank-file");
 });
