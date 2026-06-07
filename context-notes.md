@@ -648,3 +648,28 @@
 - Playwright 화면 스모크에서 자동 판정 문구가 보이고 `금융기관 설정`과 `가져올 금융기관` 선택 박스가 사라진 것을 확인했다.
 - 사용자가 제공한 `Shinhancard_20260607.xlsx`는 101건을 읽었고 오류는 0건이었다.
 - 사용자가 제공한 `hyundaicard_20260607.xls`는 39건을 읽었고 오류는 0건이었다.
+
+## Notion 백업 JSON 기록 계획
+
+- 사용자는 기존 Notion 연결 data source `3783d76f-8874-8055-af3a-000befc853fc`에 GitHub Pages 앱의 백업 JSON 내용을 채우고 싶어 한다.
+- 같은 Worker가 이미 Notion token과 data source ID를 secret으로 갖고 있으므로, 브라우저가 Notion token을 직접 저장하거나 호출하지 않는다.
+- 앱은 현재 IndexedDB에서 생성한 `BackupFile` JSON을 Worker의 `POST /backups`로 보낸다.
+- Worker는 Notion 공식 create page API처럼 `parent.data_source_id`를 사용해 해당 data source 안에 백업 page를 만든다.
+- 현재 data source가 금융기관 CMS 속성을 갖고 있으므로, 백업 JSON은 새 schema 컬럼 강제 추가 없이 page 제목과 page body markdown에 저장한다.
+- 기존 `/institutions` 응답에 백업 page가 섞이지 않도록 백업 page는 `Enabled=false`로 생성한다.
+- 백업 page 제목은 `Household account backup YYYY-MM-DD HH:mm` 형태로 두고, body에는 거래 수, 카테고리 수, export 시각, JSON 코드 블록을 넣는다.
+
+## Notion 백업 JSON 기록 결과
+
+- Worker에 `POST /backups` endpoint를 추가했다.
+- `/backups`는 `NOTION_TOKEN`, `NOTION_DATA_SOURCE_ID`, `NOTION_BACKUP_WRITE_KEY`가 모두 있어야 동작한다.
+- 브라우저는 Notion token을 저장하지 않고, `X-Household-Backup-Key` header로 Worker 쓰기 키만 보낸다.
+- Worker는 백업 JSON을 Notion create page payload로 바꾸고 `parent.data_source_id`에 `3783d76f-8874-8055-af3a-000befc853fc` 같은 연결 data source ID를 넣는다.
+- 생성되는 백업 page는 `Enabled=false`로 만들어 기존 기관 catalog 조회에 섞이지 않게 했다.
+- 백업 panel에 `Notion 백업 키`, `키 저장`, `Notion 기록` UI를 추가했다.
+- `VITE_INSTITUTION_CMS_URL`은 계속 `/institutions`까지의 URL만 필요하며, 앱이 자동으로 `/backups` endpoint를 계산한다.
+- `npx playwright test`는 16개 테스트 통과로 완료됐다.
+- `npm run build`가 TypeScript check와 Vite production build를 통과했다. 기존처럼 500 kB 초과 chunk warning은 출력됐다.
+- Worker TypeScript 명시 검증도 통과했다.
+- 로컬 화면 스모크에서 Notion 백업 키 입력과 `Notion 기록` 버튼이 보이고 콘솔 오류가 없음을 확인했다.
+- 이 Codex 환경에는 `CLOUDFLARE_API_TOKEN`이 없어 `wrangler secret list`와 Worker deploy는 실행하지 못했다.

@@ -1,9 +1,14 @@
 // JSON 백업과 전체 초기화 UI를 제공합니다.
 import { ChangeEvent, useRef, useState } from "react";
-import { Download, RotateCcw, Share2, Upload } from "lucide-react";
+import { Download, RotateCcw, Save, Share2, Upload } from "lucide-react";
 import { Button } from "../../shared/ui/Button";
 import { SectionPanel } from "../../shared/ui/SectionPanel";
 import { downloadBackupFile, downloadSharedDataFile, importBackupFile, resetAllData } from "./backup-service";
+import {
+  loadNotionBackupWriteKey,
+  pushCurrentBackupToNotion,
+  saveNotionBackupWriteKey,
+} from "./notion-backup-service";
 import type { ImportSummary } from "./backup-types";
 
 function formatImportSummary(summary: ImportSummary) {
@@ -13,6 +18,8 @@ function formatImportSummary(summary: ImportSummary) {
 export function BackupPanel() {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const [resetText, setResetText] = useState("");
+  const [notionBackupKey, setNotionBackupKey] = useState(() => loadNotionBackupWriteKey());
+  const [isPushingNotionBackup, setIsPushingNotionBackup] = useState(false);
   const [message, setMessage] = useState("");
 
   async function handleImport(event: ChangeEvent<HTMLInputElement>) {
@@ -41,6 +48,29 @@ export function BackupPanel() {
     setMessage(`공유용 shared-data.json을 내보냈습니다. 거래 ${backup.transactions.length}건.`);
   }
 
+  function handleSaveNotionBackupKey() {
+    saveNotionBackupWriteKey(notionBackupKey);
+    setNotionBackupKey(loadNotionBackupWriteKey());
+    setMessage("Notion 백업 키를 저장했습니다.");
+  }
+
+  async function handleNotionBackup() {
+    if (isPushingNotionBackup) return;
+
+    setIsPushingNotionBackup(true);
+    setMessage("백업 JSON을 Notion에 기록 중입니다.");
+
+    try {
+      saveNotionBackupWriteKey(notionBackupKey);
+      const result = await pushCurrentBackupToNotion(notionBackupKey);
+      setMessage(`Notion에 백업 JSON을 기록했습니다. 거래 ${result.transactions}건, 카테고리 ${result.categories}개.`);
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Notion 백업 기록에 실패했습니다.");
+    } finally {
+      setIsPushingNotionBackup(false);
+    }
+  }
+
   return (
     <SectionPanel title="백업" eyebrow="JSON">
       <div className="grid gap-2">
@@ -57,6 +87,37 @@ export function BackupPanel() {
           <Upload size={17} aria-hidden="true" />
           가져오기
         </Button>
+      </div>
+
+      <div className="mt-4 border-t border-line pt-4">
+        <label className="grid gap-2 text-sm">
+          <span className="font-medium">Notion 백업 키</span>
+          <input
+            className="h-10 rounded-lg border border-line bg-field px-3 text-sm"
+            type="password"
+            placeholder="Worker write key"
+            value={notionBackupKey}
+            onChange={(event) => setNotionBackupKey(event.target.value)}
+            autoComplete="off"
+          />
+        </label>
+        <div className="mt-2 grid gap-2 sm:grid-cols-2">
+          <Button variant="secondary" onClick={handleSaveNotionBackupKey}>
+            <Save size={16} aria-hidden="true" />
+            키 저장
+          </Button>
+          <Button
+            variant="secondary"
+            disabled={!notionBackupKey.trim() || isPushingNotionBackup}
+            onClick={() => void handleNotionBackup()}
+          >
+            <Share2 size={16} aria-hidden="true" />
+            {isPushingNotionBackup ? "기록 중" : "Notion 기록"}
+          </Button>
+        </div>
+        <p className="mt-2 text-xs leading-5 text-muted">
+          Notion token은 Worker secret에만 저장합니다. 이 키는 Worker 쓰기 요청 보호용입니다.
+        </p>
       </div>
 
       <div className="mt-4 border-t border-line pt-4">

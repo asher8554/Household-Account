@@ -1,10 +1,16 @@
 // Notion 기관 카탈로그를 HTTP JSON API로 제공하는 Cloudflare Worker입니다.
 import { normalizeNotionInstitutionPages } from "./notion-institution-normalizer";
+import {
+  buildNotionBackupPagePayload,
+  parseBackupPayload,
+  type NotionBackupPagePayload,
+} from "./notion-backup-page";
 import type { NotionInstitutionPage } from "./notion-institution-types";
 
 interface WorkerEnv {
   NOTION_TOKEN?: string;
   NOTION_DATA_SOURCE_ID?: string;
+  NOTION_BACKUP_WRITE_KEY?: string;
   NOTION_VERSION?: string;
   ALLOWED_ORIGIN?: string;
 }
@@ -13,6 +19,11 @@ interface NotionQueryResponse {
   results?: NotionInstitutionPage[];
   has_more?: boolean;
   next_cursor?: string | null;
+}
+
+interface NotionCreatePageResponse {
+  id?: string;
+  url?: string;
 }
 
 const DEFAULT_NOTION_VERSION = "2026-03-11";
@@ -32,38 +43,108 @@ export default {
 
     const url = new URL(request.url);
 
-    if (request.method !== "GET" || url.pathname !== "/institutions") {
-      return jsonResponse({ error: "not_found" }, 404, env);
+    if (request.method === "GET" && url.pathname === "/institutions") {
+      return handleInstitutionsRequest(env);
     }
 
-    if (!env.NOTION_TOKEN || !env.NOTION_DATA_SOURCE_ID) {
-      return jsonResponse({ error: "worker_not_configured" }, 500, env);
+    if (request.method === "POST" && url.pathname === "/backups") {
+      return handleBackupRequest(request, env);
     }
 
-    const notionEnv: RequiredNotionEnv = {
-      ...env,
-      NOTION_TOKEN: env.NOTION_TOKEN,
-      NOTION_DATA_SOURCE_ID: env.NOTION_DATA_SOURCE_ID,
-    };
-
-    try {
-      const pages = await fetchAllInstitutionPages(notionEnv);
-      const catalog = normalizeNotionInstitutionPages(pages, new Date().toISOString());
-
-      return jsonResponse(catalog, 200, env);
-    } catch (error) {
-      if (error instanceof Response) {
-        return error;
-      }
-
-      return jsonResponse(
-        { error: "notion_timeout", message: "Notion request failed." },
-        504,
-        env,
-      );
-    }
+    return jsonResponse({ error: "not_found" }, 404, env);
   },
 } satisfies ExportedHandler<WorkerEnv>;
+
+async function handleInstitutionsRequest(env: WorkerEnv): Promise<Response> {
+  if (!env.NOTION_TOKEN || !env.NOTION_DATA_SOURCE_ID) {
+    return jsonResponse({ error: "worker_not_configured" }, 500, env);
+  }
+
+  const notionEnv: RequiredNotionEnv = {
+    ...env,
+    NOTION_TOKEN: env.NOTION_TOKEN,
+    NOTION_DATA_SOURCE_ID: env.NOTION_DATA_SOURCE_ID,
+  };
+
+  try {
+    const pages = await fetchAllInstitutionPages(notionEnv);
+    const catalog = normalizeNotionInstitutionPages(pages, new Date().toISOString());
+
+    return jsonResponse(catalog, 200, env);
+  } catch (error) {
+    if (error instanceof Response) {
+      return error;
+    }
+
+    return jsonResponse(
+      { error: "notion_timeout", message: "Notion request failed." },
+      504,
+      env,
+    );
+  }
+}
+
+async function handleBackupRequest(request: Request, env: WorkerEnv): Promise<Response> {
+  if (!env.NOTION_TOKEN || !env.NOTION_DATA_SOURCE_ID || !env.NOTION_BACKUP_WRITE_KEY) {
+    return jsonResponse({ error: "worker_not_configured" }, 500, env);
+  }
+
+  const notionEnv: RequiredNotionEnv = {
+    ...env,
+    NOTION_TOKEN: env.NOTION_TOKEN,
+    NOTION_DATA_SOURCE_ID: env.NOTION_DATA_SOURCE_ID,
+  };
+
+  if (request.headers.get("X-Household-Backup-Key") !== env.NOTION_BACKUP_WRITE_KEY) {
+    return jsonResponse({ error: "unauthorized" }, 401, env);
+  }
+
+  let rawPayload: unknown;
+
+  try {
+    rawPayload = await request.json();
+  } catch {
+    return jsonResponse({ error: "invalid_json" }, 400, env);
+  }
+
+  const backup = parseBackupPayload(rawPayload);
+
+  if (!backup) {
+    return jsonResponse({ error: "invalid_backup_json" }, 400, env);
+  }
+
+  const syncedAt = new Date().toISOString();
+  let notionPayload: NotionBackupPagePayload;
+
+  try {
+    notionPayload = buildNotionBackupPagePayload(env.NOTION_DATA_SOURCE_ID, backup, syncedAt);
+  } catch {
+    return jsonResponse({ error: "backup_json_too_large" }, 413, env);
+  }
+
+  try {
+    const page = await createNotionBackupPage(notionEnv, notionPayload);
+
+    return jsonResponse(
+      {
+        version: 1,
+        syncedAt,
+        pageId: page.id ?? "",
+        pageUrl: page.url ?? "",
+        categories: backup.categories.length,
+        transactions: backup.transactions.length,
+      },
+      201,
+      env,
+    );
+  } catch (error) {
+    if (error instanceof Response) {
+      return error;
+    }
+
+    return jsonResponse({ error: "notion_timeout", message: "Notion request failed." }, 504, env);
+  }
+}
 
 async function fetchAllInstitutionPages(env: RequiredNotionEnv): Promise<NotionInstitutionPage[]> {
   const pages: NotionInstitutionPage[] = [];
@@ -133,6 +214,33 @@ async function queryInstitutionPages(
   };
 }
 
+async function createNotionBackupPage(
+  env: RequiredNotionEnv,
+  payload: NotionBackupPagePayload,
+): Promise<NotionCreatePageResponse> {
+  const response = await fetch("https://api.notion.com/v1/pages", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${env.NOTION_TOKEN}`,
+      "Content-Type": "application/json",
+      "Notion-Version": env.NOTION_VERSION || DEFAULT_NOTION_VERSION,
+    },
+    body: JSON.stringify(payload),
+  });
+
+  if (!response.ok) {
+    throw await notionErrorResponse(response, env);
+  }
+
+  const page = (await response.json()) as NotionCreatePageResponse;
+
+  if (!page.id) {
+    throw new Error("Notion create page response did not include an id.");
+  }
+
+  return page;
+}
+
 async function notionErrorResponse(response: Response, env: WorkerEnv): Promise<Response> {
   if (response.status === 429) {
     const retryAfter = response.headers.get("Retry-After");
@@ -170,8 +278,8 @@ function jsonHeaders(env: WorkerEnv): Record<string, string> {
 function corsHeaders(env: WorkerEnv): Record<string, string> {
   return {
     "Access-Control-Allow-Origin": env.ALLOWED_ORIGIN || DEFAULT_ALLOWED_ORIGIN,
-    "Access-Control-Allow-Methods": "GET, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, X-Household-Backup-Key",
   };
 }
 

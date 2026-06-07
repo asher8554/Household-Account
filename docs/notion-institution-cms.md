@@ -1,11 +1,12 @@
 # Notion 금융기관 CMS 설정
 
-이 문서는 Notion을 금융기관 안내문과 파서 힌트 CMS로 쓰고, GitHub Pages UI가 Cloudflare Worker를 통해 최신 설정을 읽는 절차를 정리합니다.
+이 문서는 Notion을 금융기관 안내문과 파서 힌트 CMS로 쓰고, 필요할 때 GitHub Pages UI의 백업 JSON을 Cloudflare Worker를 통해 Notion data source에 기록하는 절차를 정리합니다.
 
 ## 역할
 
-- Notion은 금융기관별 안내 문구와 읽기 전용 파서 힌트만 저장합니다.
-- 거래 데이터, 카드번호, 계좌번호, 로그인 정보, Notion token은 Notion 데이터베이스에 넣지 않습니다.
+- Notion은 기본적으로 금융기관별 안내 문구와 읽기 전용 파서 힌트를 저장합니다.
+- 사용자가 백업 패널에서 실행한 경우에만 현재 가계부 백업 JSON을 별도 Notion page 본문에 기록합니다.
+- 카드번호, 계좌번호, 로그인 정보, Notion token은 Notion 데이터베이스에 넣지 않습니다.
 - GitHub Pages 앱은 Notion-backed 원격 데이터를 `VITE_INSTITUTION_CMS_URL`로 지정된 Worker의 `/institutions` JSON을 통해서만 읽고, 실패 시 공개 가능한 브라우저 캐시 또는 내장 기본값을 사용합니다.
 - Notion token은 Cloudflare Worker secret에만 저장합니다.
 
@@ -43,7 +44,7 @@
 ## Notion connection
 
 1. Notion developer portal에서 internal connection을 만듭니다.
-2. connection capability는 읽기 권한만 부여합니다.
+2. connection capability는 기관 catalog 조회만 쓸 경우 읽기 권한으로 충분합니다. 백업 JSON 기록까지 쓰려면 Insert Content 권한도 켭니다.
 3. `Financial Institutions` 데이터베이스 또는 상위 페이지를 connection에 공유합니다.
 4. 데이터베이스의 data source ID를 확인합니다.
 
@@ -60,6 +61,7 @@ Copy-Item .dev.vars.example .dev.vars
 ```dotenv
 NOTION_TOKEN=ntn_your_local_token
 NOTION_DATA_SOURCE_ID=your_notion_data_source_id
+NOTION_BACKUP_WRITE_KEY=random_backup_write_key
 NOTION_VERSION=2026-03-11
 ALLOWED_ORIGIN=http://localhost:5173
 ```
@@ -70,19 +72,22 @@ ALLOWED_ORIGIN=http://localhost:5173
 npm run worker:dev
 ```
 
-상태 확인.
+기관 catalog 상태 확인.
 
 ```powershell
 Invoke-WebRequest -Uri http://localhost:8787/institutions | Select-Object -ExpandProperty StatusCode
 ```
 
+백업 endpoint는 `POST /backups`입니다. 이 endpoint는 `X-Household-Backup-Key` header가 `NOTION_BACKUP_WRITE_KEY`와 일치해야 동작합니다.
+
 ## Cloudflare Worker production secrets
 
-production secret도 key 이름을 먼저 명령에 넣고, 프롬프트가 뜨면 값을 입력합니다. 성공 메시지는 `NOTION_TOKEN`, `NOTION_DATA_SOURCE_ID` 이름으로 보여야 합니다.
+production secret도 key 이름을 먼저 명령에 넣고, 프롬프트가 뜨면 값을 입력합니다. 성공 메시지는 `NOTION_TOKEN`, `NOTION_DATA_SOURCE_ID`, `NOTION_BACKUP_WRITE_KEY` 이름으로 보여야 합니다.
 
 ```powershell
 npx wrangler secret put NOTION_TOKEN
 npx wrangler secret put NOTION_DATA_SOURCE_ID
+npx wrangler secret put NOTION_BACKUP_WRITE_KEY
 ```
 
 `wrangler.toml`의 production origin은 GitHub Pages 주소로 제한합니다.
@@ -111,6 +116,8 @@ GitHub Pages build 환경에는 production Worker URL을 넣습니다.
 VITE_INSTITUTION_CMS_URL=https://household-account-institution-cms.<account>.workers.dev/institutions
 ```
 
+백업 패널의 Notion 기록 버튼은 이 URL에서 `/institutions`를 `/backups`로 바꿔 호출합니다. 별도 Vite 환경 변수는 필요 없습니다.
+
 ## iPhone 사용 흐름
 
 1. iPhone Safari에서 GitHub Pages 앱을 엽니다.
@@ -118,12 +125,14 @@ VITE_INSTITUTION_CMS_URL=https://household-account-institution-cms.<account>.wor
 3. Worker가 실패하면 브라우저 캐시를 쓰고, 캐시도 없으면 내장 기본값을 씁니다.
 4. 금융기관을 선택하면 안내 문구, 필수 컬럼, 파서 힌트가 선택 기관 기준으로 바뀝니다.
 5. 카드사나 은행 앱에서 내려받거나 공유한 `csv`, `xls`, `xlsx` 파일을 업로드합니다.
-6. 파일은 브라우저 안에서 파싱되고, 거래 데이터는 기존 IndexedDB와 private GitHub sync 흐름으로만 처리합니다.
+6. 파일은 브라우저 안에서 파싱되고, 거래 데이터는 IndexedDB에 저장됩니다.
+7. 백업 패널에서 `NOTION_BACKUP_WRITE_KEY`와 같은 Notion 백업 키를 입력하고 `Notion 기록`을 누르면 현재 백업 JSON이 Notion data source에 새 page로 기록됩니다.
 
 ## 보안 기준
 
 - Notion token을 GitHub Pages, 브라우저 localStorage, IndexedDB에 저장하지 않습니다.
+- `NOTION_BACKUP_WRITE_KEY`는 Notion token이 아니라 Worker 쓰기 요청 보호용 키입니다. 그래도 브라우저 localStorage에 저장되므로 무작위 긴 값으로 만들고 필요하면 회전합니다.
 - Worker 응답에는 Notion raw page id, raw `properties`, token, integration 정보가 포함되지 않아야 합니다.
-- Notion에는 개인 거래 데이터와 금융 인증 정보를 저장하지 않습니다.
+- Notion 백업 page에는 현재 백업 JSON의 거래 데이터가 들어갑니다. 금융 인증 정보와 Notion token은 넣지 않습니다.
 - Browser localStorage cache에는 공개 가능한 금융기관 catalog만 저장합니다.
 - Parser hints는 컬럼을 찾기 위한 별칭일 뿐이며, 거래 저장 규칙을 우회하지 않습니다.
