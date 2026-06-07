@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-06-07T07:15:06.207Z",
+  "exportedAt": "2026-06-07T07:46:20.402Z",
   "categories": [
     {
       "id": "expense-food",
@@ -287,6 +287,17 @@
       "sortOrder": 25,
       "createdAt": "2026-06-07T07:09:22.660Z",
       "updatedAt": "2026-06-07T07:09:22.660Z"
+    },
+    {
+      "id": "cat_83444c34-46aa-4dd7-956c-517089172366",
+      "type": "expense",
+      "name": "회사",
+      "color": "#328fb3",
+      "isDefault": false,
+      "isActive": true,
+      "sortOrder": 26,
+      "createdAt": "2026-06-07T07:45:58.305Z",
+      "updatedAt": "2026-06-07T07:45:58.305Z"
     }
   ],
   "transactions": [
@@ -1307,22 +1318,22 @@
       "date": "2026-01-15",
       "type": "expense",
       "amount": 6600,
-      "categoryId": "expense-other",
+      "categoryId": "cat_83444c34-46aa-4dd7-956c-517089172366",
       "memo": "[신한카드] 성도전기주식회사 / 카드 신용 / 승인번호 09150220",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-07T06:51:14.265Z"
+      "updatedAt": "2026-06-07T07:46:05.452Z"
     },
     {
       "id": "tx_529354a3-8c55-425e-8f91-8f796c9b28cd",
       "date": "2026-01-15",
       "type": "expense",
       "amount": 14960,
-      "categoryId": "expense-other",
+      "categoryId": "cat_83444c34-46aa-4dd7-956c-517089172366",
       "memo": "[신한카드] 성도전기주식회사 / 카드 신용 / 승인번호 08020539",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-07T06:51:14.265Z"
+      "updatedAt": "2026-06-07T07:46:05.452Z"
     },
     {
       "id": "tx_874ccad3-d65e-413a-83d3-e62321edacbb",
@@ -1340,11 +1351,11 @@
       "date": "2026-01-15",
       "type": "expense",
       "amount": 700,
-      "categoryId": "expense-other",
+      "categoryId": "cat_83444c34-46aa-4dd7-956c-517089172366",
       "memo": "[신한카드] 엘지씨엔에스 / 카드 신용 / 승인번호 18930486",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-07T06:51:14.265Z"
+      "updatedAt": "2026-06-07T07:46:02.833Z"
     },
     {
       "id": "tx_a400c61a-9963-483b-9585-12dbf6b71807",
