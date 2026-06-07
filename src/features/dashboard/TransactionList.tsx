@@ -24,6 +24,7 @@ const sourceLabels: Record<Transaction["source"], string> = {
   "hyundai-card-file": "현대카드 파일",
   "shinhan-notification": "신한카드 알림",
   "bank-file": "은행 파일",
+  "naver-pay-file": "네이버페이 파일",
 };
 
 export function TransactionList({

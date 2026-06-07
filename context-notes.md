@@ -573,3 +573,58 @@
 - 구현 계획 파일은 `docs/superpowers/plans/2026-06-07-notion-institution-cms.md`다.
 - 계획은 Notion token을 브라우저에 두지 않고 Worker secret으로 보관하는 전제를 유지한다.
 - 계획은 Notion 힌트를 header alias 후보로만 사용하고, 거래 저장 검증과 위험한 파싱 규칙은 코드에 남기는 전제를 유지한다.
+
+## Notion 금융기관 CMS 구현 결과
+
+- Cloudflare Worker tooling을 추가하고 `wrangler.toml`에 Worker entry, `NOTION_VERSION`, `ALLOWED_ORIGIN`을 설정했다.
+- Notion 금융기관 page properties를 `InstitutionCatalog`로 정규화하는 Worker-side normalizer를 추가했다.
+- 정규화 결과에는 raw Notion page id와 raw `properties`를 노출하지 않는다.
+- Worker `/institutions` API는 Notion data source query API를 호출하고 정규화된 catalog JSON만 반환한다.
+- Notion token과 data source ID는 Worker secret으로만 받으며, GitHub Pages 앱이나 iPhone 브라우저에는 입력하거나 저장하지 않는다.
+- Worker는 Notion 429를 `notion_rate_limited`로 반환하고 `Retry-After`만 전달한다.
+- Worker는 다른 Notion 오류의 원문 message를 public 응답에 반사하지 않고 고정 문구를 반환한다.
+- Worker pagination은 반복 cursor와 50 page cap으로 무한 루프를 방어한다.
+- React 앱에는 기관 catalog type, fallback, localStorage cache, Worker client, `useInstitutionCatalog` hook을 추가했다.
+- 브라우저 localStorage에는 공개 가능한 기관 catalog cache만 저장한다.
+- fallback catalog에는 신한카드, 현대카드, 국민은행, 하나은행, 토스뱅크를 넣었고 모바일 링크는 iPhone 친화 링크로 맞췄다.
+- 파일 파서는 선택 기관에서 변환한 parser hints를 받아 날짜, 금액, 가맹점, 상태 컬럼 alias 후보로 사용한다.
+- 은행 파일의 출금액, 입금액 처리와 기존 신한카드, 현대카드 alias 기반 파싱은 유지했다.
+- 가져오기 화면은 catalog source, fetchedAt, refresh 버튼, 기관 selector, 지원 형식, parser key, parser hint 요약, 필수 컬럼, PC와 iPhone 안내 단계를 표시한다.
+- 기관 선택을 바꾸면 안내 문구와 parser hint가 선택 기관 기준으로 즉시 바뀐다.
+- 알림 텍스트 붙여넣기 흐름은 기존 신한카드 알림 파서를 그대로 유지한다.
+- Notion CMS 설정 문서는 `docs/notion-institution-cms.md`에 기록했다.
+
+## Notion 금융기관 CMS 검증 결과
+
+- `npx playwright test tests/notion-institution-normalizer.spec.ts tests/institution-service.spec.ts tests/shinhan-file-parser-hints.spec.ts`가 7개 테스트 통과로 완료됐다.
+- Worker 파일은 repo `tsconfig.json` include 밖이라 별도 `npx tsc --noEmit ... workers/...` 명령으로 검증했다.
+- `npm run build`가 TypeScript check와 Vite production build를 통과했다.
+- Vite는 기존과 같은 500 kB 초과 chunk warning을 출력했다.
+- `.dev.vars`가 없어 실제 Notion API 200 smoke는 수행하지 못했다.
+- secret 없는 Worker local smoke는 500 `{"error":"worker_not_configured"}`와 JSON, CORS, no-store header를 반환했다.
+- Browser plugin으로 앱 로드, 금융기관 가져오기 화면 진입, 현대카드 선택, 안내 변경, 콘솔 오류 없음까지 확인했다.
+- Browser screenshot API가 timeout되어 스크린샷 증거는 repo 밖 임시 폴더의 Playwright headless 캡처로 보완했다.
+- Playwright desktop 캡처에서 현대카드 선택 후 기관 설정, parser hint, 파일 입력, 현대카드 PC/iPhone 안내가 표시됨을 확인했다.
+- Playwright mobile 390x844 캡처에서 selector, parser hint 요약, 파일 입력이 겹치지 않고 읽히는 것을 확인했다.
+
+## 네이버페이 가져오기 추가 계획
+
+- 목표는 네이버페이를 금융기관 가져오기 선택 목록에 추가하고, 사용자가 만든 CSV/TXT 형태의 네이버페이 내역을 기존 파일 가져오기 흐름으로 저장하게 하는 것이다.
+- 네이버 공식 도움말은 `Npay > 결제내역`, `Npay 머니 내역`, 현금영수증 내역 확인 경로를 안내하지만, 소비자용 일괄 CSV/xls 다운로드 안내는 확인하지 못했다.
+- 최근 사용자 사례도 공식 다운로드 기능이 없어 네이버페이 머니 내역 화면을 끝까지 펼친 뒤 브라우저 콘솔로 CSV를 생성하는 우회 방식을 사용한다.
+- 따라서 앱 안내는 `공식 일괄 파일이 없으면 직접 CSV/TXT로 정리해서 업로드`라는 보수적 기준으로 둔다.
+- 파서에는 네이버페이 전용 `TransactionSource`를 추가하되, 파일 형식 자체는 기존 CSV/TSV/TXT/xls/xlsx 처리 경로를 재사용한다.
+- 네이버페이 내역은 카드 승인 내역처럼 금액 한 칸 중심의 지출로 보고, 취소/환불/입금 키워드가 있는 경우 기존 `detectTransactionType` 로직으로 수입 처리한다.
+
+## 네이버페이 가져오기 추가 결과
+
+- TDD RED에서 `fallback catalog includes Naver Pay as a pay institution`는 네이버페이 항목 없음으로 실패했다.
+- TDD RED에서 `parseShinhanTransactionFile uses Naver Pay parser hints`는 `transactionSource`가 `shinhan-file`로 나와 실패했다.
+- 내장 fallback catalog에 `네이버페이`를 `pay` 기관, `naver-pay` parser key, `https://pay.naver.com/`, iOS 네이버페이 앱 링크, `csv/tsv/txt` 지원 형식으로 추가했다.
+- `naver-pay-file` 거래 출처를 추가하고 백업 schema와 거래 목록 출처 라벨에 반영했다.
+- 파일 파서는 `naver-pay` parser hint 또는 naver/npay/네이버 파일명에서 네이버페이 파일 출처를 사용한다.
+- 가져오기 화면은 카드/은행/페이 파일 문구, 네이버페이 링크, `결제내역`, `Npay 머니 내역` 검색어를 포함한다.
+- `npx playwright test tests/institution-service.spec.ts tests/shinhan-file-parser-hints.spec.ts`가 7개 테스트 통과로 완료됐다.
+- `npx playwright test`가 10개 테스트 통과로 완료됐다.
+- `npm run build`가 TypeScript check와 Vite production build를 통과했다. 기존처럼 500 kB 초과 chunk warning은 출력됐다.
+- Browser로 `http://localhost:5174/`에서 금융기관 가져오기 화면을 열고 네이버페이 링크, selector 옵션, 선택 후 PC 안내와 `Npay 머니 내역` 문구, 콘솔 오류 없음까지 확인했다.
