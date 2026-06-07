@@ -7,14 +7,13 @@ import { ensureDefaultCategories } from "../features/categories/category-service
 import { useTheme } from "../features/theme/theme-service";
 import type { AppView } from "./app-navigation";
 import { ShinhanImportGuideScreen } from "../features/import-guide/ShinhanImportGuideScreen";
-import { loadPublishedSharedData } from "../features/shared-data/shared-data-service";
 
 export function App() {
   const { theme, toggleTheme } = useTheme();
   const [currentView, setCurrentView] = useState<AppView>("dashboard");
 
   useEffect(() => {
-    void ensureDefaultCategories().then(() => loadPublishedSharedData());
+    void ensureDefaultCategories();
   }, []);
 
   return (

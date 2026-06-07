@@ -10,4 +10,7 @@ pnpm-debug.log*
 .DS_Store
 *.tsbuildinfo
 dashboard-screenshot.png
+test-results/
 .dev.vars
+.gstack/
+public/shared-data.json

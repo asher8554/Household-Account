@@ -1,3 +1,22 @@
+## CSO 보안 및 모듈 구조 리팩토링 계획
+
+- 감사 단계는 `cso` 규칙에 맞춰 읽기 전용으로 진행한다.
+- 코드 수정은 감사 뒤 별도 리팩토링 단계에서 최소 범위로 진행한다.
+- 보안 표면은 GitHub Pages 정적 앱, IndexedDB 로컬 데이터, GitHub Contents API 연동, Cloudflare Worker Notion API 연동, 공개 `shared-data.json`을 우선 확인한다.
+- 구조 리팩토링은 테스트로 검증 가능한 작은 모듈 결합 지점만 다룬다.
+
+## CSO 보안 및 모듈 구조 리팩토링 결과
+
+- `public/shared-data.json`에 실제 거래 날짜, 금액, 메모가 들어 있고 GitHub Pages asset으로 배포될 수 있음을 확인했다.
+- 기존 private GitHub sync 설계 문서는 실제 가계부 데이터를 공개 `public/shared-data.json`에 두지 않는다고 정리했지만, 구현은 앱 시작 시 공개 파일을 자동 반영하고 파일 가져오기 뒤 자동 push를 시도하고 있었다.
+- 공개 `public/shared-data.json` 파일을 삭제하고 `.gitignore`에 추가했다.
+- 앱 시작 시 `loadPublishedSharedData` 자동 실행을 제거했다.
+- 금융기관 파일 가져오기는 IndexedDB 저장까지만 담당하게 하고 GitHub push 의존성을 제거했다.
+- GitHub push 기본 대상은 `Household-Account-Data`의 `data/household-account.json`로 바꿨고, 기존 `asher8554/Household-Account/public/shared-data.json` 설정은 서비스와 UI에서 차단한다.
+- Notion 백업 키는 `Notion 기록` 실행만으로 저장하지 않고 `키 저장` 버튼에서만 저장한다.
+- `public/shared-data.json` 삭제는 새 배포와 이후 커밋의 노출을 막지만, 이미 커밋된 Git 히스토리와 이전 GitHub Pages 배포 캐시의 노출은 별도 히스토리 정리와 재배포가 필요하다.
+- 검증은 `npx playwright test`, `npm run build`, Worker 전용 `tsc`, `npm audit --audit-level=high`, Playwright 브라우저 smoke로 완료했다.
+
 # Household Account Context Notes
 
 ## 결정 사항
