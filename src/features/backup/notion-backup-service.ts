@@ -189,6 +189,11 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 
 function withNotionStatus(message: string, raw: unknown) {
   const notionStatus = isRecord(raw) && typeof raw.notionStatus === "number" ? raw.notionStatus : null;
+  const notionCode = isRecord(raw) && typeof raw.notionCode === "string" ? raw.notionCode : "";
+  const notionMessage = isRecord(raw) && typeof raw.notionMessage === "string" ? raw.notionMessage : "";
+  const detail = [notionStatus ? `Notion HTTP ${notionStatus}` : "", notionCode, notionMessage]
+    .filter(Boolean)
+    .join(" · ");
 
-  return notionStatus ? `${message} Notion HTTP ${notionStatus}.` : message;
+  return detail ? `${message} ${detail}.` : message;
 }

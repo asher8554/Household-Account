@@ -339,3 +339,11 @@
 - [x] GitHub Pages UI가 단계별 Notion 백업 실패 문구를 보여주도록 수정했다.
 - [x] 전체 테스트와 빌드를 통과시킨다.
 - [x] 변경사항을 커밋하고 푸시한다.
+
+## Notion 백업 HTTP 400 수정
+
+- [x] 기존 select 컬럼의 option 누락을 테스트로 재현한다.
+- [x] Worker가 기존 select option을 보존하면서 필요한 option을 보강하도록 수정한다.
+- [x] Notion HTTP 400 원문 code/message를 안전하게 UI에 표시한다.
+- [x] 전체 테스트와 빌드를 통과시킨다.
+- [x] 변경사항을 커밋하고 푸시한다.

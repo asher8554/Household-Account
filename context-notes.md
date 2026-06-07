@@ -702,3 +702,10 @@
 - `/backups` 엔드포인트는 키 없이 호출하면 `401`을 반환하므로 Worker endpoint와 secret 존재는 확인됐다. 실제 실패는 키 인증 이후 Notion schema update, page query, page create/update, legacy cleanup 중 하나다.
 - Worker 응답은 token이나 Notion 원문 오류를 노출하지 않고, `notionStatus`와 단계별 `error` 코드만 반환한다.
 - UI는 schema read/update, page query/create/update, rate limit을 구분해 권한과 컬럼 타입 확인 문구를 보여준다.
+
+## Notion 백업 HTTP 400 수정
+
+- `Notion 백업 행 수정에 실패했습니다... Notion HTTP 400`은 권한 403이 아니라 page update payload와 Notion data source schema 불일치 가능성이 높다.
+- Notion 공식 문서도 page update의 `properties` schema가 parent data source properties와 맞아야 한다고 명시한다.
+- 현재 schema patch는 missing property만 추가하고, 이미 존재하는 `select` property의 missing option은 보강하지 않는다. 기존 `source`나 `type` select option 누락이 있으면 page update가 400을 낼 수 있다.
+- Worker는 Notion token이나 integration id는 숨기되, Notion의 `code`와 짧은 `message`는 UI에 전달해 다음 원인을 확인할 수 있게 한다.

@@ -462,7 +462,50 @@ async function notionErrorResponse(
     return jsonResponse({ error: "notion_rate_limited", message: NOTION_RATE_LIMITED_MESSAGE }, 429, env, headers);
   }
 
-  return jsonResponse({ error: errorCode, message, notionStatus: response.status }, 502, env);
+  return jsonResponse(
+    {
+      error: errorCode,
+      message,
+      notionStatus: response.status,
+      ...notionErrorDetails(await safeNotionErrorPayload(response)),
+    },
+    502,
+    env,
+  );
+}
+
+async function safeNotionErrorPayload(response: Response): Promise<unknown> {
+  try {
+    return await response.json();
+  } catch {
+    return null;
+  }
+}
+
+function notionErrorDetails(payload: unknown) {
+  if (!isRecord(payload)) {
+    return {};
+  }
+
+  const details: { notionCode?: string; notionMessage?: string } = {};
+
+  if (typeof payload.code === "string") {
+    details.notionCode = sanitizeNotionErrorText(payload.code, 80);
+  }
+
+  if (typeof payload.message === "string") {
+    details.notionMessage = sanitizeNotionErrorText(payload.message, 240);
+  }
+
+  return details;
+}
+
+function sanitizeNotionErrorText(value: string, maxLength: number) {
+  return value.replace(/ntn_[A-Za-z0-9]+/g, "[redacted]").slice(0, maxLength);
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null;
 }
 
 function jsonResponse(

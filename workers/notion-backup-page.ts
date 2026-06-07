@@ -32,6 +32,15 @@ export type BackupPayload = {
 
 export type NotionPropertySchema = {
   type?: string;
+  select?: {
+    options?: NotionSelectOption[];
+  };
+};
+
+export type NotionSelectOption = {
+  id?: string;
+  name: string;
+  color?: string;
 };
 
 export type NotionPropertyValue =
@@ -134,8 +143,19 @@ export function buildNotionBackupSchemaPatch(schema: Record<string, NotionProper
   const properties: Record<string, unknown> = {};
 
   for (const [name, propertySchema] of Object.entries(requiredBackupSchema)) {
-    if (!schema[name]?.type) {
+    const existingSchema = schema[name];
+
+    if (!existingSchema?.type) {
       properties[name] = propertySchema;
+      continue;
+    }
+
+    if (existingSchema.type === "select" && isSelectSchema(propertySchema)) {
+      const mergedOptions = mergeSelectOptions(existingSchema.select?.options ?? [], propertySchema.select.options);
+
+      if (mergedOptions.length > (existingSchema.select?.options ?? []).length) {
+        properties[name] = { select: { options: mergedOptions } };
+      }
     }
   }
 
@@ -261,6 +281,22 @@ function selectValue(name: string): NotionPropertyValue {
   return {
     select: { name },
   };
+}
+
+function mergeSelectOptions(existingOptions: NotionSelectOption[], requiredOptions: NotionSelectOption[]) {
+  const seenNames = new Set(existingOptions.map((option) => option.name));
+  const missingOptions = requiredOptions.filter((option) => !seenNames.has(option.name));
+
+  return [...existingOptions, ...missingOptions];
+}
+
+function isSelectSchema(schema: unknown): schema is { select: { options: NotionSelectOption[] } } {
+  return (
+    isRecord(schema) &&
+    isRecord(schema.select) &&
+    Array.isArray(schema.select.options) &&
+    schema.select.options.every((option) => isRecord(option) && typeof option.name === "string")
+  );
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
