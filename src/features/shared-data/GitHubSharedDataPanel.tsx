@@ -124,13 +124,14 @@ export function GitHubSharedDataPanel() {
           </Button>
           <div className="flex items-center gap-2 text-sm text-muted">
             <Github size={16} aria-hidden="true" />
-            <span>버튼을 누르면 공유 JSON이 커밋되고 Notion에도 기록됩니다.</span>
+            <span>GitHub Pages 공유 파일로 커밋하고 Notion에도 기록됩니다.</span>
           </div>
         </div>
       </form>
       {message ? <p className="mt-3 text-sm text-muted">{message}</p> : null}
       <p className="mt-3 text-sm leading-6 text-muted">
-        토큰은 이 브라우저 localStorage에만 저장됩니다. 권한은 이 repo의 Contents read/write로 제한하세요.
+        GitHub Pages 공유는 public/shared-data.json을 이 repo에 공개 커밋합니다. 토큰은 이 브라우저
+        localStorage에만 저장되고 Contents read/write 권한만 필요합니다.
       </p>
     </SectionPanel>
   );

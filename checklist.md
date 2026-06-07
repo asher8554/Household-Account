@@ -1,3 +1,11 @@
+## GitHub Pages 공유 안내 문구 정리
+
+- [x] 혼동되는 GitHub token 안내 문구 위치를 확인한다.
+- [x] GitHub 패널이 Pages 공개 공유 파일 정책을 설명하는지 테스트한다.
+- [x] UI 문구를 GitHub Pages 공개 공유 방식에 맞게 수정한다.
+- [x] 관련 테스트와 빌드를 통과시킨다.
+- [x] 변경사항을 커밋하고 GitHub에 push한다.
+
 ## 현재 PC 기록 push와 Notion 기록 동시 실행
 
 - [x] 현재 GitHub push와 Notion 기록 흐름을 확인한다.
