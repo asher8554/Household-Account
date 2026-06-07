@@ -1,3 +1,23 @@
+## 현재 PC 기록 push와 Notion 기록 동시 실행 계획
+
+- 사용자가 `현재 PC 기록 push`를 누르면 기존 GitHub data repo push 뒤에 Notion 백업도 이어서 실행한다.
+- Notion 백업은 별도 버튼과 같은 `pushCurrentBackupToNotion` 흐름을 사용한다.
+- Notion 백업 키는 자동 저장하지 않는다. 이미 저장된 키를 읽어서 사용한다.
+- GitHub push 성공 뒤 Notion 백업이 실패하면 GitHub 성공 사실과 Notion 실패 사유를 같은 상태 메시지에 표시한다.
+- 사용자가 다른 기기에서도 같은 GitHub Pages 앱에서 데이터를 보기를 원한다고 정정했다.
+- 따라서 `asher8554/Household-Account/public/shared-data.json` push 차단과 앱 시작 시 공개 shared-data 자동 로드 제거는 되돌린다.
+- 이 방식은 거래 내역 JSON이 공개 GitHub Pages asset과 공개 저장소 파일로 노출되는 tradeoff를 갖는다.
+
+## 현재 PC 기록 push와 Notion 기록 동시 실행 결과
+
+- `current-pc-record-push-service`를 추가해 `현재 PC 기록 push` 사용자 행동을 GitHub push와 Notion 기록 순차 실행으로 묶었다.
+- GitHub push가 실패하면 Notion 기록은 실행하지 않는다.
+- GitHub push가 성공하고 Notion 기록이 실패하면 GitHub 성공 메시지와 Notion 실패 사유를 함께 보여준다.
+- GitHub 기본 대상은 다시 `asher8554/Household-Account`의 `public/shared-data.json`로 설정했다.
+- 앱 시작 시 `loadPublishedSharedData`를 다시 실행해 다른 기기에서 GitHub Pages 공유 파일을 IndexedDB에 반영한다.
+- UI 문구는 `버튼을 누르면 공유 JSON이 커밋되고 Notion에도 기록됩니다.`로 바꿨다.
+- 검증은 전체 Playwright 테스트, production build, npm audit, Worker 타입 검증, route mock 기반 브라우저 smoke로 완료했다.
+
 ## CSO 보안 및 모듈 구조 리팩토링 계획
 
 - 감사 단계는 `cso` 규칙에 맞춰 읽기 전용으로 진행한다.
@@ -793,3 +813,8 @@
 - `npx playwright test`는 29개 테스트 통과로 완료됐다.
 - `npm run build`가 TypeScript check와 Vite production build를 통과했다. 기존처럼 500 kB 초과 chunk warning은 출력됐다.
 - Browser QA에서 `http://127.0.0.1:5173/` 데스크톱과 390px 모바일 폭 모두 백업 패널, `Notion 백업 키`, `Notion 기록` 버튼 렌더링을 확인했고 콘솔 오류는 없었다.
+## GitHub Pages 공유 파일 추적 정책
+
+- 사용자는 iPhone과 다른 기기에서도 GitHub Pages 페이지가 같은 거래 내역을 볼 수 있어야 한다고 정정했다.
+- 따라서 `public/shared-data.json`은 다시 GitHub Pages 공개 동기화 파일로 취급한다.
+- `.gitignore`에서 `public/shared-data.json` 제외 규칙을 제거해 GitHub API push 이후 로컬에서도 추적 가능한 공유 데이터 파일로 남도록 했다.
