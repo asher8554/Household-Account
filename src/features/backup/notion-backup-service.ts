@@ -3,6 +3,7 @@ import type { BackupFile } from "./backup-types";
 import { createBackupData } from "./backup-service";
 
 const NOTION_BACKUP_KEY_STORAGE_KEY = "household-account:notion-backup-write-key";
+const MAX_NOTION_BACKUP_BATCHES = 250;
 
 export type NotionBackupResult = {
   version: 1;
@@ -12,7 +13,14 @@ export type NotionBackupResult = {
   legacyRemoved: number;
   categories: number;
   transactions: number;
+  processed?: number;
+  hasMore?: boolean;
+  nextCursor?: NotionBackupCursor | null;
 };
+
+type NotionBackupCursor =
+  | { phase: "cleanup" }
+  | { phase: "upsert"; offset: number };
 
 export function loadNotionBackupWriteKey() {
   try {
@@ -36,8 +44,12 @@ export async function pushCurrentBackupToNotion(writeKey: string) {
   return pushBackupToNotion(backup, writeKey);
 }
 
-export async function pushBackupToNotion(backup: BackupFile, writeKey: string): Promise<NotionBackupResult> {
-  const endpoint = getNotionBackupEndpoint();
+export async function pushBackupToNotion(
+  backup: BackupFile,
+  writeKey: string,
+  workerUrl = import.meta.env?.VITE_INSTITUTION_CMS_URL ?? "",
+): Promise<NotionBackupResult> {
+  const endpoint = getNotionBackupEndpoint(workerUrl);
   const normalizedKey = writeKey.trim();
 
   if (!endpoint) {
@@ -48,25 +60,37 @@ export async function pushBackupToNotion(backup: BackupFile, writeKey: string): 
     throw new Error("Notion 백업 키를 입력하세요.");
   }
 
-  const response = await fetch(endpoint, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Household-Backup-Key": normalizedKey,
-    },
-    body: JSON.stringify(backup),
-  });
+  let cursor: NotionBackupCursor | null = null;
+  let aggregate: NotionBackupResult | null = null;
 
-  const payload = await safeJson(response);
+  for (let batchCount = 0; batchCount < MAX_NOTION_BACKUP_BATCHES; batchCount += 1) {
+    const result = await pushBackupBatchToNotion(endpoint, backup, normalizedKey, cursor);
 
-  if (!response.ok) {
-    throw new Error(getNotionBackupErrorMessage(payload, response.status));
+    aggregate = mergeNotionBackupResults(aggregate, result);
+
+    if (result.hasMore && !result.nextCursor) {
+      throw new Error("Notion 백업 응답 cursor가 올바르지 않습니다.");
+    }
+
+    cursor = result.hasMore ? result.nextCursor ?? null : null;
+
+    if (!cursor) {
+      break;
+    }
   }
 
-  return parseNotionBackupResult(payload);
+  if (cursor) {
+    throw new Error("Notion 백업 batch 처리 횟수가 너무 많습니다.");
+  }
+
+  if (!aggregate) {
+    throw new Error("Notion 백업 응답 형식이 올바르지 않습니다.");
+  }
+
+  return aggregate;
 }
 
-export function getNotionBackupEndpoint(workerUrl = import.meta.env.VITE_INSTITUTION_CMS_URL ?? "") {
+export function getNotionBackupEndpoint(workerUrl = import.meta.env?.VITE_INSTITUTION_CMS_URL ?? "") {
   const normalizedUrl = workerUrl.trim();
 
   if (!normalizedUrl) {
@@ -95,6 +119,57 @@ async function safeJson(response: Response): Promise<unknown> {
   }
 }
 
+async function pushBackupBatchToNotion(
+  endpoint: string,
+  backup: BackupFile,
+  writeKey: string,
+  cursor: NotionBackupCursor | null,
+): Promise<NotionBackupResult> {
+  const body = cursor ? { backup, cursor } : { backup };
+  const response = await fetch(endpoint, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Household-Backup-Key": writeKey,
+    },
+    body: JSON.stringify(body),
+  });
+
+  const payload = await safeJson(response);
+
+  if (!response.ok) {
+    throw new Error(getNotionBackupErrorMessage(payload, response.status));
+  }
+
+  return parseNotionBackupResult(payload);
+}
+
+function mergeNotionBackupResults(
+  current: NotionBackupResult | null,
+  next: NotionBackupResult,
+): NotionBackupResult {
+  if (!current) {
+    return {
+      ...next,
+      hasMore: false,
+      nextCursor: null,
+    };
+  }
+
+  return {
+    version: 1,
+    syncedAt: next.syncedAt,
+    created: current.created + next.created,
+    updated: current.updated + next.updated,
+    legacyRemoved: current.legacyRemoved + next.legacyRemoved,
+    categories: next.categories,
+    transactions: next.transactions,
+    processed: (current.processed ?? 0) + (next.processed ?? 0),
+    hasMore: false,
+    nextCursor: null,
+  };
+}
+
 function parseNotionBackupResult(raw: unknown): NotionBackupResult {
   if (!isRecord(raw) || raw.version !== 1) {
     throw new Error("Notion 백업 응답 형식이 올바르지 않습니다.");
@@ -119,7 +194,26 @@ function parseNotionBackupResult(raw: unknown): NotionBackupResult {
     legacyRemoved: raw.legacyRemoved,
     categories: raw.categories,
     transactions: raw.transactions,
+    processed: typeof raw.processed === "number" ? raw.processed : raw.transactions,
+    hasMore: raw.hasMore === true,
+    nextCursor: parseNotionBackupCursor(raw.nextCursor),
   };
+}
+
+function parseNotionBackupCursor(raw: unknown): NotionBackupCursor | null {
+  if (!isRecord(raw) || typeof raw.phase !== "string") {
+    return null;
+  }
+
+  if (raw.phase === "cleanup") {
+    return { phase: "cleanup" };
+  }
+
+  if (raw.phase === "upsert" && typeof raw.offset === "number" && Number.isInteger(raw.offset) && raw.offset >= 0) {
+    return { phase: "upsert", offset: raw.offset };
+  }
+
+  return null;
 }
 
 function getNotionBackupErrorMessage(raw: unknown, status: number) {

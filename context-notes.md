@@ -740,3 +740,22 @@
 - `npx playwright test`는 24개 테스트 통과로 완료됐다.
 - `npm run build`가 TypeScript check와 Vite production build를 통과했다. 기존처럼 500 kB 초과 chunk warning은 출력됐다.
 - Worker TypeScript 명시 검증도 통과했다.
+
+## Notion 백업 subrequest 한도 대응 계획
+
+- 실제 오류는 `Worker stage upsert · Too many subrequests by single Worker invocation`이다.
+- Cloudflare Workers 공식 limits 기준 Free 플랜은 subrequest가 50/request이며, Notion 거래 row 하나당 `POST /v1/pages` 또는 `PATCH /v1/pages/{id}`가 1개 이상 들어간다.
+- 현재 Worker는 schema read, page query, legacy cleanup, dedupe, 전체 upsert를 한 invocation에서 모두 수행하므로 거래가 50건 안팎만 되어도 한도에 걸린다.
+- 한도 설정을 올리는 방법은 유료 플랜이나 설정 의존이 생긴다. 현재 요구에는 Free 플랜에서도 동작하는 cursor 기반 chunk 처리가 더 적합하다.
+- Worker는 한 번에 최대 20개 Notion 변경만 수행하고, 응답의 `hasMore`와 `nextCursor`로 다음 요청을 안내한다.
+- 브라우저는 같은 백업 JSON을 유지한 채 `nextCursor`가 없어질 때까지 `/backups`를 반복 호출하고 결과 건수를 합산한다.
+
+## Notion 백업 subrequest 한도 대응 결과
+
+- Worker `/backups`는 이제 한 invocation에서 Notion 변경 요청을 최대 20개만 수행한다.
+- legacy summary, category row, duplicate row 정리도 20개 단위로 끊고, 정리가 남으면 `nextCursor={ phase: "cleanup" }`를 반환한다.
+- 거래 upsert는 `nextCursor={ phase: "upsert", offset }`로 이어가며, GitHub Pages UI 호출부는 cursor가 없어질 때까지 같은 백업 JSON을 반복 전송한다.
+- 브라우저 호출부는 각 batch의 `created`, `updated`, `legacyRemoved`, `processed`를 합산하고, Worker가 `hasMore`만 주고 cursor를 누락하면 실패 처리한다.
+- `npx playwright test`는 28개 테스트 통과로 완료됐다.
+- `npm run build`가 TypeScript check와 Vite production build를 통과했다. 기존처럼 500 kB 초과 chunk warning은 출력됐다.
+- Worker TypeScript 명시 검증도 통과했다.

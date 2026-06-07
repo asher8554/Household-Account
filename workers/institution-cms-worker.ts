@@ -5,6 +5,7 @@ import {
   buildNotionBackupSchemaPatch,
   getTitlePropertyName,
   parseBackupPayload,
+  type BackupPayload,
   type NotionBackupRow,
   type NotionPropertySchema,
 } from "./notion-backup-page";
@@ -37,8 +38,18 @@ interface NotionPageResponse {
 const DEFAULT_NOTION_VERSION = "2026-03-11";
 const DEFAULT_ALLOWED_ORIGIN = "*";
 const MAX_NOTION_PAGE_COUNT = 50;
+const BACKUP_MUTATION_BATCH_SIZE = 20;
 const NOTION_REQUEST_FAILED_MESSAGE = "Notion request failed.";
 const NOTION_RATE_LIMITED_MESSAGE = "Notion request was rate limited.";
+
+type BackupCursor =
+  | { phase: "cleanup" }
+  | { phase: "upsert"; offset: number };
+
+type ParsedBackupRequest = {
+  backup: BackupPayload;
+  cursor: BackupCursor | null;
+};
 
 export default {
   async fetch(request: Request, env: WorkerEnv): Promise<Response> {
@@ -115,12 +126,13 @@ async function handleBackupRequest(request: Request, env: WorkerEnv): Promise<Re
     return jsonResponse({ error: "invalid_json" }, 400, env);
   }
 
-  const backup = parseBackupPayload(rawPayload);
+  const backupRequest = parseBackupRequestPayload(rawPayload);
 
-  if (!backup) {
+  if (!backupRequest) {
     return jsonResponse({ error: "invalid_backup_json" }, 400, env);
   }
 
+  const { backup, cursor } = backupRequest;
   const syncedAt = new Date().toISOString();
   let workerStage = "schema_read";
 
@@ -142,29 +154,76 @@ async function handleBackupRequest(request: Request, env: WorkerEnv): Promise<Re
     );
     workerStage = "row_build";
     const rows = buildNotionBackupRows(backup, titlePropertyName, dataSource.properties);
-    workerStage = "legacy_cleanup";
-    const obsoleteRemoved = await trashObsoleteBackupPages(notionEnv, existingPages, titlePropertyName);
-    workerStage = "dedupe";
-    const existingPagesResult = await mapExistingPagesByTitle(
-      notionEnv,
-      existingPages,
-      titlePropertyName,
-      new Set(rows.map((row) => row.id)),
-    );
-    workerStage = "upsert";
-    const result = await upsertNotionBackupRows(notionEnv, rows, existingPagesResult.pageMap);
+    const targetRowIds = new Set(rows.map((row) => row.id));
+    const existingPagesResult = mapExistingPagesByTitle(existingPages, titlePropertyName, targetRowIds);
+    let mutationBudget = BACKUP_MUTATION_BATCH_SIZE;
+    let legacyRemoved = 0;
+    let created = 0;
+    let updated = 0;
+    let processed = 0;
 
-    return jsonResponse(
+    workerStage = "legacy_cleanup";
+    if (cursor?.phase !== "upsert") {
+      const cleanupPages = backupCleanupPages(existingPages, existingPagesResult.duplicatePages, titlePropertyName);
+      const cleanupBatch = cleanupPages.slice(0, mutationBudget);
+
+      legacyRemoved = await trashNotionPages(notionEnv, cleanupBatch);
+      mutationBudget -= cleanupBatch.length;
+
+      if (cleanupPages.length > cleanupBatch.length) {
+        return backupJsonResponse(
+          {
+            syncedAt,
+            created,
+            updated,
+            legacyRemoved,
+            processed,
+            transactions: backup.transactions.length,
+            hasMore: true,
+            nextCursor: { phase: "cleanup" },
+          },
+          env,
+        );
+      }
+    }
+
+    workerStage = "upsert";
+    if (mutationBudget > 0) {
+      const offset = cursor?.phase === "upsert" ? cursor.offset : 0;
+      const rowBatch = rows.slice(offset, offset + mutationBudget);
+      const result = await upsertNotionBackupRows(notionEnv, rowBatch, existingPagesResult.pageMap);
+      const nextOffset = offset + rowBatch.length;
+
+      created = result.created;
+      updated = result.updated;
+      processed = rowBatch.length;
+
+      return backupJsonResponse(
+        {
+          syncedAt,
+          created,
+          updated,
+          legacyRemoved,
+          processed,
+          transactions: backup.transactions.length,
+          hasMore: nextOffset < rows.length,
+          nextCursor: nextOffset < rows.length ? { phase: "upsert", offset: nextOffset } : null,
+        },
+        env,
+      );
+    }
+
+    return backupJsonResponse(
       {
-        version: 1,
         syncedAt,
-        created: result.created,
-        updated: result.updated,
-        legacyRemoved: obsoleteRemoved + existingPagesResult.removed,
-        categories: 0,
+        created,
+        updated,
+        legacyRemoved,
+        processed,
         transactions: backup.transactions.length,
+        hasMore: rows.length > 0,
+        nextCursor: rows.length > 0 ? { phase: "upsert", offset: 0 } : null,
       },
-      201,
       env,
     );
   } catch (error) {
@@ -174,6 +233,85 @@ async function handleBackupRequest(request: Request, env: WorkerEnv): Promise<Re
 
     return workerExceptionResponse(error, workerStage, env);
   }
+}
+
+function parseBackupRequestPayload(raw: unknown): ParsedBackupRequest | null {
+  const directBackup = parseBackupPayload(raw);
+
+  if (directBackup) {
+    return {
+      backup: directBackup,
+      cursor: null,
+    };
+  }
+
+  if (!isRecord(raw)) {
+    return null;
+  }
+
+  const backup = parseBackupPayload(raw.backup);
+
+  if (!backup) {
+    return null;
+  }
+
+  const cursor = raw.cursor === undefined || raw.cursor === null ? null : parseBackupCursor(raw.cursor);
+
+  if (raw.cursor !== undefined && raw.cursor !== null && !cursor) {
+    return null;
+  }
+
+  return {
+    backup,
+    cursor,
+  };
+}
+
+function parseBackupCursor(raw: unknown): BackupCursor | null {
+  if (!isRecord(raw) || typeof raw.phase !== "string") {
+    return null;
+  }
+
+  if (raw.phase === "cleanup") {
+    return { phase: "cleanup" };
+  }
+
+  if (raw.phase === "upsert" && typeof raw.offset === "number" && Number.isInteger(raw.offset) && raw.offset >= 0) {
+    return { phase: "upsert", offset: raw.offset };
+  }
+
+  return null;
+}
+
+function backupJsonResponse(
+  result: {
+    syncedAt: string;
+    created: number;
+    updated: number;
+    legacyRemoved: number;
+    processed: number;
+    transactions: number;
+    hasMore: boolean;
+    nextCursor: BackupCursor | null;
+  },
+  env: WorkerEnv,
+) {
+  return jsonResponse(
+    {
+      version: 1,
+      syncedAt: result.syncedAt,
+      created: result.created,
+      updated: result.updated,
+      legacyRemoved: result.legacyRemoved,
+      categories: 0,
+      transactions: result.transactions,
+      processed: result.processed,
+      hasMore: result.hasMore,
+      nextCursor: result.nextCursor,
+    },
+    201,
+    env,
+  );
 }
 
 async function fetchAllInstitutionPages(
@@ -397,15 +535,14 @@ async function updateNotionBackupPage(
   }
 }
 
-async function mapExistingPagesByTitle(
-  env: RequiredNotionEnv,
+function mapExistingPagesByTitle(
   pages: NotionInstitutionPage[],
   titlePropertyName: string,
   targetRowIds: Set<string>,
 ) {
   const pageMap = new Map<string, string>();
   const pagesByRowId = new Map<string, NotionInstitutionPage[]>();
-  let removed = 0;
+  const allDuplicatePages: NotionInstitutionPage[] = [];
 
   for (const page of pages) {
     const rowId = textFragmentsValue(page.properties?.[titlePropertyName]?.title);
@@ -420,31 +557,25 @@ async function mapExistingPagesByTitle(
   }
 
   for (const [rowId, rowPages] of pagesByRowId) {
-    const [pageToKeep, ...duplicatePages] = rowPages.sort(compareNotionPagesByLatestEdit);
+    const [pageToKeep, ...rowDuplicatePages] = rowPages.sort(compareNotionPagesByLatestEdit);
 
     if (pageToKeep?.id) {
       pageMap.set(rowId, pageToKeep.id);
     }
 
-    for (const page of duplicatePages) {
-      if (!page.id) {
-        continue;
-      }
-
-      await trashNotionPage(env, page.id);
-      removed += 1;
-    }
+    allDuplicatePages.push(...rowDuplicatePages);
   }
 
-  return { pageMap, removed };
+  return { pageMap, duplicatePages: allDuplicatePages };
 }
 
-async function trashObsoleteBackupPages(
-  env: RequiredNotionEnv,
+function backupCleanupPages(
   pages: NotionInstitutionPage[],
+  duplicatePages: NotionInstitutionPage[],
   titlePropertyName: string,
 ) {
-  let removed = 0;
+  const cleanupPages: NotionInstitutionPage[] = [];
+  const seenPageIds = new Set<string>();
 
   for (const page of pages) {
     const id = page.id;
@@ -453,7 +584,31 @@ async function trashObsoleteBackupPages(
       continue;
     }
 
-    await trashNotionPage(env, id);
+    cleanupPages.push(page);
+    seenPageIds.add(id);
+  }
+
+  for (const page of duplicatePages) {
+    if (!page.id || seenPageIds.has(page.id)) {
+      continue;
+    }
+
+    cleanupPages.push(page);
+    seenPageIds.add(page.id);
+  }
+
+  return cleanupPages;
+}
+
+async function trashNotionPages(env: RequiredNotionEnv, pages: NotionInstitutionPage[]) {
+  let removed = 0;
+
+  for (const page of pages) {
+    if (!page.id) {
+      continue;
+    }
+
+    await trashNotionPage(env, page.id);
     removed += 1;
   }
 
