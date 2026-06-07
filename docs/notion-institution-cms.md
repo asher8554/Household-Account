@@ -6,7 +6,7 @@
 
 - Notion은 금융기관별 안내 문구와 읽기 전용 파서 힌트만 저장합니다.
 - 거래 데이터, 카드번호, 계좌번호, 로그인 정보, Notion token은 Notion 데이터베이스에 넣지 않습니다.
-- GitHub Pages 앱은 `VITE_INSTITUTION_CMS_URL`로 지정된 Worker의 `/institutions` JSON만 읽습니다.
+- GitHub Pages 앱은 Notion-backed 원격 데이터를 `VITE_INSTITUTION_CMS_URL`로 지정된 Worker의 `/institutions` JSON을 통해서만 읽고, 실패 시 공개 가능한 브라우저 캐시 또는 내장 기본값을 사용합니다.
 - Notion token은 Cloudflare Worker secret에만 저장합니다.
 
 ## Notion 데이터베이스
