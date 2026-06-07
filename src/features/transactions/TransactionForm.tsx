@@ -5,6 +5,7 @@ import { normalizeAmountInput } from "../../lib/money";
 import { Button } from "../../shared/ui/Button";
 import { FormField } from "../../shared/ui/FormField";
 import type { Category, CategoryType } from "../categories/category-types";
+import { CurrentPcRecordPushButton } from "../shared-data/CurrentPcRecordPushButton";
 import { addTransaction } from "./transaction-service";
 
 type TransactionFormProps = {
@@ -123,6 +124,7 @@ export function TransactionForm({ categories, defaultDateKey }: TransactionFormP
         <Plus size={17} aria-hidden="true" />
         거래 추가
       </Button>
+      <CurrentPcRecordPushButton />
     </form>
   );
 }
