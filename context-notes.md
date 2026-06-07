@@ -759,3 +759,18 @@
 - `npx playwright test`는 28개 테스트 통과로 완료됐다.
 - `npm run build`가 TypeScript check와 Vite production build를 통과했다. 기존처럼 500 kB 초과 chunk warning은 출력됐다.
 - Worker TypeScript 명시 검증도 통과했다.
+
+## 백업 패널 위치 이동 계획
+
+- 사용자는 대시보드 사이드바에 있는 `JSON / 백업` 패널 전체를 금융기관 가져오기 화면으로 옮기길 원한다.
+- 백업 패널에는 JSON 내보내기, 공유용 내보내기, JSON 가져오기, Notion 백업 키와 기록, 전체 초기화가 포함된다.
+- 구현은 `BackupPanel` 컴포넌트를 유지하고, import/use 위치만 `DashboardScreen`에서 `ShinhanImportGuideScreen`으로 옮긴다.
+- 기존 백업 동작은 그대로 유지하고 화면 배치만 바꾼다.
+
+## 백업 패널 위치 이동 결과
+
+- `DashboardScreen` 사이드바에서 `BackupPanel`을 제거하고 `ShinhanImportGuideScreen`의 GitHub 공유 설정 아래에 배치했다.
+- `tests/backup-panel-placement.spec.ts`로 `BackupPanel`이 대시보드가 아니라 금융기관 가져오기 화면에 있는지 고정했다.
+- `npx playwright test`는 29개 테스트 통과로 완료됐다.
+- `npm run build`가 TypeScript check와 Vite production build를 통과했다. 기존처럼 500 kB 초과 chunk warning은 출력됐다.
+- Browser QA에서 `http://127.0.0.1:5173/` 데스크톱과 390px 모바일 폭 모두 백업 패널, `Notion 백업 키`, `Notion 기록` 버튼 렌더링을 확인했고 콘솔 오류는 없었다.
