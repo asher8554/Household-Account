@@ -606,3 +606,25 @@
 - Browser screenshot API가 timeout되어 스크린샷 증거는 repo 밖 임시 폴더의 Playwright headless 캡처로 보완했다.
 - Playwright desktop 캡처에서 현대카드 선택 후 기관 설정, parser hint, 파일 입력, 현대카드 PC/iPhone 안내가 표시됨을 확인했다.
 - Playwright mobile 390x844 캡처에서 selector, parser hint 요약, 파일 입력이 겹치지 않고 읽히는 것을 확인했다.
+
+## 네이버페이 가져오기 추가 계획
+
+- 목표는 네이버페이를 금융기관 가져오기 선택 목록에 추가하고, 사용자가 만든 CSV/TXT 형태의 네이버페이 내역을 기존 파일 가져오기 흐름으로 저장하게 하는 것이다.
+- 네이버 공식 도움말은 `Npay > 결제내역`, `Npay 머니 내역`, 현금영수증 내역 확인 경로를 안내하지만, 소비자용 일괄 CSV/xls 다운로드 안내는 확인하지 못했다.
+- 최근 사용자 사례도 공식 다운로드 기능이 없어 네이버페이 머니 내역 화면을 끝까지 펼친 뒤 브라우저 콘솔로 CSV를 생성하는 우회 방식을 사용한다.
+- 따라서 앱 안내는 `공식 일괄 파일이 없으면 직접 CSV/TXT로 정리해서 업로드`라는 보수적 기준으로 둔다.
+- 파서에는 네이버페이 전용 `TransactionSource`를 추가하되, 파일 형식 자체는 기존 CSV/TSV/TXT/xls/xlsx 처리 경로를 재사용한다.
+- 네이버페이 내역은 카드 승인 내역처럼 금액 한 칸 중심의 지출로 보고, 취소/환불/입금 키워드가 있는 경우 기존 `detectTransactionType` 로직으로 수입 처리한다.
+
+## 네이버페이 가져오기 추가 결과
+
+- TDD RED에서 `fallback catalog includes Naver Pay as a pay institution`는 네이버페이 항목 없음으로 실패했다.
+- TDD RED에서 `parseShinhanTransactionFile uses Naver Pay parser hints`는 `transactionSource`가 `shinhan-file`로 나와 실패했다.
+- 내장 fallback catalog에 `네이버페이`를 `pay` 기관, `naver-pay` parser key, `https://pay.naver.com/`, iOS 네이버페이 앱 링크, `csv/tsv/txt` 지원 형식으로 추가했다.
+- `naver-pay-file` 거래 출처를 추가하고 백업 schema와 거래 목록 출처 라벨에 반영했다.
+- 파일 파서는 `naver-pay` parser hint 또는 naver/npay/네이버 파일명에서 네이버페이 파일 출처를 사용한다.
+- 가져오기 화면은 카드/은행/페이 파일 문구, 네이버페이 링크, `결제내역`, `Npay 머니 내역` 검색어를 포함한다.
+- `npx playwright test tests/institution-service.spec.ts tests/shinhan-file-parser-hints.spec.ts`가 7개 테스트 통과로 완료됐다.
+- `npx playwright test`가 10개 테스트 통과로 완료됐다.
+- `npm run build`가 TypeScript check와 Vite production build를 통과했다. 기존처럼 500 kB 초과 chunk warning은 출력됐다.
+- Browser로 `http://localhost:5174/`에서 금융기관 가져오기 화면을 열고 네이버페이 링크, selector 옵션, 선택 후 PC 안내와 `Npay 머니 내역` 문구, 콘솔 오류 없음까지 확인했다.

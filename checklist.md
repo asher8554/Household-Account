@@ -291,3 +291,14 @@
 - [x] 앱 production build를 통과했다.
 - [x] Worker secret 없는 local smoke에서 `worker_not_configured` 응답을 확인했다.
 - [x] Browser와 Playwright로 desktop/mobile 가져오기 화면 렌더와 기관 선택 상호작용을 검증했다.
+
+## 네이버페이 가져오기 추가
+
+- [x] 네이버페이 소비자 결제내역 다운로드 가능 경로를 확인한다.
+- [x] 네이버페이를 내장 금융기관 목록에 추가한다.
+- [x] 네이버페이 CSV/TXT 파서 기대 동작 테스트를 먼저 작성하고 실패를 확인한다.
+- [x] 네이버페이 거래 출처 라벨과 백업 schema를 맞춘다.
+- [x] 가져오기 화면 안내 문구와 검색어를 네이버페이까지 포함하도록 조정한다.
+- [x] 관련 Playwright 테스트를 통과한다.
+- [x] 앱 production build를 통과한다.
+- [x] Browser로 로컬 가져오기 화면에서 네이버페이 선택과 안내 표시를 확인한다.

@@ -30,8 +30,8 @@ type ColumnMapping = {
 
 type FileInstitution = {
   name: string;
-  source: "shinhan-file" | "hyundai-card-file" | "bank-file";
-  kind: "card" | "bank";
+  source: "shinhan-file" | "hyundai-card-file" | "bank-file" | "naver-pay-file";
+  kind: "card" | "bank" | "pay";
 };
 
 export async function parseShinhanTransactionFile(
@@ -198,6 +198,7 @@ function detectFileInstitution(
     normalizedFileName.includes("hyundai") || normalizedFileName.includes("현대")
       ? { name: "현대카드", source: "hyundai-card-file" as const }
       : { name: "신한카드", source: "shinhan-file" as const };
+  const isNaverPayFile = normalizedFileName.includes("naver") || normalizedFileName.includes("npay") || normalizedFileName.includes("네이버");
   const bankName =
     normalizedFileName.includes("kb") || normalizedFileName.includes("kbstar") || normalizedFileName.includes("국민")
       ? "국민은행"
@@ -214,6 +215,12 @@ function detectFileInstitution(
           source: "bank-file" as const,
           kind: "bank" as const,
         }
+      : isNaverPayFile
+        ? {
+            name: "네이버페이",
+            source: "naver-pay-file" as const,
+            kind: "pay" as const,
+          }
       : {
           name: cardInstitution.name,
           source: cardInstitution.source,
@@ -237,6 +244,14 @@ function detectFileInstitution(
       name: hints.institutionName || detectedInstitution.name,
       source: "bank-file",
       kind: "bank",
+    };
+  }
+
+  if (hints.parserKey === "naver-pay") {
+    return {
+      name: hints.institutionName || detectedInstitution.name,
+      source: "naver-pay-file",
+      kind: "pay",
     };
   }
 

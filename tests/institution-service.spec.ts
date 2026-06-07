@@ -145,3 +145,15 @@ test("loadInstitutionCatalog falls back when cache is unavailable or corrupt", a
     restore();
   }
 });
+
+test("fallback catalog includes Naver Pay as a pay institution", () => {
+  const naverPay = fallbackInstitutionCatalog.institutions.find((item) => item.name === "네이버페이");
+
+  expect(naverPay).toMatchObject({
+    institutionType: "pay",
+    parserKey: "naver-pay",
+    homepageUrl: "https://pay.naver.com/",
+  });
+  expect(naverPay?.supportedFormats).toEqual(expect.arrayContaining(["csv", "txt"]));
+  expect(naverPay?.requiredColumns).toEqual(expect.arrayContaining(["날짜", "항목", "금액"]));
+});
