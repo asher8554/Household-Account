@@ -7,8 +7,9 @@ const NOTION_BACKUP_KEY_STORAGE_KEY = "household-account:notion-backup-write-key
 export type NotionBackupResult = {
   version: 1;
   syncedAt: string;
-  pageId: string;
-  pageUrl: string;
+  created: number;
+  updated: number;
+  legacyRemoved: number;
   categories: number;
   transactions: number;
 };
@@ -101,8 +102,9 @@ function parseNotionBackupResult(raw: unknown): NotionBackupResult {
 
   if (
     typeof raw.syncedAt !== "string" ||
-    typeof raw.pageId !== "string" ||
-    typeof raw.pageUrl !== "string" ||
+    typeof raw.created !== "number" ||
+    typeof raw.updated !== "number" ||
+    typeof raw.legacyRemoved !== "number" ||
     typeof raw.categories !== "number" ||
     typeof raw.transactions !== "number"
   ) {
@@ -112,8 +114,9 @@ function parseNotionBackupResult(raw: unknown): NotionBackupResult {
   return {
     version: 1,
     syncedAt: raw.syncedAt,
-    pageId: raw.pageId,
-    pageUrl: raw.pageUrl,
+    created: raw.created,
+    updated: raw.updated,
+    legacyRemoved: raw.legacyRemoved,
     categories: raw.categories,
     transactions: raw.transactions,
   };
