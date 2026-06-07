@@ -45,13 +45,44 @@ export function GitHubSharedDataPanel() {
 
     setIsPushing(true);
     setMessage("현재 PC 기록을 GitHub 공유 데이터로 push 중입니다.");
+    let isActive = true;
+    const slowNoticeTimer = window.setTimeout(() => {
+      if (isActive) {
+        setMessage("GitHub API 응답을 기다리는 중입니다. 공유 파일 조회나 커밋이 오래 걸릴 수 있습니다.");
+      }
+    }, 10000);
 
     try {
-      const result = await pushCurrentPcRecords(settings);
+      const result = await pushCurrentPcRecords(settings, {
+        onProgress: (progress) => {
+          if (progress.phase === "github_start") {
+            setMessage("현재 PC 기록을 GitHub Pages 공유 파일로 커밋하는 중입니다.");
+          }
+
+          if (progress.phase === "github_success") {
+            window.clearTimeout(slowNoticeTimer);
+            setMessage(
+              `GitHub Pages 공유 파일 push 완료. 거래 ${progress.result.transactions}건. 이어서 Notion에 기록합니다.`,
+            );
+          }
+
+          if (progress.phase === "notion_start") {
+            setMessage("GitHub push 완료. Notion 백업 기록을 시작합니다.");
+          }
+
+          if (progress.phase === "notion_batch") {
+            setMessage(
+              `Notion에 기록 중입니다. batch ${progress.progress.batchCount} 완료. 거래 처리 ${progress.progress.processed ?? 0}/${progress.progress.transactions}건, 생성 ${progress.progress.created}건, 업데이트 ${progress.progress.updated}건, 정리 ${progress.progress.legacyRemoved}건.`,
+            );
+          }
+        },
+      });
       setMessage(formatCurrentPcRecordPushResult(result));
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "GitHub 공유 데이터 push에 실패했습니다.");
     } finally {
+      isActive = false;
+      window.clearTimeout(slowNoticeTimer);
       setIsPushing(false);
     }
   }

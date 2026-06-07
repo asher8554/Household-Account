@@ -16,8 +16,15 @@ const settings: GitHubSharedDataSettings = {
 
 test("pushCurrentPcRecords pushes GitHub data and then records the same backup to Notion", async () => {
   const calls: string[] = [];
+  const progressUpdates: string[] = [];
 
   const result = await pushCurrentPcRecords(settings, {
+    onProgress: (progress) => {
+      if (progress.phase === "github_start") progressUpdates.push("github_start");
+      if (progress.phase === "github_success") progressUpdates.push(`github_success:${progress.result.transactions}`);
+      if (progress.phase === "notion_start") progressUpdates.push("notion_start");
+      if (progress.phase === "notion_batch") progressUpdates.push(`notion_batch:${progress.progress.processed}`);
+    },
     loadNotionBackupWriteKey: () => {
       calls.push("load-notion-key");
       return "notion-key";
@@ -31,8 +38,21 @@ test("pushCurrentPcRecords pushes GitHub data and then records the same backup t
         commitUrl: "https://github.test/commit/abc123",
       };
     },
-    pushNotion: async (writeKey) => {
+    pushNotion: async (writeKey, options) => {
       calls.push(`notion:${writeKey}`);
+      options?.onBatchComplete?.({
+        version: 1,
+        syncedAt: "2026-06-07T12:00:00.500Z",
+        created: 1,
+        updated: 0,
+        legacyRemoved: 0,
+        categories: 0,
+        transactions: 3,
+        processed: 3,
+        hasMore: false,
+        nextCursor: null,
+        batchCount: 1,
+      });
       return {
         version: 1,
         syncedAt: "2026-06-07T12:00:01.000Z",
@@ -49,6 +69,7 @@ test("pushCurrentPcRecords pushes GitHub data and then records the same backup t
   });
 
   expect(calls).toEqual(["github:Household-Account", "load-notion-key", "notion:notion-key"]);
+  expect(progressUpdates).toEqual(["github_start", "github_success:3", "notion_start", "notion_batch:3"]);
   expect(result.notion.status).toBe("success");
   expect(formatCurrentPcRecordPushResult(result)).toBe(
     "현재 PC 기록 3건을 GitHub Pages 공유 파일에 push했고 Notion에도 거래 백업 3건을 기록했습니다.",

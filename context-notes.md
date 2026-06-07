@@ -813,6 +813,21 @@
 - `npx playwright test`는 29개 테스트 통과로 완료됐다.
 - `npm run build`가 TypeScript check와 Vite production build를 통과했다. 기존처럼 500 kB 초과 chunk warning은 출력됐다.
 - Browser QA에서 `http://127.0.0.1:5173/` 데스크톱과 390px 모바일 폭 모두 백업 패널, `Notion 백업 키`, `Notion 기록` 버튼 렌더링을 확인했고 콘솔 오류는 없었다.
+## 현재 PC 기록 push 진행 상태 표시 계획
+
+- 사용자는 `현재 PC 기록을 GitHub 공유 데이터로 push 중입니다.` 상태에서 변화가 없다고 보고했다.
+- 해당 문구는 `GitHubSharedDataPanel`의 `현재 PC 기록 push` 버튼에서 나온다.
+- `pushCurrentPcRecords`는 GitHub push 완료 전, GitHub 완료 후 Notion 시작 전, Notion batch 처리 중 상태를 UI에 전달하지 않는다.
+- GitHub API 조회/커밋 또는 Notion batch가 오래 걸리면 정상 처리 중이어도 같은 문구가 유지되어 멈춘 것처럼 보인다.
+- `pushCurrentPcRecords`에 단계별 progress callback을 추가하고 UI에서 GitHub 대기, GitHub 완료, Notion 시작, Notion batch 진행 상태를 표시한다.
+
+## 현재 PC 기록 push 진행 상태 표시 결과
+
+- `pushCurrentPcRecords`에 `onProgress`를 추가해 `github_start`, `github_success`, `notion_start`, `notion_batch` 단계를 전달한다.
+- `GitHubSharedDataPanel`은 GitHub API가 10초 이상 응답하지 않으면 공유 파일 조회나 커밋이 오래 걸릴 수 있다는 안내로 바꾼다.
+- GitHub push 완료 후 Notion 기록 시작과 Notion batch 완료 메시지를 표시한다.
+- `tests/current-pc-record-push-service.spec.ts`, 전체 Playwright 37개, `npm run build`, 로컬 브라우저 smoke를 통과했다.
+
 ## Notion 백업 진행 상태 표시 계획
 
 - 사용자는 `백업 JSON을 Notion에 기록 중입니다.` 상태에서 변화가 없다고 보고했다.
