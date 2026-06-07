@@ -26,6 +26,28 @@ test("parseShinhanTransactionFile uses supplied column hints", async () => {
   });
 });
 
+test("parseShinhanTransactionFile falls back to the next populated amount column", async () => {
+  const file = new File(["이용일자,이용금액,승인금액,가맹점명\n2026-06-01,,12000,스타벅스"], "multi-amount.csv", {
+    type: "text/csv",
+  });
+
+  const candidates = await parseShinhanTransactionFile(file, {
+    parserKey: "shinhan-card",
+    institutionName: "신한카드",
+    dateColumnHints: ["이용일자"],
+    amountColumnHints: ["이용금액", "승인금액"],
+    merchantColumnHints: ["가맹점명"],
+    statusColumnHints: [],
+  });
+
+  expect(candidates).toHaveLength(1);
+  expect(candidates[0]).toMatchObject({
+    amount: 12000,
+    merchant: "스타벅스",
+    transactionSource: "shinhan-file",
+  });
+});
+
 test("parseShinhanTransactionFile keeps existing aliases without hints", async () => {
   const file = new File(["이용일자,이용금액,가맹점명\n2026-06-01,12000,스타벅스"], "shinhan.csv", {
     type: "text/csv",

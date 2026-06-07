@@ -20,6 +20,7 @@ const columnAliases = {
 type ColumnMapping = {
   date: number;
   amount: number;
+  amountCandidates: number[];
   withdrawalAmount: number;
   depositAmount: number;
   merchant: number;
@@ -89,7 +90,7 @@ function toCandidate(
   const date = parseDateKey(row[mapping.date]);
   const withdrawalAmount = getOptionalAmount(row, mapping.withdrawalAmount);
   const depositAmount = getOptionalAmount(row, mapping.depositAmount);
-  const directAmount = getOptionalAmount(row, mapping.amount);
+  const directAmount = getFirstOptionalAmount(row, mapping.amountCandidates);
   const amount = institution.kind === "bank" ? withdrawalAmount ?? depositAmount ?? directAmount : directAmount;
   const merchant = normalizeLooseText(row[mapping.merchant]);
   const statusText = getOptionalCell(row, mapping.status);
@@ -148,14 +149,29 @@ function getOptionalAmount(row: CellValue[], index: number) {
   return index >= 0 ? parseKrwAmount(row[index]) : null;
 }
 
+function getFirstOptionalAmount(row: CellValue[], indexes: number[]) {
+  for (const index of indexes) {
+    const amount = getOptionalAmount(row, index);
+
+    if (amount) {
+      return amount;
+    }
+  }
+
+  return null;
+}
+
 function getOptionalCell(row: CellValue[], index: number) {
   return index >= 0 ? normalizeLooseText(row[index]) : "";
 }
 
 function buildColumnMapping(headers: string[], hints?: InstitutionParserHints): ColumnMapping {
+  const amountCandidates = findColumnIndexesWithHints(headers, hints?.amountColumnHints, columnAliases.amount);
+
   return {
     date: findColumnIndexWithHints(headers, hints?.dateColumnHints, columnAliases.date),
-    amount: findColumnIndexWithHints(headers, hints?.amountColumnHints, columnAliases.amount),
+    amount: amountCandidates[0] ?? -1,
+    amountCandidates,
     withdrawalAmount: findColumnIndex(headers, columnAliases.withdrawalAmount),
     depositAmount: findColumnIndex(headers, columnAliases.depositAmount),
     merchant: findColumnIndexWithHints(headers, hints?.merchantColumnHints, columnAliases.merchant),
@@ -184,7 +200,7 @@ function findHeaderRowIndex(rows: CellValue[][], hints?: InstitutionParserHints)
 }
 
 function hasAmountColumn(mapping: ColumnMapping) {
-  return mapping.amount >= 0 || mapping.withdrawalAmount >= 0 || mapping.depositAmount >= 0;
+  return mapping.amountCandidates.length > 0 || mapping.withdrawalAmount >= 0 || mapping.depositAmount >= 0;
 }
 
 function detectFileInstitution(
@@ -272,17 +288,32 @@ function findColumnIndexWithHints(headers: string[], hints: string[] | undefined
   return findColumnIndex(headers, aliases);
 }
 
+function findColumnIndexesWithHints(headers: string[], hints: string[] | undefined, aliases: string[]) {
+  return uniqueIndexes([
+    ...findColumnIndexes(headers, cleanAliases(hints ?? [])),
+    ...findColumnIndexes(headers, aliases),
+  ]);
+}
+
 function cleanAliases(aliases: string[]) {
   return aliases.map(normalizeLooseText).filter(Boolean);
 }
 
 function findColumnIndex(headers: string[], aliases: string[]) {
+  return findColumnIndexes(headers, aliases)[0] ?? -1;
+}
+
+function findColumnIndexes(headers: string[], aliases: string[]) {
   const normalizedAliases = aliases.map(normalizeHeader);
 
-  return headers.findIndex((header) => {
+  return headers.flatMap((header, index) => {
     const normalizedHeader = normalizeHeader(header);
-    return normalizedAliases.some((alias) => normalizedHeader.includes(alias));
+    return normalizedAliases.some((alias) => normalizedHeader.includes(alias)) ? [index] : [];
   });
+}
+
+function uniqueIndexes(indexes: number[]) {
+  return Array.from(new Set(indexes));
 }
 
 function normalizeHeader(value: string) {
