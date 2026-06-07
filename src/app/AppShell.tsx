@@ -2,7 +2,7 @@
 import type { ReactNode } from "react";
 import { CalendarDays, Moon, Sun } from "lucide-react";
 import type { ThemeMode } from "../features/theme/theme-service";
-import { appViewLabels, type AppView } from "./app-navigation";
+import { appViewLabels, type AppView, visibleAppViews } from "./app-navigation";
 import { cx } from "../lib/cx";
 
 type AppShellProps = {
@@ -16,7 +16,6 @@ type AppShellProps = {
 export function AppShell({ children, currentView, theme, onChangeView, onToggleTheme }: AppShellProps) {
   const isDark = theme === "dark";
   const ThemeIcon = isDark ? Sun : Moon;
-  const views = Object.keys(appViewLabels) as AppView[];
 
   return (
     <div className="min-h-screen bg-surface text-ink">
@@ -29,7 +28,7 @@ export function AppShell({ children, currentView, theme, onChangeView, onToggleT
               </div>
               <div>
                 <h1 className="text-lg font-semibold tracking-normal">Household Account</h1>
-                <p className="text-sm text-muted">로컬 저장 가계부 달력</p>
+                <p className="text-sm text-muted">가계부 달력</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -49,7 +48,7 @@ export function AppShell({ children, currentView, theme, onChangeView, onToggleT
             </div>
           </div>
           <nav className="flex gap-2 overflow-x-auto" aria-label="앱 화면">
-            {views.map((view) => (
+            {visibleAppViews.map((view) => (
               <button
                 key={view}
                 type="button"

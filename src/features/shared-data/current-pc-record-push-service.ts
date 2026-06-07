@@ -80,3 +80,19 @@ export function formatCurrentPcRecordPushResult(result: CurrentPcRecordPushResul
 
   return `현재 PC 기록 ${result.gitHub.transactions}건을 GitHub Pages 공유 파일에 push했습니다. Notion 기록은 실패했습니다. ${result.notion.message}`;
 }
+
+export function formatCurrentPcRecordPushProgress(progress: CurrentPcRecordPushProgress) {
+  if (progress.phase === "github_start") {
+    return "현재 PC 기록을 GitHub Pages 공유 파일로 커밋하는 중입니다.";
+  }
+
+  if (progress.phase === "github_success") {
+    return `GitHub Pages 공유 파일 push 완료. 거래 ${progress.result.transactions}건. 이어서 Notion에 기록합니다.`;
+  }
+
+  if (progress.phase === "notion_start") {
+    return "GitHub push 완료. Notion 백업 기록을 시작합니다.";
+  }
+
+  return `Notion에 기록 중입니다. batch ${progress.progress.batchCount} 완료. 거래 처리 ${progress.progress.processed ?? 0}/${progress.progress.transactions}건, 생성 ${progress.progress.created}건, 업데이트 ${progress.progress.updated}건, 정리 ${progress.progress.legacyRemoved}건.`;
+}

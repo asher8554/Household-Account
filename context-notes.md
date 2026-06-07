@@ -896,3 +896,18 @@
 - 사용자는 iPhone과 다른 기기에서도 GitHub Pages 페이지가 같은 거래 내역을 볼 수 있어야 한다고 정정했다.
 - 따라서 `public/shared-data.json`은 다시 GitHub Pages 공개 동기화 파일로 취급한다.
 - `.gitignore`에서 `public/shared-data.json` 제외 규칙을 제거해 GitHub API push 이후 로컬에서도 추적 가능한 공유 데이터 파일로 남도록 했다.
+
+## 대시보드 push 버튼과 숨김 가져오기 진입 계획
+
+- 사용자는 거래 입력 아래에서 바로 `현재 PC 기록 push`를 실행하길 원한다.
+- 새 버튼은 별도 구현이 아니라 기존 `pushCurrentPcRecords` 경로를 재사용해 GitHub Pages 공유 파일 커밋과 Notion 백업을 같은 순서로 실행한다.
+- 금융기관 가져오기는 일반 사용자 화면에 노출하지 않는다. GitHub Pages SPA에서 새 서버 라우팅 없이 접근 가능하도록 hash 기반 비밀 진입 `#admin-import`를 사용한다.
+- 상단 설명 문구는 `로컬 저장 가계부 달력`에서 `가계부 달력`로 줄인다.
+
+## 대시보드 push 버튼과 숨김 가져오기 진입 결과
+
+- `CurrentPcRecordPushButton`을 추가하고 `TransactionForm`의 `거래 추가` 버튼 아래에 배치했다.
+- 새 버튼은 저장된 GitHub 공유 설정을 읽어 `pushCurrentPcRecords`를 실행하므로 GitHub Pages 공유 파일 커밋과 Notion 백업이 함께 실행된다.
+- `visibleAppViews`를 도입해 상단 메뉴에서 `금융기관 가져오기`를 숨겼고, `#admin-import` hash로 직접 접근하면 기존 가져오기 화면을 열도록 했다.
+- 헤더 보조 문구를 `가계부 달력`로 변경했다.
+- `npx playwright test` 41개, `npm run build`, Playwright 브라우저 smoke를 통과했다.
