@@ -716,3 +716,11 @@
 - 사용자가 이미 만든 Notion data source를 존중하기 위해 `type` 컬럼을 select로 바꾸라고 요구하지 않고, Worker가 schema를 읽어 `select` 또는 `multi_select` 값을 맞춰 보낸다.
 - 같은 option 계열인 `recordType`, `type`, `source` 모두 기존 컬럼이 multi-select이면 `{ multi_select: [{ name }] }`로 쓰고, select이면 기존처럼 `{ select: { name } }`로 쓴다.
 - schema patch도 기존 multi-select option을 보존하면서 누락된 `expense`, `income`, `shinhan-file`, `hyundai-card-file` 등을 보강한다.
+
+## Notion 거래 전용 백업과 중복 정리
+
+- 사용자는 category 설정 row를 Notion 백업 데이터로 원하지 않는다. Notion 백업은 월간 금액, 날짜, 사용처 같은 거래 row만 남긴다.
+- `buildNotionBackupRows`는 더 이상 category row를 만들지 않고 transaction row만 만든다.
+- 이전 버전이 만든 category row는 `recordType=category` 또는 `expense-`, `income-`, `cat_` id 패턴과 빈 거래 필드로 식별해 휴지통으로 보낸다.
+- 같은 거래 id의 Notion row가 여러 개 있으면 `last_edited_time`이 가장 최신인 page를 남기고 나머지는 휴지통으로 보낸 뒤, 남긴 page만 업데이트한다.
+- 금융기관 설정 row는 현재 백업 거래 id 집합에 포함되지 않으면 중복 정리 대상이 아니므로 건드리지 않는다.
