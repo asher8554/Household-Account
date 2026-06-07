@@ -813,6 +813,19 @@
 - `npx playwright test`는 29개 테스트 통과로 완료됐다.
 - `npm run build`가 TypeScript check와 Vite production build를 통과했다. 기존처럼 500 kB 초과 chunk warning은 출력됐다.
 - Browser QA에서 `http://127.0.0.1:5173/` 데스크톱과 390px 모바일 폭 모두 백업 패널, `Notion 백업 키`, `Notion 기록` 버튼 렌더링을 확인했고 콘솔 오류는 없었다.
+## GitHub Pages 공유 안내 문구 정리 계획
+
+- 사용자가 GitHub 공유 설정 하단의 token 권한 문구가 GitHub Pages 공유 방식과 혼동된다고 지적했다.
+- 현재 정책은 `public/shared-data.json`을 `asher8554/Household-Account` repo에 커밋하고 GitHub Pages가 공개 파일로 배포하는 방식이다.
+- UI 안내는 private repo 동기화처럼 읽히지 않게, Pages 공개 공유 파일로 커밋된다는 점과 token 저장 위치만 짧게 설명한다.
+
+## GitHub Pages 공유 안내 문구 정리 결과
+
+- GitHub 패널의 보조 문구를 `GitHub Pages 공유 파일로 커밋하고 Notion에도 기록됩니다.`로 바꿨다.
+- 하단 token 안내는 `public/shared-data.json`을 이 repo에 공개 커밋한다는 점을 먼저 말하고, token은 localStorage에만 저장되며 Contents read/write 권한만 필요하다고 정리했다.
+- `tests/public-shared-data-security.spec.ts`에 Pages 공개 공유 안내 문구 회귀 테스트를 추가했다.
+- `npx playwright test` 37개와 `npm run build`를 통과했다.
+
 ## GitHub Pages 공유 파일 추적 정책
 
 - 사용자는 iPhone과 다른 기기에서도 GitHub Pages 페이지가 같은 거래 내역을 볼 수 있어야 한다고 정정했다.

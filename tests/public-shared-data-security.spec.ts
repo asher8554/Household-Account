@@ -40,6 +40,14 @@ test("GitHub panel does not block the GitHub Pages shared-data path", () => {
   expect(serviceSource).not.toContain("isUnsafePublicSharedDataTarget");
 });
 
+test("GitHub panel copy explains the Pages public shared-data target", () => {
+  const panelSource = readSource("src/features/shared-data/GitHubSharedDataPanel.tsx");
+
+  expect(panelSource).toContain("GitHub Pages 공유 파일로 커밋하고 Notion에도 기록됩니다.");
+  expect(panelSource).toContain("GitHub Pages 공유는 public/shared-data.json을 이 repo에 공개 커밋합니다.");
+  expect(panelSource).not.toContain("권한은 이 repo의 Contents read/write로 제한하세요.");
+});
+
 function readSource(path: string) {
   return readFileSync(resolve(projectRoot, path), "utf8");
 }
