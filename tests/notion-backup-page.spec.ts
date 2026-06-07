@@ -46,7 +46,8 @@ test("buildNotionBackupRows maps only transactions to data source row properties
     id: "tx-1",
     recordType: "transaction",
   });
-  expect(rows[0].properties.id.title[0]?.text.content).toBe("tx-1");
+  expect(rows[0].properties.id.title[0]?.text.content).toBe("스타벅스");
+  expect(rows[0].properties.recordId.rich_text[0]?.text.content).toBe("tx-1");
   expect(rows[0].properties.recordType.select.name).toBe("transaction");
   expect(rows[0].properties.date.rich_text[0]?.text.content).toBe("2026-06-07");
   expect(rows[0].properties["날짜"].date.start).toBe("2026-06-07");
@@ -118,6 +119,7 @@ test("buildNotionBackupSchemaPatch adds missing meaningful backup columns", () =
       source: { select: {} },
       date: { rich_text: {} },
       "날짜": { date: {} },
+      recordId: { rich_text: {} },
       type: {
         select: {
           options: [
@@ -672,7 +674,8 @@ test("backup endpoint removes category rows and duplicate transaction rows befor
               id: "page-duplicate-old",
               last_edited_time: "2026-06-07T07:01:00.000Z",
               properties: {
-                id: { title: [{ plain_text: "tx-1" }] },
+                id: { title: [{ plain_text: "스타벅스" }] },
+                recordId: { rich_text: [{ plain_text: "tx-1" }] },
                 recordType: { select: { name: "transaction" } },
               },
             },
@@ -680,7 +683,8 @@ test("backup endpoint removes category rows and duplicate transaction rows befor
               id: "page-duplicate-new",
               last_edited_time: "2026-06-07T07:02:00.000Z",
               properties: {
-                id: { title: [{ plain_text: "tx-1" }] },
+                id: { title: [{ plain_text: "스타벅스" }] },
+                recordId: { rich_text: [{ plain_text: "tx-1" }] },
                 recordType: { select: { name: "transaction" } },
               },
             },
@@ -781,7 +785,8 @@ test("backup endpoint removes category rows and duplicate transaction rows befor
         url: "https://api.notion.com/v1/pages/page-duplicate-new",
         body: expect.objectContaining({
           properties: expect.objectContaining({
-            id: { title: [{ type: "text", text: { content: "tx-1" } }] },
+            id: { title: [{ type: "text", text: { content: "스타벅스" } }] },
+            recordId: { rich_text: [{ type: "text", text: { content: "tx-1" } }] },
             recordType: { select: { name: "transaction" } },
           }),
         }),
@@ -808,6 +813,7 @@ function completeBackupSchema() {
     updatedAt: { type: "rich_text" },
     date: { type: "rich_text" },
     "날짜": { type: "date" },
+    recordId: { type: "rich_text" },
     amount: { type: "number" },
     categoryId: { type: "rich_text" },
     memo: { type: "rich_text" },

@@ -1,3 +1,12 @@
+## Notion 캘린더 title 표시를 name으로 변경
+
+- [x] Notion 캘린더 view의 표시 속성 설정을 확인한다.
+- [x] view 표시 속성에 `name`을 추가한다.
+- [x] Notion 백업 row title이 `name`으로 보이고 실제 동기화 키는 `recordId`로 유지되도록 테스트한다.
+- [x] Worker 백업 변환과 기존 row 매칭 로직을 수정한다.
+- [x] 관련 테스트와 빌드, Worker 배포를 완료한다.
+- [x] 변경사항을 커밋하고 GitHub에 push한다.
+
 ## 현재 PC 기록 push 진행 상태 표시
 
 - [x] 멈춘 문구가 나오는 UI와 호출 흐름을 확인한다.
