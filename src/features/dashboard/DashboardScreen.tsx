@@ -5,7 +5,6 @@ import { getTodayKey, isDateKeyInMonth, toDateKey } from "../../lib/date";
 import { useLiveQuery } from "../../db/use-live-query";
 import { listCategories } from "../categories/category-service";
 import { CategoryManager } from "../categories/CategoryManager";
-import { BackupPanel } from "../backup/BackupPanel";
 import { TransactionForm } from "../transactions/TransactionForm";
 import {
   deleteTransaction,
@@ -148,7 +147,6 @@ export function DashboardScreen() {
             onDeleteTransaction={(id) => void deleteTransaction(id)}
             onChangeTransactionCategory={(id, categoryId) => void updateSameMerchantCategory(id, categoryId)}
           />
-          <BackupPanel />
           <CategoryManager categories={data.categories} />
         </aside>
       </div>

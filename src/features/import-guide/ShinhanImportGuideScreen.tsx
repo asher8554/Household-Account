@@ -29,6 +29,7 @@ import {
 } from "../shared-data/github-shared-data-service";
 import { useInstitutionCatalog } from "../institutions/use-institution-catalog";
 import type { InstitutionConfig } from "../institutions/institution-types";
+import { BackupPanel } from "../backup/BackupPanel";
 
 type Step = {
   title: string;
@@ -240,6 +241,7 @@ export function ShinhanImportGuideScreen() {
 
       <CardImportFreshnessPanel />
       <GitHubSharedDataPanel />
+      <BackupPanel />
 
       <div className="grid gap-5 xl:grid-cols-2">
         <SectionPanel title="CSV/TSV/TXT/xls/xlsx 파일 가져오기" eyebrow="카드/은행/페이 파일">
