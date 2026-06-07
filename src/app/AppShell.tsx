@@ -60,7 +60,7 @@ export function AppShell({
             <div className="flex min-w-0 items-center gap-3">
               <button
                 type="button"
-                className="flex h-10 w-10 shrink-0 touch-none select-none items-center justify-center rounded-lg bg-moss text-white transition-colors hover:bg-moss-hover focus:outline-none focus:ring-2 focus:ring-mint focus:ring-offset-2 focus:ring-offset-surface"
+                className="flex h-10 w-10 shrink-0 cursor-default touch-none select-none items-center justify-center rounded-lg bg-moss text-white outline-none [-webkit-tap-highlight-color:transparent] hover:bg-moss active:bg-moss focus:bg-moss focus:outline-none focus-visible:bg-moss focus-visible:outline-none focus-visible:ring-0"
                 aria-label="앱 아이콘"
                 onMouseDown={handleAdminIconMouseDown}
                 onMouseUp={clearAdminPressTimer}

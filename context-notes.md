@@ -992,3 +992,20 @@
 - iPhone 16 393px Playwright 검증에서 1초 누름은 관리자 화면으로 이동하지 않았고, 5.1초 누름은 `#admin-import`와 `금융기관 가져오기` 화면으로 이동했다.
 - in-app Browser로 `127.0.0.1:5173` 로딩, 앱 아이콘 버튼 존재, console error 없음도 확인했다.
 - `npx playwright test` 43개와 `npm run build`를 통과했다. Vite는 기존 chunk size 경고만 표시했다.
+
+## 앱 아이콘 비밀 진입 시각 상태 제거 계획
+
+- 사용자는 앱 아이콘을 클릭했을 때 아이콘에 변화가 없어 클릭되는지 모르도록 만들길 원한다.
+- 5초 long-press 관리자 진입 동작은 유지한다.
+- 기존 아이콘 버튼의 `hover:bg-moss-hover`, `focus:ring-*`가 클릭 가능성과 포커스 상태를 드러낸다.
+- 아이콘 버튼은 배경색을 고정하고, hover, active, focus-visible, 모바일 tap highlight를 모두 제거한다.
+- 별도 안내 문구나 노출 UI는 추가하지 않는다.
+
+## 앱 아이콘 비밀 진입 시각 상태 제거 결과
+
+- 앱 아이콘 버튼에서 `hover:bg-moss-hover`와 `focus:ring-*`를 제거했다.
+- 아이콘 버튼은 `hover:bg-moss`, `active:bg-moss`, `focus:bg-moss`, `focus-visible:bg-moss`, `focus-visible:ring-0`, `cursor-default`, `[-webkit-tap-highlight-color:transparent]`로 고정했다.
+- iPhone 16 393px Playwright 검증에서 짧은 터치 중과 터치 후 `backgroundColor`, `borderColor`, `borderWidth`, `boxShadow`, `outlineWidth`, `transform` 값이 초기 상태와 같았다.
+- 짧은 터치는 `#admin-import`로 이동하지 않았고, 5.1초 long-press는 기존 관리자 화면으로 이동했다.
+- in-app Browser에서 앱 로딩, 아이콘 버튼 클래스, console error 없음, 가로 overflow 없음도 확인했다.
+- `npx playwright test` 44개와 `npm run build`를 통과했다. Vite는 기존 chunk size 경고만 표시했다.
