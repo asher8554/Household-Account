@@ -724,3 +724,19 @@
 - 이전 버전이 만든 category row는 `recordType=category` 또는 `expense-`, `income-`, `cat_` id 패턴과 빈 거래 필드로 식별해 휴지통으로 보낸다.
 - 같은 거래 id의 Notion row가 여러 개 있으면 `last_edited_time`이 가장 최신인 page를 남기고 나머지는 휴지통으로 보낸 뒤, 남긴 page만 업데이트한다.
 - 금융기관 설정 row는 현재 백업 거래 id 집합에 포함되지 않으면 중복 정리 대상이 아니므로 건드리지 않는다.
+
+## Notion 백업 실패 원인 표시 보강 계획
+
+- 사용자가 다시 본 `Notion 백업 기록에 실패했습니다.` 문구는 최신 UI가 받는 Worker 응답에 단계별 `error`, `notionStatus`, `notionMessage`가 없을 때만 나온다.
+- Notion 데이터 소스 스키마는 fetch 기준으로 `recordType=select`, `source=select`, `type=multi_select`이며 최신 Worker 코드가 처리 가능한 형태다.
+- 공개 GitHub Pages 번들은 최신 오류 처리 코드를 포함한다. 남은 후보는 Worker 미배포, 브라우저 캐시, 또는 Worker 내부 예외가 `notion_timeout`으로 뭉개지는 경로다.
+- 이번 변경은 실제 Notion token이나 백업 키를 노출하지 않고, 내부 예외를 안전한 짧은 메시지로 반환해 다음 실패 시 원인을 바로 확인하게 하는 데 집중한다.
+
+## Notion 백업 실패 원인 표시 보강 결과
+
+- Worker `/backups`는 이제 내부 예외를 `notion_backup_worker_exception`으로 반환하고, `workerStage`와 짧게 정리한 `workerMessage`를 포함한다.
+- `workerStage`는 `schema_read`, `schema_update`, `page_query`, `row_build`, `legacy_cleanup`, `dedupe`, `upsert` 중 하나로 남겨 어느 단계에서 끊겼는지 알 수 있게 했다.
+- GitHub Pages UI는 기존 `notion_timeout`과 새 `notion_backup_worker_exception`을 별도 안내 문구로 표시한다.
+- `npx playwright test`는 24개 테스트 통과로 완료됐다.
+- `npm run build`가 TypeScript check와 Vite production build를 통과했다. 기존처럼 500 kB 초과 chunk warning은 출력됐다.
+- Worker TypeScript 명시 검증도 통과했다.

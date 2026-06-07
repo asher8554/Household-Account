@@ -145,6 +145,20 @@ function getNotionBackupErrorMessage(raw: unknown, status: number) {
     return "Notion 요청 제한에 걸렸습니다. 잠시 뒤 다시 시도하세요.";
   }
 
+  if (error === "notion_timeout") {
+    return withNotionStatus(
+      "Notion 백업 Worker가 응답을 끝내지 못했습니다. Worker 최신 배포 후 다시 시도하세요.",
+      raw,
+    );
+  }
+
+  if (error === "notion_backup_worker_exception") {
+    return withNotionStatus(
+      "Notion 백업 처리 중 Worker 내부 오류가 발생했습니다. Worker 최신 배포 후에도 반복되면 상세 메시지를 알려주세요.",
+      raw,
+    );
+  }
+
   if (error === "notion_backup_schema_read_failed") {
     return withNotionStatus(
       "Notion data source를 읽지 못했습니다. data source ID와 integration 공유를 확인하세요.",
@@ -191,7 +205,9 @@ function withNotionStatus(message: string, raw: unknown) {
   const notionStatus = isRecord(raw) && typeof raw.notionStatus === "number" ? raw.notionStatus : null;
   const notionCode = isRecord(raw) && typeof raw.notionCode === "string" ? raw.notionCode : "";
   const notionMessage = isRecord(raw) && typeof raw.notionMessage === "string" ? raw.notionMessage : "";
-  const detail = [notionStatus ? `Notion HTTP ${notionStatus}` : "", notionCode, notionMessage]
+  const workerStage = isRecord(raw) && typeof raw.workerStage === "string" ? `Worker stage ${raw.workerStage}` : "";
+  const workerMessage = isRecord(raw) && typeof raw.workerMessage === "string" ? raw.workerMessage : "";
+  const detail = [notionStatus ? `Notion HTTP ${notionStatus}` : "", notionCode, notionMessage, workerStage, workerMessage]
     .filter(Boolean)
     .join(" · ");
 
