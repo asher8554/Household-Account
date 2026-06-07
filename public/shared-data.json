@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-06-07T11:54:13.727Z",
+  "exportedAt": "2026-06-07T12:00:35.308Z",
   "categories": [
     {
       "id": "expense-food",
@@ -6202,11 +6202,11 @@
       "date": "2026-06-07",
       "type": "expense",
       "amount": 301510,
-      "categoryId": "expense-other",
+      "categoryId": "expense-grocery",
       "memo": "[현대카드] 코스트코코리아 / 상태 본인 / 카드 본인 / 승인번호 00841812",
       "source": "hyundai-card-file",
       "createdAt": "2026-06-07T11:53:59.507Z",
-      "updatedAt": "2026-06-07T11:53:59.507Z"
+      "updatedAt": "2026-06-07T11:54:24.468Z"
     }
   ]
 }
