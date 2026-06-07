@@ -331,3 +331,11 @@
 - [x] 관련 Playwright 테스트와 앱 빌드를 통과한다.
 - [x] Worker TypeScript 검증을 통과한다.
 - [x] 변경사항을 커밋하고 GitHub에 push한다.
+
+## Notion 백업 실패 진단 개선
+
+- [x] `/backups` Notion schema update 실패가 일반 실패 문구로 뭉개지는 현상을 테스트로 재현했다.
+- [x] Worker가 Notion 실패 단계를 안전한 error code로 반환하도록 수정했다.
+- [x] GitHub Pages UI가 단계별 Notion 백업 실패 문구를 보여주도록 수정했다.
+- [x] 전체 테스트와 빌드를 통과시킨다.
+- [x] 변경사항을 커밋하고 푸시한다.

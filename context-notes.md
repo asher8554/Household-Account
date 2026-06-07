@@ -695,3 +695,10 @@
 - `npx playwright test`는 17개 테스트 통과로 완료됐다.
 - `npm run build`가 TypeScript check와 Vite production build를 통과했다. 기존처럼 500 kB 초과 chunk warning은 출력됐다.
 - Worker TypeScript 명시 검증도 통과했다.
+
+## Notion 백업 실패 진단 개선
+
+- 사용자가 본 `Notion 백업 기록에 실패했습니다.` 문구는 Worker가 Notion API 실패를 모두 `notion_request_failed`로 숨겨 UI가 다음 조치를 안내하지 못해서 발생했다.
+- `/backups` 엔드포인트는 키 없이 호출하면 `401`을 반환하므로 Worker endpoint와 secret 존재는 확인됐다. 실제 실패는 키 인증 이후 Notion schema update, page query, page create/update, legacy cleanup 중 하나다.
+- Worker 응답은 token이나 Notion 원문 오류를 노출하지 않고, `notionStatus`와 단계별 `error` 코드만 반환한다.
+- UI는 schema read/update, page query/create/update, rate limit을 구분해 권한과 컬럼 타입 확인 문구를 보여준다.
