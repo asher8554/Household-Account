@@ -35,6 +35,9 @@ export type NotionPropertySchema = {
   select?: {
     options?: NotionSelectOption[];
   };
+  multi_select?: {
+    options?: NotionSelectOption[];
+  };
 };
 
 export type NotionSelectOption = {
@@ -47,6 +50,7 @@ export type NotionPropertyValue =
   | { title: Array<{ type: "text"; text: { content: string } }> }
   | { rich_text: Array<{ type: "text"; text: { content: string } }> }
   | { select: { name: string } }
+  | { multi_select: Array<{ name: string }> }
   | { checkbox: boolean }
   | { number: number };
 
@@ -132,10 +136,14 @@ export function parseBackupPayload(raw: unknown): BackupPayload | null {
   };
 }
 
-export function buildNotionBackupRows(backup: BackupPayload, titlePropertyName: string): NotionBackupRow[] {
+export function buildNotionBackupRows(
+  backup: BackupPayload,
+  titlePropertyName: string,
+  schema: Record<string, NotionPropertySchema> = {},
+): NotionBackupRow[] {
   return [
-    ...backup.categories.map((category) => buildCategoryRow(category, titlePropertyName)),
-    ...backup.transactions.map((transaction) => buildTransactionRow(transaction, titlePropertyName)),
+    ...backup.categories.map((category) => buildCategoryRow(category, titlePropertyName, schema)),
+    ...backup.transactions.map((transaction) => buildTransactionRow(transaction, titlePropertyName, schema)),
   ];
 }
 
@@ -156,6 +164,16 @@ export function buildNotionBackupSchemaPatch(schema: Record<string, NotionProper
       if (mergedOptions.length > (existingSchema.select?.options ?? []).length) {
         properties[name] = { select: { options: mergedOptions } };
       }
+      continue;
+    }
+
+    if (existingSchema.type === "multi_select" && isSelectSchema(propertySchema)) {
+      const existingOptions = existingSchema.multi_select?.options ?? [];
+      const mergedOptions = mergeSelectOptions(existingOptions, propertySchema.select.options);
+
+      if (mergedOptions.length > existingOptions.length) {
+        properties[name] = { multi_select: { options: mergedOptions } };
+      }
     }
   }
 
@@ -166,14 +184,18 @@ export function getTitlePropertyName(schema: Record<string, NotionPropertySchema
   return Object.entries(schema).find(([, property]) => property.type === "title")?.[0] ?? "id";
 }
 
-function buildCategoryRow(category: BackupCategoryPayload, titlePropertyName: string): NotionBackupRow {
+function buildCategoryRow(
+  category: BackupCategoryPayload,
+  titlePropertyName: string,
+  schema: Record<string, NotionPropertySchema>,
+): NotionBackupRow {
   return {
     id: category.id,
     recordType: "category",
     properties: {
       [titlePropertyName]: titleValue(category.id),
-      recordType: selectValue("category"),
-      type: selectValue(category.type),
+      recordType: optionValue("recordType", "category", schema),
+      type: optionValue("type", category.type, schema),
       name: richTextValue(category.name),
       color: richTextValue(category.color),
       isDefault: { checkbox: category.isDefault },
@@ -185,20 +207,24 @@ function buildCategoryRow(category: BackupCategoryPayload, titlePropertyName: st
   };
 }
 
-function buildTransactionRow(transaction: BackupTransactionPayload, titlePropertyName: string): NotionBackupRow {
+function buildTransactionRow(
+  transaction: BackupTransactionPayload,
+  titlePropertyName: string,
+  schema: Record<string, NotionPropertySchema>,
+): NotionBackupRow {
   return {
     id: transaction.id,
     recordType: "transaction",
     properties: {
       [titlePropertyName]: titleValue(transaction.id),
-      recordType: selectValue("transaction"),
+      recordType: optionValue("recordType", "transaction", schema),
       date: richTextValue(transaction.date),
-      type: selectValue(transaction.type),
+      type: optionValue("type", transaction.type, schema),
       amount: { number: transaction.amount },
       categoryId: richTextValue(transaction.categoryId),
       name: richTextValue(transaction.memo),
       memo: richTextValue(transaction.memo),
-      source: selectValue(transaction.source),
+      source: optionValue("source", transaction.source, schema),
       createdAt: richTextValue(transaction.createdAt),
       updatedAt: richTextValue(transaction.updatedAt),
     },
@@ -281,6 +307,20 @@ function selectValue(name: string): NotionPropertyValue {
   return {
     select: { name },
   };
+}
+
+function multiSelectValue(name: string): NotionPropertyValue {
+  return {
+    multi_select: [{ name }],
+  };
+}
+
+function optionValue(
+  propertyName: string,
+  name: string,
+  schema: Record<string, NotionPropertySchema>,
+): NotionPropertyValue {
+  return schema[propertyName]?.type === "multi_select" ? multiSelectValue(name) : selectValue(name);
 }
 
 function mergeSelectOptions(existingOptions: NotionSelectOption[], requiredOptions: NotionSelectOption[]) {

@@ -347,3 +347,11 @@
 - [x] Notion HTTP 400 원문 code/message를 안전하게 UI에 표시한다.
 - [x] 전체 테스트와 빌드를 통과시킨다.
 - [x] 변경사항을 커밋하고 푸시한다.
+
+## Notion 백업 multi-select 컬럼 대응
+
+- [x] `type is expected to be multi_select` 오류를 기존 Notion 컬럼 타입 불일치로 해석했다.
+- [x] `recordType`, `type`, `source`가 multi-select 컬럼이면 multi-select 값으로 쓰도록 테스트를 추가했다.
+- [x] 기존 multi-select option을 보존하면서 필요한 option을 보강하도록 수정했다.
+- [x] 전체 테스트와 빌드를 통과시킨다.
+- [x] 변경사항을 커밋하고 푸시한다.

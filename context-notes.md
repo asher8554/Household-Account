@@ -709,3 +709,10 @@
 - Notion 공식 문서도 page update의 `properties` schema가 parent data source properties와 맞아야 한다고 명시한다.
 - 현재 schema patch는 missing property만 추가하고, 이미 존재하는 `select` property의 missing option은 보강하지 않는다. 기존 `source`나 `type` select option 누락이 있으면 page update가 400을 낼 수 있다.
 - Worker는 Notion token이나 integration id는 숨기되, Notion의 `code`와 짧은 `message`는 UI에 전달해 다음 원인을 확인할 수 있게 한다.
+
+## Notion 백업 multi-select 컬럼 대응
+
+- Notion 오류 `type is expected to be multi_select`는 data source의 `type` 컬럼이 multi-select인데 Worker가 `{ select: ... }` 값을 보냈다는 뜻이다.
+- 사용자가 이미 만든 Notion data source를 존중하기 위해 `type` 컬럼을 select로 바꾸라고 요구하지 않고, Worker가 schema를 읽어 `select` 또는 `multi_select` 값을 맞춰 보낸다.
+- 같은 option 계열인 `recordType`, `type`, `source` 모두 기존 컬럼이 multi-select이면 `{ multi_select: [{ name }] }`로 쓰고, select이면 기존처럼 `{ select: { name } }`로 쓴다.
+- schema patch도 기존 multi-select option을 보존하면서 누락된 `expense`, `income`, `shinhan-file`, `hyundai-card-file` 등을 보강한다.
