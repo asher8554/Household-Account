@@ -2,6 +2,8 @@
 import {
   loadNotionBackupWriteKey,
   pushCurrentBackupToNotion,
+  type NotionBackupOptions,
+  type NotionBackupProgress,
   type NotionBackupResult,
 } from "../backup/notion-backup-service";
 import {
@@ -13,8 +15,15 @@ import {
 type PushCurrentPcRecordActions = {
   loadNotionBackupWriteKey?: () => string;
   pushGitHub?: (settings: GitHubSharedDataSettings) => Promise<GitHubSharedDataPushResult>;
-  pushNotion?: (writeKey: string) => Promise<NotionBackupResult>;
+  pushNotion?: (writeKey: string, options?: NotionBackupOptions) => Promise<NotionBackupResult>;
+  onProgress?: (progress: CurrentPcRecordPushProgress) => void;
 };
+
+export type CurrentPcRecordPushProgress =
+  | { phase: "github_start" }
+  | { phase: "github_success"; result: GitHubSharedDataPushResult }
+  | { phase: "notion_start" }
+  | { phase: "notion_batch"; progress: NotionBackupProgress };
 
 export type CurrentPcRecordPushResult = {
   gitHub: GitHubSharedDataPushResult;
@@ -36,10 +45,15 @@ export async function pushCurrentPcRecords(
   const pushGitHub = actions.pushGitHub ?? pushCurrentSharedDataToGitHub;
   const pushNotion = actions.pushNotion ?? pushCurrentBackupToNotion;
   const getNotionKey = actions.loadNotionBackupWriteKey ?? loadNotionBackupWriteKey;
+  actions.onProgress?.({ phase: "github_start" });
   const gitHub = await pushGitHub(settings);
+  actions.onProgress?.({ phase: "github_success", result: gitHub });
 
   try {
-    const notionResult = await pushNotion(getNotionKey());
+    actions.onProgress?.({ phase: "notion_start" });
+    const notionResult = await pushNotion(getNotionKey(), {
+      onBatchComplete: (progress) => actions.onProgress?.({ phase: "notion_batch", progress }),
+    });
 
     return {
       gitHub,
