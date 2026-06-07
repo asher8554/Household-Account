@@ -65,6 +65,27 @@ test("parseShinhanTransactionFile keeps existing aliases without hints", async (
   });
 });
 
+test("parseShinhanTransactionFile prefers Hyundai filename over selected Shinhan card hints", async () => {
+  const file = new File(["이용일자,이용금액,가맹점명\n2026-06-01,12000,현대백화점"], "hyundaicard_20260607.csv", {
+    type: "text/csv",
+  });
+
+  const candidates = await parseShinhanTransactionFile(file, {
+    parserKey: "shinhan-card",
+    institutionName: "신한카드",
+    dateColumnHints: ["이용일자"],
+    amountColumnHints: ["이용금액"],
+    merchantColumnHints: ["가맹점명"],
+    statusColumnHints: [],
+  });
+
+  expect(candidates).toHaveLength(1);
+  expect(candidates[0]).toMatchObject({
+    institutionName: "현대카드",
+    transactionSource: "hyundai-card-file",
+  });
+});
+
 test("parseShinhanTransactionFile uses Naver Pay parser hints", async () => {
   const file = new File(['날짜,시간,항목,금액,유형\n2026.06.01,13:22,스타벅스,"-5,400원",결제'], "naver-pay.csv", {
     type: "text/csv",
