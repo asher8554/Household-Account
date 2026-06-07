@@ -24,6 +24,23 @@ test("secret hash opens the financial import screen", () => {
   expect(appSource).toContain("window.location.hash === secretImportHash");
   expect(appSource).toContain('setCurrentView("shinhan-import")');
   expect(appSource).toContain('window.addEventListener("hashchange", syncViewFromHash)');
+  expect(appSource).toContain("function handleOpenAdminView()");
+  expect(appSource).toContain("window.location.hash = secretImportHash");
+  expect(appSource).toContain("onOpenAdminView={handleOpenAdminView}");
+});
+
+test("app icon long press opens the hidden admin screen", () => {
+  const appShellSource = readSource("src/app/AppShell.tsx");
+
+  expect(appShellSource).toContain("const ADMIN_ICON_LONG_PRESS_MS = 5000");
+  expect(appShellSource).toContain("onOpenAdminView()");
+  expect(appShellSource).toContain('aria-label="앱 아이콘"');
+  expect(appShellSource).toContain("onMouseDown={handleAdminIconMouseDown}");
+  expect(appShellSource).toContain("onMouseUp={clearAdminPressTimer}");
+  expect(appShellSource).toContain("onTouchStart={startAdminPressTimer}");
+  expect(appShellSource).toContain("onTouchEnd={clearAdminPressTimer}");
+  expect(appShellSource).toContain("onTouchCancel={clearAdminPressTimer}");
+  expect(appShellSource).toContain("onBlur={clearAdminPressTimer}");
 });
 
 test("transaction form shows current record update below transaction add", () => {

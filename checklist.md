@@ -488,3 +488,12 @@
 - [x] iPhone 16 폭에서 legend와 x축 사이 간격, 가로 overflow, console error를 검증한다.
 - [x] 관련 테스트와 production build를 통과시킨다.
 - [x] 변경사항을 커밋하고 push한다.
+
+## 앱 아이콘 관리자 진입 long-press
+
+- [x] 기존 숨김 관리자 화면 진입 구조를 확인한다.
+- [x] 헤더 왼쪽 앱 아이콘을 5초 이상 누르면 관리자 화면으로 이동하도록 연결한다.
+- [x] 5초 미만 클릭이나 누르기 취소는 관리자 화면으로 이동하지 않도록 한다.
+- [x] 모바일 iPhone 폭에서 long-press 동작과 화면 전환을 검증한다.
+- [x] 관련 테스트와 production build를 통과시킨다.
+- [x] 변경사항을 커밋하고 push한다.

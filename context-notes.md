@@ -976,3 +976,19 @@
 - iPhone 16 393px과 데스크톱 1280px 모두 가로 overflow와 console error가 없었다.
 - in-app Browser로도 `127.0.0.1:5173`의 앱 로딩, 연간 소비 추세 이동, console error 없음, 가로 overflow 없음 상태를 확인했다.
 - `npx playwright test` 42개와 `npm run build`를 통과했다. Vite는 기존 chunk size 경고만 표시했다.
+
+## 앱 아이콘 관리자 진입 long-press 계획
+
+- 사용자는 헤더 왼쪽 달력 아이콘을 5초 이상 누르면 관리자 페이지에 들어가길 원한다.
+- 기존 관리자 화면은 `secretImportHash` 값 `#admin-import`로 열리는 `shinhan-import` 화면이다. 새 관리자 화면을 만들지 않고 기존 숨김 화면 진입만 연결한다.
+- 5초 미만 클릭은 아무 동작도 하지 않는다. `mouseup`, `mouseleave`, `touchend`, `touchcancel`, `blur` 시 timer를 취소한다.
+- iPhone에서는 long-press가 자연스럽게 동작해야 하므로 아이콘을 버튼으로 바꾸고 `touch-none`, `select-none`을 적용한다.
+
+## 앱 아이콘 관리자 진입 long-press 결과
+
+- `App`에 `handleOpenAdminView`를 추가해 기존 `#admin-import` hash와 `shinhan-import` 화면을 연동했다.
+- `AppShell`의 달력 아이콘을 버튼으로 바꾸고, 5초 timer 기반 long-press 동작을 추가했다.
+- 데스크톱은 `mousedown/mouseup`, iPhone은 `touchstart/touchend` 기준으로 동작한다. `mouseleave`, `touchcancel`, `blur`에서는 timer를 취소한다.
+- iPhone 16 393px Playwright 검증에서 1초 누름은 관리자 화면으로 이동하지 않았고, 5.1초 누름은 `#admin-import`와 `금융기관 가져오기` 화면으로 이동했다.
+- in-app Browser로 `127.0.0.1:5173` 로딩, 앱 아이콘 버튼 존재, console error 없음도 확인했다.
+- `npx playwright test` 43개와 `npm run build`를 통과했다. Vite는 기존 chunk size 경고만 표시했다.

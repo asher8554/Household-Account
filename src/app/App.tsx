@@ -41,11 +41,20 @@ export function App() {
     }
   }
 
+  function handleOpenAdminView() {
+    setCurrentView("shinhan-import");
+
+    if (window.location.hash !== secretImportHash) {
+      window.location.hash = secretImportHash;
+    }
+  }
+
   return (
     <AppShell
       currentView={currentView}
       theme={theme}
       onChangeView={handleChangeView}
+      onOpenAdminView={handleOpenAdminView}
       onToggleTheme={toggleTheme}
     >
       {currentView === "dashboard" ? <DashboardScreen /> : null}
