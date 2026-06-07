@@ -147,3 +147,22 @@ test("filters disabled and nameless entries and sorts enabled entries by order a
     updatedAt: fetchedAt,
   });
 });
+
+test("normalizes parser key from a Notion select property", () => {
+  const catalog = normalizeNotionInstitutionPages(
+    [
+      {
+        properties: {
+          Name: title("Test Card"),
+          "Institution Type": select("card"),
+          Enabled: { checkbox: true },
+          "Sort Order": { number: 1 },
+          "Parser Key": select("shinhan-card"),
+        },
+      },
+    ],
+    "2026-06-07T10:00:00.000Z",
+  );
+
+  expect(catalog.institutions[0]?.parserKey).toBe("shinhan-card");
+});

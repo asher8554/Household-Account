@@ -31,6 +31,8 @@ jobs:
         run: npm ci
 
       - name: Build
+        env:
+          VITE_INSTITUTION_CMS_URL: ${{ vars.VITE_INSTITUTION_CMS_URL }}
         run: npm run build
 
       - name: Upload artifact
