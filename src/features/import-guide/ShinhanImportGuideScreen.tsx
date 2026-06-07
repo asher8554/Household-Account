@@ -1,5 +1,5 @@
 // 금융기관 파일과 신한카드 알림 텍스트 가져오기 화면입니다.
-import { ChangeEvent, DragEvent, useState } from "react";
+import { ChangeEvent, DragEvent, useEffect, useState } from "react";
 import {
   Bell,
   CheckCircle2,
@@ -8,6 +8,7 @@ import {
   ExternalLink,
   FileSpreadsheet,
   MonitorCog,
+  RefreshCw,
   Search,
   Upload,
 } from "lucide-react";
@@ -27,58 +28,15 @@ import {
   loadGitHubSharedDataSettings,
   pushCurrentSharedDataToGitHub,
 } from "../shared-data/github-shared-data-service";
+import { useInstitutionCatalog } from "../institutions/use-institution-catalog";
+import type { InstitutionConfig } from "../institutions/institution-types";
+import { toParserHints } from "./parser-hints";
 
 type Step = {
   title: string;
   description: string;
   detail: string;
 };
-
-const pcSteps: Step[] = [
-  {
-    title: "신한카드 홈페이지 접속",
-    description: "PC 브라우저에서 신한카드 홈페이지에 접속하고 로그인합니다.",
-    detail: "공동인증서, 신한 SOL페이 인증, 간편인증 중 본인이 쓰는 방식으로 로그인합니다.",
-  },
-  {
-    title: "이용내역 조회 화면 이동",
-    description: "상단 메뉴나 검색에서 이용내역, 카드이용내역, 매출전표를 찾습니다.",
-    detail: "메뉴가 보이면 보통 마이, 이용내역, 카드이용내역 또는 카드이용내역(매출전표) 흐름입니다.",
-  },
-  {
-    title: "기간과 카드 선택",
-    description: "가져올 기간, 카드, 국내/해외, 승인/취소 포함 조건을 맞춥니다.",
-    detail: "처음에는 최근 1개월만 내려받아 테스트하는 편이 안전합니다.",
-  },
-  {
-    title: "엑셀 저장",
-    description: "조회 결과 하단이나 우측의 엑셀저장, Excel, 다운로드 버튼을 사용합니다.",
-    detail: "신한카드에서 xls로 내려받아도 드래그앤드롭으로 올리면 자동 변환합니다.",
-  },
-];
-
-const appSteps: Step[] = [
-  {
-    title: "신한 SOL페이 실행",
-    description: "신한 SOL페이 앱을 열고 로그인합니다.",
-    detail: "공식 앱 이름은 신한 SOL페이입니다. 구버전 안내에서는 신한플레이로 표시될 수 있습니다.",
-  },
-  {
-    title: "전체 메뉴에서 이용내역 검색",
-    description: "전체 메뉴 또는 검색에서 카드이용내역, 이용내역, 매출전표를 찾습니다.",
-    detail: "앱 화면이 개편되면 검색어로 찾는 방식이 가장 빠릅니다.",
-  },
-  {
-    title: "기간 필터 적용",
-    description: "월 단위 기간을 선택하고 실제 결제 내역이 보이는지 확인합니다.",
-    detail: "앱에서 파일 내보내기가 보이지 않으면 PC 홈페이지 다운로드를 사용합니다.",
-  },
-  {
-    title: "공유 또는 저장",
-    description: "엑셀, 파일 저장, 공유, 이메일 전송 같은 내보내기 버튼이 있으면 파일로 저장합니다.",
-    detail: "모바일 앱은 버전별로 내보내기 위치가 달라질 수 있습니다.",
-  },
-];
 
 const requiredColumns = [
   "이용일자 또는 승인일자",
@@ -91,16 +49,6 @@ const requiredColumns = [
   "할부개월",
   "승인번호",
   "카드명 또는 카드번호 뒤 4자리",
-];
-
-const shinhanCardMainUrl = "https://www.shinhancard.com/pconts/html/main.html?_refer=https://www.google.com/";
-
-const institutionLinks = [
-  { label: "신한카드", href: shinhanCardMainUrl },
-  { label: "현대카드", href: "https://www.hyundaicard.com/index.jsp" },
-  { label: "국민은행", href: "https://www.kbstar.com/" },
-  { label: "하나은행", href: "https://www.kebhana.com/" },
-  { label: "토스뱅크", href: "https://www.tossbank.com/" },
 ];
 
 const roadmap = [
@@ -124,6 +72,11 @@ const roadmap = [
 const emptyPreview: ShinhanPreviewItem[] = [];
 
 export function ShinhanImportGuideScreen() {
+  const { catalog, isLoading: isLoadingInstitutions, error: institutionError, refresh } = useInstitutionCatalog();
+  const institutions = catalog.institutions;
+  const [selectedInstitutionName, setSelectedInstitutionName] = useState("");
+  const selectedInstitution =
+    institutions.find((institution) => institution.name === selectedInstitutionName) ?? institutions[0] ?? null;
   const [filePreview, setFilePreview] = useState(emptyPreview);
   const [notificationText, setNotificationText] = useState("");
   const [notificationPreview, setNotificationPreview] = useState(emptyPreview);
@@ -132,6 +85,15 @@ export function ShinhanImportGuideScreen() {
   const [isImportingFile, setIsImportingFile] = useState(false);
   const [isImportingNotification, setIsImportingNotification] = useState(false);
   const [isDragActive, setIsDragActive] = useState(false);
+
+  useEffect(() => {
+    if (!institutions[0]) return;
+
+    const hasSelectedInstitution = institutions.some((institution) => institution.name === selectedInstitutionName);
+    if (!selectedInstitutionName || !hasSelectedInstitution) {
+      setSelectedInstitutionName(institutions[0].name);
+    }
+  }, [institutions, selectedInstitutionName]);
 
   async function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -149,7 +111,10 @@ export function ShinhanImportGuideScreen() {
     setStatusMessage("");
 
     try {
-      const candidates = await parseShinhanTransactionFile(file);
+      const candidates = await parseShinhanTransactionFile(
+        file,
+        selectedInstitution ? toParserHints(selectedInstitution) : undefined,
+      );
       const preview = buildShinhanPreview(candidates, await listTransactions());
       await recordFileLoadStatus(file.name, preview);
       setFilePreview(preview);
@@ -251,18 +216,23 @@ export function ShinhanImportGuideScreen() {
               붙여넣은 알림 텍스트만 브라우저 안에서 분석하고, 결과는 IndexedDB에 저장합니다.
             </p>
             <div className="mt-4 flex flex-wrap gap-2">
-              {institutionLinks.map((link) => (
-                <a
-                  key={link.href}
-                  className="inline-flex h-10 items-center gap-2 rounded-lg bg-moss px-4 text-sm font-medium text-white transition-colors hover:bg-moss-hover"
-                  href={link.href}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  <ExternalLink size={16} aria-hidden="true" />
-                  {link.label}
-                </a>
-              ))}
+              {institutions.map((institution) => {
+                const href = getInstitutionHref(institution, "homepage");
+                if (!href) return null;
+
+                return (
+                  <a
+                    key={institution.name}
+                    className="inline-flex h-10 items-center gap-2 rounded-lg bg-moss px-4 text-sm font-medium text-white transition-colors hover:bg-moss-hover"
+                    href={href}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <ExternalLink size={16} aria-hidden="true" />
+                    {institution.name}
+                  </a>
+                );
+              })}
             </div>
             {statusMessage ? (
               <p className="mt-4 rounded-lg border border-line bg-field px-3 py-2 text-sm text-ink">{statusMessage}</p>
@@ -290,6 +260,42 @@ export function ShinhanImportGuideScreen() {
       <div className="grid gap-5 xl:grid-cols-2">
         <SectionPanel title="CSV/xls/xlsx 파일 가져오기" eyebrow="카드/은행 파일">
           <div className="grid gap-4">
+            <div className="grid gap-3 border-b border-line pb-4">
+              <div className="flex flex-wrap items-start justify-between gap-3">
+                <div>
+                  <p className="text-sm font-semibold text-ink">금융기관 설정</p>
+                  <p className="mt-1 text-xs leading-5 text-muted">
+                    {getCatalogSourceLabel(catalog.source)} · {formatCatalogFetchedAt(catalog.fetchedAt)}
+                  </p>
+                </div>
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  onClick={() => void refresh()}
+                  disabled={isLoadingInstitutions}
+                  className="shrink-0"
+                >
+                  <RefreshCw className={isLoadingInstitutions ? "animate-spin" : undefined} size={15} aria-hidden="true" />
+                  새로고침
+                </Button>
+              </div>
+              {institutionError ? <p className="text-sm leading-6 text-coral">{institutionError}</p> : null}
+              <FormField label="가져올 금융기관">
+                <select
+                  className="h-10 w-full rounded-lg border border-line bg-panel px-3 text-sm"
+                  value={selectedInstitution?.name ?? ""}
+                  onChange={(event) => setSelectedInstitutionName(event.target.value)}
+                  disabled={institutions.length === 0}
+                >
+                  {institutions.map((institution) => (
+                    <option key={institution.name} value={institution.name}>
+                      {institution.name}
+                    </option>
+                  ))}
+                </select>
+              </FormField>
+              {selectedInstitution ? <InstitutionHintSummary institution={selectedInstitution} /> : null}
+            </div>
             <FormField label="카드 또는 은행 거래내역 파일">
               <input
                 className="block w-full rounded-lg border border-line bg-field px-3 py-2 text-sm"
@@ -356,27 +362,29 @@ export function ShinhanImportGuideScreen() {
         </SectionPanel>
       </div>
 
-      <div className="grid gap-5 xl:grid-cols-2">
-        <GuideStepsPanel
-          eyebrow="PC"
-          title="신한카드 홈페이지에서 받기"
-          steps={pcSteps}
-          linkLabel="신한카드 홈페이지 열기"
-          linkHref={shinhanCardMainUrl}
-        />
-        <GuideStepsPanel
-          eyebrow="Mobile"
-          title="신한 SOL페이 앱에서 찾기"
-          steps={appSteps}
-          linkLabel="신한 SOL페이 Android"
-          linkHref="https://play.google.com/store/apps/details?id=com.shcard.smartpay&hl=ko"
-        />
-      </div>
+      {selectedInstitution ? (
+        <div className="grid gap-5 xl:grid-cols-2">
+          <GuideStepsPanel
+            eyebrow="PC"
+            title={`${selectedInstitution.name} PC에서 받기`}
+            steps={toGuideSteps(selectedInstitution.pcSteps)}
+            linkLabel={`${selectedInstitution.name} 열기`}
+            linkHref={getInstitutionHref(selectedInstitution, "homepage")}
+          />
+          <GuideStepsPanel
+            eyebrow="Mobile"
+            title={`${selectedInstitution.name} iPhone에서 찾기`}
+            steps={toGuideSteps(selectedInstitution.mobileSteps)}
+            linkLabel={`${selectedInstitution.name} 앱`}
+            linkHref={getInstitutionHref(selectedInstitution, "mobile")}
+          />
+        </div>
+      ) : null}
 
       <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_420px]">
         <SectionPanel title="다운로드 후 파일 확인" eyebrow="검수">
           <div className="grid gap-3 md:grid-cols-2">
-            {requiredColumns.map((column) => (
+            {getRequiredColumns(selectedInstitution).map((column) => (
               <div key={column} className="flex items-center gap-2 rounded-lg border border-line bg-field px-3 py-2 text-sm">
                 <CheckCircle2 className="text-mint" size={16} aria-hidden="true" />
                 <span>{column}</span>
@@ -427,6 +435,69 @@ export function ShinhanImportGuideScreen() {
   );
 }
 
+function InstitutionHintSummary({ institution }: { institution: InstitutionConfig }) {
+  return (
+    <div className="grid gap-2 text-sm text-muted">
+      <p>
+        지원 형식{" "}
+        <span className="font-semibold text-ink">
+          {institution.supportedFormats.length > 0 ? institution.supportedFormats.join(", ") : "미정"}
+        </span>
+      </p>
+      <div className="flex flex-wrap gap-2">
+        {getRequiredColumns(institution).map((column) => (
+          <span key={column} className="rounded-md bg-moss-soft px-2 py-1 text-xs font-medium text-moss">
+            {column}
+          </span>
+        ))}
+      </div>
+      {institution.notes ? <p className="leading-6">{institution.notes}</p> : null}
+    </div>
+  );
+}
+
+function getCatalogSourceLabel(source: "remote" | "cache" | "fallback") {
+  if (source === "remote") return "Notion 최신 정보";
+  if (source === "cache") return "저장된 Notion 캐시";
+  return "내장 기본값";
+}
+
+function formatCatalogFetchedAt(fetchedAt: string) {
+  const date = new Date(fetchedAt);
+  if (Number.isNaN(date.getTime())) return "동기화 시각 미정";
+  return date.toLocaleString("ko-KR");
+}
+
+function getInstitutionHref(institution: InstitutionConfig, preferred: "homepage" | "mobile") {
+  if (preferred === "mobile") {
+    return institution.mobileAppUrl || institution.homepageUrl;
+  }
+
+  return institution.homepageUrl || institution.mobileAppUrl;
+}
+
+function getRequiredColumns(institution: InstitutionConfig | null) {
+  return institution && institution.requiredColumns.length > 0 ? institution.requiredColumns : requiredColumns;
+}
+
+function toGuideSteps(steps: string[]): Step[] {
+  const normalizedSteps = steps.map(stripStepPrefix).filter(Boolean);
+  const displaySteps =
+    normalizedSteps.length > 0
+      ? normalizedSteps
+      : ["거래내역 화면을 열고 기간을 선택합니다.", "CSV, xls, xlsx 파일로 저장하거나 공유합니다."];
+
+  return displaySteps.map((step) => ({
+    title: step,
+    description: "",
+    detail: "",
+  }));
+}
+
+function stripStepPrefix(step: string) {
+  return step.replace(/^\s*\d+[.)]\s*/, "").trim();
+}
+
 type GuideStepsPanelProps = {
   eyebrow: string;
   title: string;
@@ -441,15 +512,17 @@ function GuideStepsPanel({ eyebrow, title, steps, linkLabel, linkHref }: GuideSt
       title={title}
       eyebrow={eyebrow}
       action={
-        <a
-          className="inline-flex h-8 items-center gap-1 rounded-lg border border-line bg-field px-3 text-sm font-medium text-ink transition-colors hover:bg-moss-soft"
-          href={linkHref}
-          target="_blank"
-          rel="noreferrer"
-        >
-          <ExternalLink size={15} aria-hidden="true" />
-          {linkLabel}
-        </a>
+        linkHref ? (
+          <a
+            className="inline-flex h-8 items-center gap-1 rounded-lg border border-line bg-field px-3 text-sm font-medium text-ink transition-colors hover:bg-moss-soft"
+            href={linkHref}
+            target="_blank"
+            rel="noreferrer"
+          >
+            <ExternalLink size={15} aria-hidden="true" />
+            {linkLabel}
+          </a>
+        ) : null
       }
     >
       <ol className="grid gap-3">
@@ -460,8 +533,8 @@ function GuideStepsPanel({ eyebrow, title, steps, linkLabel, linkHref }: GuideSt
             </div>
             <div>
               <h3 className="font-semibold">{step.title}</h3>
-              <p className="mt-1 text-sm leading-6 text-ink">{step.description}</p>
-              <p className="mt-1 text-sm leading-6 text-muted">{step.detail}</p>
+              {step.description ? <p className="mt-1 text-sm leading-6 text-ink">{step.description}</p> : null}
+              {step.detail ? <p className="mt-1 text-sm leading-6 text-muted">{step.detail}</p> : null}
             </div>
           </li>
         ))}
