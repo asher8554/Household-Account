@@ -436,6 +436,13 @@ export function ShinhanImportGuideScreen() {
 }
 
 function InstitutionHintSummary({ institution }: { institution: InstitutionConfig }) {
+  const parserHintGroups = [
+    { label: "날짜", values: institution.dateColumnHints },
+    { label: "금액", values: institution.amountColumnHints },
+    { label: "가맹점", values: institution.merchantColumnHints },
+    { label: "상태", values: institution.statusColumnHints },
+  ];
+
   return (
     <div className="grid gap-2 text-sm text-muted">
       <p>
@@ -443,12 +450,22 @@ function InstitutionHintSummary({ institution }: { institution: InstitutionConfi
         <span className="font-semibold text-ink">
           {institution.supportedFormats.length > 0 ? institution.supportedFormats.join(", ") : "미정"}
         </span>
+        <span className="mx-2 text-line">|</span>
+        파서 <span className="font-semibold text-ink">{institution.parserKey || "기본"}</span>
       </p>
       <div className="flex flex-wrap gap-2">
         {getRequiredColumns(institution).map((column) => (
           <span key={column} className="rounded-md bg-moss-soft px-2 py-1 text-xs font-medium text-moss">
             {column}
           </span>
+        ))}
+      </div>
+      <div className="grid gap-1.5">
+        {parserHintGroups.map((group) => (
+          <p key={group.label} className="text-xs leading-5">
+            <span className="font-semibold text-ink">{group.label}</span>{" "}
+            {group.values.length > 0 ? group.values.join(", ") : "기본 별칭"}
+          </p>
         ))}
       </div>
       {institution.notes ? <p className="leading-6">{institution.notes}</p> : null}
