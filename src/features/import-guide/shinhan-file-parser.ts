@@ -1,6 +1,7 @@
 // 카드와 은행 CSV, xlsx, HTML/XML xls 파일을 거래 후보로 변환합니다.
 import type { ShinhanParsedCandidate } from "./shinhan-import-types";
 import { detectTransactionType, normalizeLooseText, parseDateKey, parseKrwAmount } from "./shinhan-normalizers";
+import type { InstitutionParserHints } from "./parser-hints";
 
 type CellValue = string | number | boolean | Date | null;
 type TextEncoding = "utf-8" | "euc-kr" | "utf-16le" | "utf-16be";
@@ -29,22 +30,25 @@ type ColumnMapping = {
 
 type FileInstitution = {
   name: string;
-  source: "shinhan-file" | "hyundai-card-file" | "bank-file";
-  kind: "card" | "bank";
+  source: "shinhan-file" | "hyundai-card-file" | "bank-file" | "naver-pay-file";
+  kind: "card" | "bank" | "pay";
 };
 
-export async function parseShinhanTransactionFile(file: File): Promise<ShinhanParsedCandidate[]> {
+export async function parseShinhanTransactionFile(
+  file: File,
+  hints?: InstitutionParserHints,
+): Promise<ShinhanParsedCandidate[]> {
   const rows = await readFileRows(file);
   const table = rows.filter((row) => row.some((cell) => normalizeLooseText(cell)));
-  const headerIndex = findHeaderRowIndex(table);
+  const headerIndex = findHeaderRowIndex(table, hints);
 
   if (headerIndex < 0) {
     throw new Error("이용일자, 이용금액, 가맹점명 같은 헤더 행을 찾지 못했습니다.");
   }
 
   const headers = table[headerIndex].map((cell) => normalizeLooseText(cell));
-  const mapping = buildColumnMapping(headers);
-  const institution = detectFileInstitution(file.name, mapping);
+  const mapping = buildColumnMapping(headers, hints);
+  const institution = detectFileInstitution(file.name, mapping, hints);
 
   if (mapping.date < 0 || !hasAmountColumn(mapping) || mapping.merchant < 0) {
     throw new Error("날짜, 금액, 거래내용 컬럼을 자동으로 찾지 못했습니다.");
@@ -148,26 +152,26 @@ function getOptionalCell(row: CellValue[], index: number) {
   return index >= 0 ? normalizeLooseText(row[index]) : "";
 }
 
-function buildColumnMapping(headers: string[]): ColumnMapping {
+function buildColumnMapping(headers: string[], hints?: InstitutionParserHints): ColumnMapping {
   return {
-    date: findColumnIndex(headers, columnAliases.date),
-    amount: findColumnIndex(headers, columnAliases.amount),
+    date: findColumnIndexWithHints(headers, hints?.dateColumnHints, columnAliases.date),
+    amount: findColumnIndexWithHints(headers, hints?.amountColumnHints, columnAliases.amount),
     withdrawalAmount: findColumnIndex(headers, columnAliases.withdrawalAmount),
     depositAmount: findColumnIndex(headers, columnAliases.depositAmount),
-    merchant: findColumnIndex(headers, columnAliases.merchant),
-    status: findColumnIndex(headers, columnAliases.status),
+    merchant: findColumnIndexWithHints(headers, hints?.merchantColumnHints, columnAliases.merchant),
+    status: findColumnIndexWithHints(headers, hints?.statusColumnHints, columnAliases.status),
     approvalNo: findColumnIndex(headers, columnAliases.approvalNo),
     cardName: findColumnIndex(headers, columnAliases.cardName),
   };
 }
 
-function findHeaderRowIndex(rows: CellValue[][]) {
+function findHeaderRowIndex(rows: CellValue[][], hints?: InstitutionParserHints) {
   let bestIndex = -1;
   let bestScore = 0;
 
   rows.slice(0, 12).forEach((row, index) => {
     const headers = row.map((cell) => normalizeLooseText(cell));
-    const mapping = buildColumnMapping(headers);
+    const mapping = buildColumnMapping(headers, hints);
     const score = Number(mapping.date >= 0) + Number(hasAmountColumn(mapping)) + Number(mapping.merchant >= 0);
 
     if (score > bestScore) {
@@ -183,13 +187,18 @@ function hasAmountColumn(mapping: ColumnMapping) {
   return mapping.amount >= 0 || mapping.withdrawalAmount >= 0 || mapping.depositAmount >= 0;
 }
 
-function detectFileInstitution(fileName: string, mapping: ColumnMapping): FileInstitution {
+function detectFileInstitution(
+  fileName: string,
+  mapping: ColumnMapping,
+  hints?: InstitutionParserHints,
+): FileInstitution {
   const normalizedFileName = fileName.toLowerCase();
   const hasBankColumns = mapping.withdrawalAmount >= 0 || mapping.depositAmount >= 0;
   const cardInstitution =
     normalizedFileName.includes("hyundai") || normalizedFileName.includes("현대")
       ? { name: "현대카드", source: "hyundai-card-file" as const }
       : { name: "신한카드", source: "shinhan-file" as const };
+  const isNaverPayFile = normalizedFileName.includes("naver") || normalizedFileName.includes("npay") || normalizedFileName.includes("네이버");
   const bankName =
     normalizedFileName.includes("kb") || normalizedFileName.includes("kbstar") || normalizedFileName.includes("국민")
       ? "국민은행"
@@ -199,19 +208,72 @@ function detectFileInstitution(fileName: string, mapping: ColumnMapping): FileIn
           ? "토스뱅크"
           : "";
 
-  if (hasBankColumns || bankName) {
+  const detectedInstitution =
+    hasBankColumns || bankName
+      ? {
+          name: bankName || "은행거래",
+          source: "bank-file" as const,
+          kind: "bank" as const,
+        }
+      : isNaverPayFile
+        ? {
+            name: "네이버페이",
+            source: "naver-pay-file" as const,
+            kind: "pay" as const,
+          }
+      : {
+          name: cardInstitution.name,
+          source: cardInstitution.source,
+          kind: "card" as const,
+        };
+
+  if (!hints) {
+    return detectedInstitution;
+  }
+
+  if (hints.parserKey === "hyundai-card") {
     return {
-      name: bankName || "은행거래",
+      name: hints.institutionName || detectedInstitution.name,
+      source: "hyundai-card-file",
+      kind: "card",
+    };
+  }
+
+  if (hints.parserKey === "bank-file") {
+    return {
+      name: hints.institutionName || detectedInstitution.name,
       source: "bank-file",
       kind: "bank",
     };
   }
 
+  if (hints.parserKey === "naver-pay") {
+    return {
+      name: hints.institutionName || detectedInstitution.name,
+      source: "naver-pay-file",
+      kind: "pay",
+    };
+  }
+
   return {
-    name: cardInstitution.name,
-    source: cardInstitution.source,
+    name: hints.institutionName || detectedInstitution.name,
+    source: "shinhan-file",
     kind: "card",
   };
+}
+
+function findColumnIndexWithHints(headers: string[], hints: string[] | undefined, aliases: string[]) {
+  const hintedIndex = findColumnIndex(headers, cleanAliases(hints ?? []));
+
+  if (hintedIndex >= 0) {
+    return hintedIndex;
+  }
+
+  return findColumnIndex(headers, aliases);
+}
+
+function cleanAliases(aliases: string[]) {
+  return aliases.map(normalizeLooseText).filter(Boolean);
 }
 
 function findColumnIndex(headers: string[], aliases: string[]) {
