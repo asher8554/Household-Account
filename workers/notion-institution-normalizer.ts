@@ -43,7 +43,7 @@ function normalizePage(
     institutionType: institutionTypeValue(properties["Institution Type"]),
     enabled,
     sortOrder: numberValue(properties["Sort Order"]),
-    parserKey: richTextOrSelectValue(properties["Parser Key"]),
+    parserKey: singleValueProperty(properties["Parser Key"]),
     homepageUrl: urlValue(properties["Homepage URL"]),
     mobileAppUrl: urlValue(properties["Mobile App URL"]),
     supportedFormats: multiSelectValue(properties["Supported Formats"]),
@@ -77,8 +77,14 @@ function richTextValue(property: NotionInstitutionProperty | undefined): string 
   return normalizeSingleLine(textFragmentsValue(property?.rich_text));
 }
 
-function richTextOrSelectValue(property: NotionInstitutionProperty | undefined): string {
-  return richTextValue(property) || normalizeSingleLine(property?.select?.name ?? "");
+function singleValueProperty(property: NotionInstitutionProperty | undefined): string {
+  return (
+    richTextValue(property) ||
+    normalizeSingleLine(property?.select?.name ?? "") ||
+    normalizeSingleLine(property?.status?.name ?? "") ||
+    multiSelectValue(property)[0] ||
+    ""
+  );
 }
 
 function stepValue(property: NotionInstitutionProperty | undefined): string[] {

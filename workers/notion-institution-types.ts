@@ -42,6 +42,7 @@ export interface NotionInstitutionProperty {
   title?: NotionTextFragment[];
   rich_text?: NotionTextFragment[];
   select?: NotionSelectOption | null;
+  status?: NotionSelectOption | null;
   multi_select?: NotionSelectOption[];
   checkbox?: boolean;
   number?: number | null;
