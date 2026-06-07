@@ -12,15 +12,15 @@ type SectionPanelProps = {
 
 export function SectionPanel({ title, eyebrow, action, children, className }: SectionPanelProps) {
   return (
-    <section className={cx("rounded-lg border border-line bg-panel shadow-panel", className)}>
-      <div className="flex items-start justify-between gap-3 border-b border-line px-4 py-3">
-        <div>
+    <section className={cx("min-w-0 overflow-hidden rounded-lg border border-line bg-panel shadow-panel", className)}>
+      <div className="flex flex-col gap-3 border-b border-line px-3 py-3 sm:flex-row sm:items-start sm:justify-between sm:px-4">
+        <div className="min-w-0">
           {eyebrow ? <p className="text-xs font-medium uppercase text-muted">{eyebrow}</p> : null}
-          <h2 className="text-base font-semibold">{title}</h2>
+          <h2 className="truncate text-base font-semibold">{title}</h2>
         </div>
-        {action}
+        {action ? <div className="shrink-0">{action}</div> : null}
       </div>
-      <div className="p-4">{children}</div>
+      <div className="p-3 sm:p-4">{children}</div>
     </section>
   );
 }

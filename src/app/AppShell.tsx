@@ -18,20 +18,20 @@ export function AppShell({ children, currentView, theme, onChangeView, onToggleT
   const ThemeIcon = isDark ? Sun : Moon;
 
   return (
-    <div className="min-h-screen bg-surface text-ink">
+    <div className="min-h-screen overflow-x-hidden bg-surface text-ink">
       <header className="border-b border-line bg-surface/95 backdrop-blur">
-        <div className="mx-auto grid max-w-[1500px] gap-4 px-4 py-4 md:px-6">
+        <div className="mx-auto grid w-full max-w-[1500px] gap-4 px-3 py-4 sm:px-4 md:px-6">
           <div className="flex items-center justify-between gap-4">
-            <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-moss text-white">
+            <div className="flex min-w-0 items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-moss text-white">
                 <CalendarDays size={21} aria-hidden="true" />
               </div>
-              <div>
-                <h1 className="text-lg font-semibold tracking-normal">Household Account</h1>
+              <div className="min-w-0">
+                <h1 className="truncate text-lg font-semibold tracking-normal">Household Account</h1>
                 <p className="text-sm text-muted">가계부 달력</p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex shrink-0 items-center gap-2">
               <button
                 type="button"
                 className="inline-flex h-10 items-center gap-2 rounded-lg border border-line bg-panel px-3 text-sm font-medium text-ink transition-colors hover:bg-moss-soft"
@@ -47,7 +47,7 @@ export function AppShell({ children, currentView, theme, onChangeView, onToggleT
               </div>
             </div>
           </div>
-          <nav className="flex gap-2 overflow-x-auto" aria-label="앱 화면">
+          <nav className="flex gap-2 overflow-x-auto pb-1" aria-label="앱 화면">
             {visibleAppViews.map((view) => (
               <button
                 key={view}
@@ -66,7 +66,7 @@ export function AppShell({ children, currentView, theme, onChangeView, onToggleT
           </nav>
         </div>
       </header>
-      <main className="mx-auto max-w-[1500px] px-4 py-5 md:px-6 md:py-6">{children}</main>
+      <main className="mx-auto w-full max-w-[1500px] px-3 py-4 sm:px-4 md:px-6 md:py-6">{children}</main>
     </div>
   );
 }

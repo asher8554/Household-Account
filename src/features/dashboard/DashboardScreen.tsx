@@ -100,11 +100,11 @@ export function DashboardScreen() {
   }
 
   return (
-    <div className="grid gap-5">
+    <div className="grid min-w-0 gap-4 md:gap-5">
       <MonthSummaryCards summary={monthSummary} />
 
-      <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_390px]">
-        <div className="grid gap-5">
+      <div className="grid min-w-0 gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(20rem,24rem)] xl:gap-5">
+        <div className="grid min-w-0 gap-4 md:gap-5">
           <CalendarGrid
             monthDate={currentMonth}
             selectedDateKey={selectedDateKey}
@@ -136,7 +136,7 @@ export function DashboardScreen() {
           />
         </div>
 
-        <aside className="grid content-start gap-5">
+        <aside className="grid min-w-0 content-start gap-4 md:gap-5">
           <SectionPanel title="거래 입력" eyebrow={isLoading ? "로딩" : "간단 입력"}>
             <TransactionForm categories={data.categories} defaultDateKey={selectedDateKey} />
           </SectionPanel>
