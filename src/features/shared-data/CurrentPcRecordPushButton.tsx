@@ -1,4 +1,4 @@
-// 현재 PC 기록 push 버튼을 거래 입력 폼에서 재사용합니다.
+// 현재 기록 업데이트 버튼을 거래 입력 폼에서 재사용합니다.
 import { useState } from "react";
 import { Upload } from "lucide-react";
 import { Button } from "../../shared/ui/Button";
@@ -27,7 +27,7 @@ export function CurrentPcRecordPushButton() {
     }
 
     setIsPushing(true);
-    setMessage("현재 PC 기록을 GitHub 공유 데이터로 push 중입니다.");
+    setMessage("현재 기록을 업데이트 중입니다.");
     let isActive = true;
     const slowNoticeTimer = window.setTimeout(() => {
       if (isActive) {
@@ -47,7 +47,7 @@ export function CurrentPcRecordPushButton() {
       });
       setMessage(formatCurrentPcRecordPushResult(result));
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "GitHub 공유 데이터 push에 실패했습니다.");
+      setMessage(error instanceof Error ? error.message : "현재 기록 업데이트에 실패했습니다.");
     } finally {
       isActive = false;
       window.clearTimeout(slowNoticeTimer);
@@ -59,7 +59,7 @@ export function CurrentPcRecordPushButton() {
     <div className="grid gap-2 border-t border-line pt-3">
       <Button variant="secondary" className="w-full" disabled={isPushing} onClick={handlePush}>
         <Upload size={17} aria-hidden="true" />
-        {isPushing ? "push 중" : "현재 PC 기록 push"}
+        {isPushing ? "업데이트 중" : "현재 기록 업데이트"}
       </Button>
       {message ? (
         <p className={hasToken ? "text-sm text-muted" : "text-sm text-coral"}>{message}</p>

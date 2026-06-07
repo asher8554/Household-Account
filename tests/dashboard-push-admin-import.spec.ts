@@ -26,13 +26,16 @@ test("secret hash opens the financial import screen", () => {
   expect(appSource).toContain('window.addEventListener("hashchange", syncViewFromHash)');
 });
 
-test("transaction form shows current PC push below transaction add", () => {
+test("transaction form shows current record update below transaction add", () => {
   const transactionFormSource = readSource("src/features/transactions/TransactionForm.tsx");
+  const pushButtonSource = readSource("src/features/shared-data/CurrentPcRecordPushButton.tsx");
 
   expect(transactionFormSource).toContain('import { CurrentPcRecordPushButton } from "../shared-data/CurrentPcRecordPushButton";');
   expect(transactionFormSource.indexOf("거래 추가")).toBeLessThan(
     transactionFormSource.indexOf("<CurrentPcRecordPushButton />"),
   );
+  expect(pushButtonSource).toContain("현재 기록 업데이트");
+  expect(pushButtonSource).not.toContain("현재 PC 기록 push");
 });
 
 test("header copy uses household calendar wording", () => {
