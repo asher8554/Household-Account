@@ -189,10 +189,9 @@ async function handleBackupRequest(request: Request, env: WorkerEnv): Promise<Re
 
     workerStage = "upsert";
     if (mutationBudget > 0) {
-      const offset = cursor?.phase === "upsert" ? cursor.offset : 0;
-      const rowBatch = rows.slice(offset, offset + mutationBudget);
+      const pendingRows = rows.filter((row) => needsNotionBackupMutation(row, existingPagesResult.pageMap.get(row.id)));
+      const rowBatch = pendingRows.slice(0, mutationBudget);
       const result = await upsertNotionBackupRows(notionEnv, rowBatch, existingPagesResult.pageMap);
-      const nextOffset = offset + rowBatch.length;
 
       created = result.created;
       updated = result.updated;
@@ -206,8 +205,8 @@ async function handleBackupRequest(request: Request, env: WorkerEnv): Promise<Re
           legacyRemoved,
           processed,
           transactions: backup.transactions.length,
-          hasMore: nextOffset < rows.length,
-          nextCursor: nextOffset < rows.length ? { phase: "upsert", offset: nextOffset } : null,
+          hasMore: pendingRows.length > rowBatch.length,
+          nextCursor: pendingRows.length > rowBatch.length ? { phase: "upsert", offset: 0 } : null,
         },
         env,
       );
@@ -450,16 +449,20 @@ async function updateNotionDataSourceSchema(
 async function upsertNotionBackupRows(
   env: RequiredNotionEnv,
   rows: NotionBackupRow[],
-  existingPageById: Map<string, string>,
+  existingPageById: Map<string, NotionInstitutionPage>,
 ): Promise<{ created: number; updated: number }> {
   let created = 0;
   let updated = 0;
 
   for (const row of rows) {
-    const pageId = existingPageById.get(row.id);
+    const page = existingPageById.get(row.id);
 
-    if (pageId) {
-      await updateNotionBackupPage(env, pageId, row);
+    if (page?.id) {
+      if (!needsNotionBackupMutation(row, page)) {
+        continue;
+      }
+
+      await updateNotionBackupPage(env, page.id, row);
       updated += 1;
       continue;
     }
@@ -540,7 +543,7 @@ function mapExistingPagesByTitle(
   titlePropertyName: string,
   targetRowIds: Set<string>,
 ) {
-  const pageMap = new Map<string, string>();
+  const pageMap = new Map<string, NotionInstitutionPage>();
   const pagesByRowId = new Map<string, NotionInstitutionPage[]>();
   const allDuplicatePages: NotionInstitutionPage[] = [];
 
@@ -560,7 +563,7 @@ function mapExistingPagesByTitle(
     const [pageToKeep, ...rowDuplicatePages] = rowPages.sort(compareNotionPagesByLatestEdit);
 
     if (pageToKeep?.id) {
-      pageMap.set(rowId, pageToKeep.id);
+      pageMap.set(rowId, pageToKeep);
     }
 
     allDuplicatePages.push(...rowDuplicatePages);
@@ -571,6 +574,90 @@ function mapExistingPagesByTitle(
 
 function getBackupRowId(page: NotionInstitutionPage, titlePropertyName: string) {
   return textFragmentsValue(page.properties?.recordId?.rich_text) || textFragmentsValue(page.properties?.[titlePropertyName]?.title);
+}
+
+function needsNotionBackupMutation(
+  row: NotionBackupRow,
+  page: NotionInstitutionPage | undefined,
+) {
+  if (!page?.id) {
+    return true;
+  }
+
+  return !isNotionBackupRowCurrent(row, page);
+}
+
+function isNotionBackupRowCurrent(
+  row: NotionBackupRow,
+  page: NotionInstitutionPage,
+) {
+  const properties = page.properties ?? {};
+
+  for (const [propertyName, expectedValue] of Object.entries(row.properties)) {
+    const actualValue = properties[propertyName];
+
+    if ("title" in expectedValue) {
+      const actualTitle = textFragmentsValue(actualValue?.title);
+      const expectedTitle = textFragmentsValue(expectedValue.title);
+
+      if (actualTitle !== expectedTitle) {
+        return false;
+      }
+
+      continue;
+    }
+
+    if ("rich_text" in expectedValue) {
+      const actualText = textFragmentsValue(actualValue?.rich_text);
+      const expectedText = textFragmentsValue(expectedValue.rich_text);
+
+      if (actualText !== expectedText) {
+        return false;
+      }
+
+      continue;
+    }
+
+    if ("select" in expectedValue) {
+      if (!optionNamesValue(actualValue).includes(expectedValue.select.name)) {
+        return false;
+      }
+
+      continue;
+    }
+
+    if ("multi_select" in expectedValue) {
+      if (!sameStringSet(optionNamesValue(actualValue), expectedValue.multi_select.map((option) => option.name))) {
+        return false;
+      }
+
+      continue;
+    }
+
+    if ("date" in expectedValue) {
+      if (actualValue?.date?.start !== expectedValue.date.start) {
+        return false;
+      }
+
+      continue;
+    }
+
+    if ("checkbox" in expectedValue) {
+      if (actualValue?.checkbox !== expectedValue.checkbox) {
+        return false;
+      }
+
+      continue;
+    }
+
+    if ("number" in expectedValue) {
+      if (actualValue?.number !== expectedValue.number) {
+        return false;
+      }
+    }
+  }
+
+  return true;
 }
 
 function backupCleanupPages(
@@ -659,6 +746,16 @@ function optionNamesValue(property: NotionInstitutionPage["properties"][string] 
     property?.status?.name ?? "",
     ...(property?.multi_select ?? []).map((option) => option.name ?? ""),
   ].filter(Boolean);
+}
+
+function sameStringSet(left: string[], right: string[]) {
+  if (left.length !== right.length) {
+    return false;
+  }
+
+  const rightValues = new Set(right);
+
+  return left.every((value) => rightValues.has(value));
 }
 
 async function trashNotionPage(env: RequiredNotionEnv, pageId: string): Promise<void> {
