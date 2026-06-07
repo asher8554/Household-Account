@@ -51,6 +51,7 @@ export type NotionPropertyValue =
   | { rich_text: Array<{ type: "text"; text: { content: string } }> }
   | { select: { name: string } }
   | { multi_select: Array<{ name: string }> }
+  | { date: { start: string } }
   | { checkbox: boolean }
   | { number: number };
 
@@ -85,6 +86,7 @@ const requiredBackupSchema: Record<string, unknown> = {
   createdAt: { rich_text: {} },
   updatedAt: { rich_text: {} },
   date: { rich_text: {} },
+  "날짜": { date: {} },
   amount: { number: {} },
   categoryId: { rich_text: {} },
   memo: { rich_text: {} },
@@ -189,6 +191,7 @@ function buildTransactionRow(
       [titlePropertyName]: titleValue(transaction.id),
       recordType: optionValue("recordType", "transaction", schema),
       date: richTextValue(transaction.date),
+      "날짜": dateValue(transaction.date),
       type: optionValue("type", transaction.type, schema),
       amount: { number: transaction.amount },
       categoryId: richTextValue(transaction.categoryId),
@@ -270,6 +273,12 @@ function titleValue(content: string): NotionPropertyValue {
 function richTextValue(content: string): NotionPropertyValue {
   return {
     rich_text: content ? [{ type: "text", text: { content } }] : [],
+  };
+}
+
+function dateValue(start: string): NotionPropertyValue {
+  return {
+    date: { start },
   };
 }
 
