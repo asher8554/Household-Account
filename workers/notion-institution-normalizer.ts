@@ -39,9 +39,8 @@ function normalizePage(
   }
 
   return {
-    id: normalizeSingleLine(page.id ?? "") || name,
     name,
-    institutionType: institutionTypeValue(properties.Type),
+    institutionType: institutionTypeValue(properties["Institution Type"]),
     enabled,
     sortOrder: numberValue(properties["Sort Order"]),
     parserKey: richTextValue(properties["Parser Key"]),

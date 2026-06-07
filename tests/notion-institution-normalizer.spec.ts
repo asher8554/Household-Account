@@ -27,7 +27,7 @@ test("normalizes a Notion page with guide text, hints, urls, and sort order", ()
         last_edited_time: "2026-06-07T09:00:00.000Z",
         properties: {
           Name: title(" KB 국민카드 "),
-          Type: select("card"),
+          "Institution Type": select("card"),
           Enabled: { checkbox: true },
           "Sort Order": { number: 10 },
           "Parser Key": richText(" kb-card-csv\n"),
@@ -51,13 +51,16 @@ test("normalizes a Notion page with guide text, hints, urls, and sort order", ()
     ],
     fetchedAt,
   );
+  const jsonOutput = JSON.stringify(catalog);
+
+  expect(jsonOutput).not.toContain("page-kb-card");
+  expect(jsonOutput).not.toContain("properties");
 
   expect(catalog).toEqual({
     version: 1,
     fetchedAt,
     institutions: [
       {
-        id: "page-kb-card",
         name: "KB 국민카드",
         institutionType: "card",
         enabled: true,
@@ -88,7 +91,7 @@ test("filters disabled and nameless entries and sorts enabled entries by order a
         id: "disabled-bank",
         properties: {
           Name: title("사용 안 함"),
-          Type: select("bank"),
+          "Institution Type": select("bank"),
           Enabled: { checkbox: false },
           "Sort Order": { number: 0 },
         },
@@ -105,7 +108,7 @@ test("filters disabled and nameless entries and sorts enabled entries by order a
         last_edited_time: "2026-06-07T08:00:00.000Z",
         properties: {
           Name: title("나은행"),
-          Type: select("bank"),
+          "Institution Type": select("bank"),
           Enabled: { checkbox: true },
           "Sort Order": { number: 2 },
         },
@@ -114,7 +117,7 @@ test("filters disabled and nameless entries and sorts enabled entries by order a
         id: "ga-bank",
         properties: {
           Name: title("가은행"),
-          Type: select("credit-union"),
+          "Institution Type": select("credit-union"),
           "Sort Order": { number: 2 },
         },
       },
@@ -122,7 +125,7 @@ test("filters disabled and nameless entries and sorts enabled entries by order a
         id: "toss-pay",
         properties: {
           Name: title("토스페이"),
-          Type: select("pay"),
+          "Institution Type": select("pay"),
           "Sort Order": { number: 1 },
         },
       },
@@ -135,8 +138,10 @@ test("filters disabled and nameless entries and sorts enabled entries by order a
     "가은행",
     "나은행",
   ]);
+  expect(catalog.institutions[2]).toMatchObject({
+    institutionType: "bank",
+  });
   expect(catalog.institutions[1]).toMatchObject({
-    id: "ga-bank",
     institutionType: "card",
     enabled: true,
     updatedAt: fetchedAt,

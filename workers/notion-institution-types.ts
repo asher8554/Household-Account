@@ -2,7 +2,6 @@
 export type InstitutionType = "card" | "bank" | "pay";
 
 export interface InstitutionConfig {
-  id: string;
   name: string;
   institutionType: InstitutionType;
   enabled: boolean;
