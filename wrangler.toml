@@ -1,0 +1,7 @@
+name = "household-account-institution-cms"
+main = "workers/institution-cms-worker.ts"
+compatibility_date = "2026-06-07"
+
+[vars]
+NOTION_VERSION = "2026-03-11"
+ALLOWED_ORIGIN = "https://asher8554.github.io"
