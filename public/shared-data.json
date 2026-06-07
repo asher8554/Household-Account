@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-06-05T11:56:48.702Z",
+  "exportedAt": "2026-06-07T00:52:02.700Z",
   "categories": [
     {
       "id": "expense-food",
@@ -6130,6 +6130,17 @@
       "source": "shinhan-file",
       "createdAt": "2026-06-05T10:36:09.414Z",
       "updatedAt": "2026-06-05T10:36:43.678Z"
+    },
+    {
+      "id": "tx_3afd66b8-c6f0-4f78-a271-13ff9a932b2c",
+      "date": "2026-06-06",
+      "type": "expense",
+      "amount": 381010,
+      "categoryId": "expense-food",
+      "memo": "우준우 베베쿡 30세트",
+      "source": "manual",
+      "createdAt": "2026-06-06T09:23:12.133Z",
+      "updatedAt": "2026-06-06T09:23:12.133Z"
     }
   ]
 }
