@@ -565,3 +565,11 @@
 - 카드사 `xls`, `xlsx`, `csv` 파일 업로드와 실제 파싱은 계속 브라우저 앱이 담당한다.
 - 개인 거래 데이터는 Notion으로 가지 않고 private GitHub sync 설계를 따른다.
 - 설계 문서는 `docs/superpowers/specs/2026-06-07-notion-institution-cms-design.md`에 기록했다.
+
+## Notion 금융기관 CMS 구현 계획
+
+- 사용자가 설계 문서를 승인했다.
+- 구현 계획은 Worker tooling, Notion normalizer, Worker API, React catalog client, parser hint integration, dynamic import guide UI, setup docs, end-to-end verification 순서로 나눴다.
+- 구현 계획 파일은 `docs/superpowers/plans/2026-06-07-notion-institution-cms.md`다.
+- 계획은 Notion token을 브라우저에 두지 않고 Worker secret으로 보관하는 전제를 유지한다.
+- 계획은 Notion 힌트를 header alias 후보로만 사용하고, 거래 저장 검증과 위험한 파싱 규칙은 코드에 남기는 전제를 유지한다.
