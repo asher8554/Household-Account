@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-06-07T00:56:43.922Z",
+  "exportedAt": "2026-06-07T06:45:19.804Z",
   "categories": [
     {
       "id": "expense-food",
@@ -5021,6 +5021,17 @@
       "updatedAt": "2026-06-04T06:01:49.760Z"
     },
     {
+      "id": "tx_811692f7-709e-438b-8334-c30e121b76a7",
+      "date": "2026-05-09",
+      "type": "expense",
+      "amount": 3500,
+      "categoryId": "expense-other",
+      "memo": "[신한카드] HONGLAB / 카드 신용 / 승인번호 155383",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-07T06:45:19.788Z",
+      "updatedAt": "2026-06-07T06:45:19.788Z"
+    },
+    {
       "id": "tx_84b8deb5-8a0b-4ef4-80d1-b398d8c50521",
       "date": "2026-05-09",
       "type": "expense",
@@ -5230,6 +5241,17 @@
       "updatedAt": "2026-06-05T10:36:09.414Z"
     },
     {
+      "id": "tx_779c56bd-7fd1-41ac-8652-8ec8bd68e433",
+      "date": "2026-05-15",
+      "type": "expense",
+      "amount": 8000,
+      "categoryId": "expense-other",
+      "memo": "[신한카드] Steam Purchase / 카드 신용 / 승인번호 267207",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-07T06:45:19.788Z",
+      "updatedAt": "2026-06-07T06:45:19.788Z"
+    },
+    {
       "id": "tx_b364db4e-120c-48c5-828b-ac2e34b31747",
       "date": "2026-05-15",
       "type": "expense",
@@ -5415,6 +5437,17 @@
       "source": "shinhan-file",
       "createdAt": "2026-06-05T10:36:09.414Z",
       "updatedAt": "2026-06-05T10:36:09.414Z"
+    },
+    {
+      "id": "tx_6489a352-c89d-4854-9316-1c7cb4d66c19",
+      "date": "2026-05-19",
+      "type": "expense",
+      "amount": 3640,
+      "categoryId": "expense-other",
+      "memo": "[신한카드] STEAMGAMES.COM 4259522 / 카드 신용 / 승인번호 470325",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-07T06:45:19.788Z",
+      "updatedAt": "2026-06-07T06:45:19.788Z"
     },
     {
       "id": "tx_88e3b096-b0e9-4bca-8c71-40a63c26ef31",
