@@ -51,6 +51,12 @@
 
 로컬 개발용 `.dev.vars`를 만듭니다. 이 파일은 `.gitignore`에 포함되어야 하며 커밋하지 않습니다.
 
+```powershell
+Copy-Item .dev.vars.example .dev.vars
+```
+
+`.dev.vars`의 key 이름은 아래처럼 고정입니다. `NOTION_TOKEN` 자리에 token 값을 넣는 것이 아니라, `NOTION_TOKEN=` 오른쪽에 token 값을 넣습니다.
+
 ```dotenv
 NOTION_TOKEN=ntn_your_local_token
 NOTION_DATA_SOURCE_ID=your_notion_data_source_id
@@ -72,6 +78,8 @@ Invoke-WebRequest -Uri http://localhost:8787/institutions | Select-Object -Expan
 
 ## Cloudflare Worker production secrets
 
+production secret도 key 이름을 먼저 명령에 넣고, 프롬프트가 뜨면 값을 입력합니다. 성공 메시지는 `NOTION_TOKEN`, `NOTION_DATA_SOURCE_ID` 이름으로 보여야 합니다.
+
 ```powershell
 npx wrangler secret put NOTION_TOKEN
 npx wrangler secret put NOTION_DATA_SOURCE_ID
@@ -88,6 +96,10 @@ ALLOWED_ORIGIN = "https://asher8554.github.io"
 ## React app environment
 
 로컬 앱에서 Worker를 보려면 `.env.local`을 만듭니다.
+
+```powershell
+Copy-Item .env.example .env.local
+```
 
 ```dotenv
 VITE_INSTITUTION_CMS_URL=http://localhost:8787/institutions
