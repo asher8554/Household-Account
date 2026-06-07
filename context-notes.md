@@ -813,6 +813,21 @@
 - `npx playwright test`는 29개 테스트 통과로 완료됐다.
 - `npm run build`가 TypeScript check와 Vite production build를 통과했다. 기존처럼 500 kB 초과 chunk warning은 출력됐다.
 - Browser QA에서 `http://127.0.0.1:5173/` 데스크톱과 390px 모바일 폭 모두 백업 패널, `Notion 백업 키`, `Notion 기록` 버튼 렌더링을 확인했고 콘솔 오류는 없었다.
+## Notion 백업 진행 상태 표시 계획
+
+- 사용자는 `백업 JSON을 Notion에 기록 중입니다.` 상태에서 변화가 없다고 보고했다.
+- 해당 문구는 `BackupPanel`의 단독 `Notion 기록` 버튼에서 나온다.
+- 현재 `pushBackupToNotion`은 Worker가 여러 batch를 반환해도 전체 루프가 끝난 뒤에만 UI 결과를 갱신한다.
+- 거래 수나 기존 Notion row가 많으면 정상 처리 중이어도 화면이 멈춘 것처럼 보인다.
+- 서비스에 batch 완료 콜백을 추가하고, BackupPanel에서 처리 건수와 정리 건수를 표시한다.
+
+## Notion 백업 진행 상태 표시 결과
+
+- `pushBackupToNotion`에 `onBatchComplete` 옵션을 추가해 batch 완료마다 누적 처리 결과를 받을 수 있게 했다.
+- `BackupPanel`은 10초 동안 첫 응답이 없으면 첫 batch 대기 안내를 표시한다.
+- batch가 끝날 때마다 `batch N 완료`, 거래 처리 건수, 생성/업데이트/정리 건수를 표시한다.
+- `tests/notion-backup-service.spec.ts`, 전체 Playwright 37개, `npm run build`, 로컬 브라우저 smoke를 통과했다.
+
 ## Notion 백업 캘린더 날짜 연동 계획
 
 - 사용자는 Notion data source `3783d76f-8874-8055-af3a-000befc853fc`가 `https://app.notion.com/p/3783d76f887480299913e7fe4231957a?v=3783d76f887480179dfc000c486c0dbd&source=copy_link` 캘린더에 정리되기를 원한다.

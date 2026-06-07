@@ -59,15 +59,29 @@ export function BackupPanel() {
 
     setIsPushingNotionBackup(true);
     setMessage("백업 JSON을 Notion에 기록 중입니다.");
+    let isActive = true;
+    const slowNoticeTimer = window.setTimeout(() => {
+      if (isActive) {
+        setMessage("Notion 첫 batch 응답을 기다리는 중입니다. 거래가 많으면 시간이 걸릴 수 있습니다.");
+      }
+    }, 10000);
 
     try {
-      const result = await pushCurrentBackupToNotion(notionBackupKey);
+      const result = await pushCurrentBackupToNotion(notionBackupKey, {
+        onBatchComplete: (progress) => {
+          setMessage(
+            `Notion에 기록 중입니다. batch ${progress.batchCount} 완료. 거래 처리 ${progress.processed ?? 0}/${progress.transactions}건, 생성 ${progress.created}건, 업데이트 ${progress.updated}건, 정리 ${progress.legacyRemoved}건.`,
+          );
+        },
+      });
       setMessage(
         `Notion에 거래 백업 행을 동기화했습니다. 생성 ${result.created}건, 업데이트 ${result.updated}건, 불필요/중복 행 정리 ${result.legacyRemoved}건. 거래 ${result.transactions}건.`,
       );
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Notion 백업 기록에 실패했습니다.");
     } finally {
+      isActive = false;
+      window.clearTimeout(slowNoticeTimer);
       setIsPushingNotionBackup(false);
     }
   }
