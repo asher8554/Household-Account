@@ -1,41 +1,29 @@
-// 공개 shared-data 경로로 거래 내역이 다시 배포되지 않도록 검증합니다.
-import { existsSync, readFileSync } from "node:fs";
+// 공개 shared-data 경로 동기화 정책을 검증합니다.
+import { readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { expect, test } from "@playwright/test";
-import {
-  defaultGitHubSharedDataSettings,
-  isUnsafePublicSharedDataTarget,
-  pushCurrentSharedDataToGitHub,
-  type GitHubSharedDataSettings,
-} from "../src/features/shared-data/github-shared-data-service";
+import { defaultGitHubSharedDataSettings } from "../src/features/shared-data/github-shared-data-service";
 
 const testDir = dirname(fileURLToPath(import.meta.url));
 const projectRoot = resolve(testDir, "..");
 
-test("default GitHub data target uses a private-data style path", () => {
-  expect(defaultGitHubSharedDataSettings.repo).not.toBe("Household-Account");
-  expect(defaultGitHubSharedDataSettings.path).toBe("data/household-account.json");
-  expect(isUnsafePublicSharedDataTarget(defaultGitHubSharedDataSettings)).toBe(false);
+test("default GitHub data target uses the GitHub Pages shared-data path", () => {
+  expect(defaultGitHubSharedDataSettings.owner).toBe("asher8554");
+  expect(defaultGitHubSharedDataSettings.repo).toBe("Household-Account");
+  expect(defaultGitHubSharedDataSettings.path).toBe("public/shared-data.json");
 });
 
-test("GitHub push rejects the old public Pages shared-data target", async () => {
-  const unsafeSettings: GitHubSharedDataSettings = {
-    owner: "asher8554",
-    repo: "Household-Account",
-    branch: "main",
-    path: "public\\shared-data.json",
-    token: "test-token",
-  };
+test("GitHub Pages shared-data file is not ignored by git", () => {
+  const gitignoreSource = readSource(".gitignore");
 
-  expect(isUnsafePublicSharedDataTarget(unsafeSettings)).toBe(true);
-  await expect(pushCurrentSharedDataToGitHub(unsafeSettings)).rejects.toThrow(/공개 GitHub Pages/);
+  expect(gitignoreSource).not.toContain("public/shared-data.json");
 });
 
-test("app startup no longer imports published shared-data automatically", () => {
+test("app startup imports published shared-data for other devices", () => {
   const appSource = readSource("src/app/App.tsx");
 
-  expect(appSource).not.toContain("loadPublishedSharedData");
+  expect(appSource).toContain("loadPublishedSharedData");
 });
 
 test("financial import no longer auto-pushes GitHub shared data", () => {
@@ -44,8 +32,12 @@ test("financial import no longer auto-pushes GitHub shared data", () => {
   expect(importScreenSource).not.toContain("pushCurrentSharedDataToGitHub");
 });
 
-test("public shared-data JSON is not checked into the app assets", () => {
-  expect(existsSync(resolve(projectRoot, "public/shared-data.json"))).toBe(false);
+test("GitHub panel does not block the GitHub Pages shared-data path", () => {
+  const panelSource = readSource("src/features/shared-data/GitHubSharedDataPanel.tsx");
+  const serviceSource = readSource("src/features/shared-data/github-shared-data-service.ts");
+
+  expect(panelSource).not.toContain("public shared-data target");
+  expect(serviceSource).not.toContain("isUnsafePublicSharedDataTarget");
 });
 
 function readSource(path: string) {

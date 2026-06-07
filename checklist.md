@@ -1,3 +1,12 @@
+## 현재 PC 기록 push와 Notion 기록 동시 실행
+
+- [x] 현재 GitHub push와 Notion 기록 흐름을 확인한다.
+- [x] 버튼 동시 동작을 검증하는 테스트를 추가한다.
+- [x] `현재 PC 기록 push`에서 Notion 백업도 실행한다.
+- [x] GitHub Pages `public/shared-data.json` push와 자동 로드를 다시 허용한다.
+- [x] 관련 테스트와 빌드를 실행한다.
+- [x] 브라우저 smoke를 확인하고 커밋한다.
+
 ## CSO 보안 및 모듈 구조 리팩토링
 
 - [x] 저장소 구조와 런타임 진입점을 확인한다.
