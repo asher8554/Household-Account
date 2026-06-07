@@ -1,3 +1,11 @@
+## Notion 백업 진행 상태 표시
+
+- [x] 멈춘 문구가 나오는 UI와 호출 흐름을 확인한다.
+- [x] batch 진행률 콜백 테스트를 추가한다.
+- [x] Notion 백업 UI가 batch 완료마다 메시지를 갱신하도록 수정한다.
+- [x] 관련 테스트와 빌드를 통과시킨다.
+- [x] 변경사항을 커밋하고 GitHub에 push한다.
+
 ## Notion 백업 캘린더 날짜 연동
 
 - [x] Notion data source와 캘린더 뷰 schema를 확인한다.

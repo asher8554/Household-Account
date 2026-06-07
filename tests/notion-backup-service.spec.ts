@@ -7,6 +7,7 @@ test("pushBackupToNotion follows cursor responses and aggregates counts", async 
   const originalFetch = globalThis.fetch;
   const backup = backupWithTransactions(25);
   const requestBodies: unknown[] = [];
+  const progressUpdates: Array<{ processed?: number; hasMore?: boolean }> = [];
 
   globalThis.fetch = async (_input: RequestInfo | URL, init?: RequestInit) => {
     requestBodies.push(JSON.parse(String(init?.body ?? "{}")));
@@ -53,7 +54,14 @@ test("pushBackupToNotion follows cursor responses and aggregates counts", async 
   };
 
   try {
-    const result = await pushBackupToNotion(backup, "secret", "https://worker.test/institutions");
+    const result = await pushBackupToNotion(backup, "secret", "https://worker.test/institutions", {
+      onBatchComplete: (progress) => {
+        progressUpdates.push({
+          processed: progress.processed,
+          hasMore: progress.hasMore,
+        });
+      },
+    });
 
     expect(result).toMatchObject({
       created: 25,
@@ -64,6 +72,10 @@ test("pushBackupToNotion follows cursor responses and aggregates counts", async 
     expect(requestBodies).toEqual([
       { backup },
       { backup, cursor: { phase: "upsert", offset: 20 } },
+    ]);
+    expect(progressUpdates).toEqual([
+      { processed: 20, hasMore: true },
+      { processed: 25, hasMore: false },
     ]);
   } finally {
     globalThis.fetch = originalFetch;

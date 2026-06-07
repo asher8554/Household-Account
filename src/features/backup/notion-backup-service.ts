@@ -22,6 +22,14 @@ type NotionBackupCursor =
   | { phase: "cleanup" }
   | { phase: "upsert"; offset: number };
 
+export type NotionBackupProgress = NotionBackupResult & {
+  batchCount: number;
+};
+
+export type NotionBackupOptions = {
+  onBatchComplete?: (progress: NotionBackupProgress) => void;
+};
+
 export function loadNotionBackupWriteKey() {
   try {
     return localStorage.getItem(NOTION_BACKUP_KEY_STORAGE_KEY) ?? "";
@@ -38,16 +46,17 @@ export function saveNotionBackupWriteKey(value: string) {
   }
 }
 
-export async function pushCurrentBackupToNotion(writeKey: string) {
+export async function pushCurrentBackupToNotion(writeKey: string, options: NotionBackupOptions = {}) {
   const backup = await createBackupData();
 
-  return pushBackupToNotion(backup, writeKey);
+  return pushBackupToNotion(backup, writeKey, undefined, options);
 }
 
 export async function pushBackupToNotion(
   backup: BackupFile,
   writeKey: string,
   workerUrl = import.meta.env?.VITE_INSTITUTION_CMS_URL ?? "",
+  options: NotionBackupOptions = {},
 ): Promise<NotionBackupResult> {
   const endpoint = getNotionBackupEndpoint(workerUrl);
   const normalizedKey = writeKey.trim();
@@ -67,6 +76,12 @@ export async function pushBackupToNotion(
     const result = await pushBackupBatchToNotion(endpoint, backup, normalizedKey, cursor);
 
     aggregate = mergeNotionBackupResults(aggregate, result);
+    options.onBatchComplete?.({
+      ...aggregate,
+      hasMore: result.hasMore,
+      nextCursor: result.nextCursor,
+      batchCount: batchCount + 1,
+    });
 
     if (result.hasMore && !result.nextCursor) {
       throw new Error("Notion 백업 응답 cursor가 올바르지 않습니다.");
