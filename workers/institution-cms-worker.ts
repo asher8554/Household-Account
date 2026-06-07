@@ -137,10 +137,15 @@ async function handleBackupRequest(request: Request, env: WorkerEnv): Promise<Re
       "notion_backup_page_query_failed",
       "Notion backup pages query failed.",
     );
-    const legacyRemoved = await trashLegacyBackupSummaryPages(notionEnv, existingPages, titlePropertyName);
-    const existingPageById = mapExistingPagesByTitle(existingPages, titlePropertyName);
     const rows = buildNotionBackupRows(backup, titlePropertyName, dataSource.properties);
-    const result = await upsertNotionBackupRows(notionEnv, rows, existingPageById);
+    const obsoleteRemoved = await trashObsoleteBackupPages(notionEnv, existingPages, titlePropertyName);
+    const existingPagesResult = await mapExistingPagesByTitle(
+      notionEnv,
+      existingPages,
+      titlePropertyName,
+      new Set(rows.map((row) => row.id)),
+    );
+    const result = await upsertNotionBackupRows(notionEnv, rows, existingPagesResult.pageMap);
 
     return jsonResponse(
       {
@@ -148,8 +153,8 @@ async function handleBackupRequest(request: Request, env: WorkerEnv): Promise<Re
         syncedAt,
         created: result.created,
         updated: result.updated,
-        legacyRemoved,
-        categories: backup.categories.length,
+        legacyRemoved: obsoleteRemoved + existingPagesResult.removed,
+        categories: 0,
         transactions: backup.transactions.length,
       },
       201,
@@ -385,22 +390,49 @@ async function updateNotionBackupPage(
   }
 }
 
-function mapExistingPagesByTitle(pages: NotionInstitutionPage[], titlePropertyName: string) {
+async function mapExistingPagesByTitle(
+  env: RequiredNotionEnv,
+  pages: NotionInstitutionPage[],
+  titlePropertyName: string,
+  targetRowIds: Set<string>,
+) {
   const pageMap = new Map<string, string>();
+  const pagesByRowId = new Map<string, NotionInstitutionPage[]>();
+  let removed = 0;
 
   for (const page of pages) {
-    const id = page.id;
     const rowId = textFragmentsValue(page.properties?.[titlePropertyName]?.title);
 
-    if (id && rowId) {
-      pageMap.set(rowId, id);
+    if (!page.id || !targetRowIds.has(rowId)) {
+      continue;
+    }
+
+    const existingPages = pagesByRowId.get(rowId) ?? [];
+    existingPages.push(page);
+    pagesByRowId.set(rowId, existingPages);
+  }
+
+  for (const [rowId, rowPages] of pagesByRowId) {
+    const [pageToKeep, ...duplicatePages] = rowPages.sort(compareNotionPagesByLatestEdit);
+
+    if (pageToKeep?.id) {
+      pageMap.set(rowId, pageToKeep.id);
+    }
+
+    for (const page of duplicatePages) {
+      if (!page.id) {
+        continue;
+      }
+
+      await trashNotionPage(env, page.id);
+      removed += 1;
     }
   }
 
-  return pageMap;
+  return { pageMap, removed };
 }
 
-async function trashLegacyBackupSummaryPages(
+async function trashObsoleteBackupPages(
   env: RequiredNotionEnv,
   pages: NotionInstitutionPage[],
   titlePropertyName: string,
@@ -409,9 +441,8 @@ async function trashLegacyBackupSummaryPages(
 
   for (const page of pages) {
     const id = page.id;
-    const rowId = textFragmentsValue(page.properties?.[titlePropertyName]?.title);
 
-    if (!id || !rowId.startsWith("Household account backup ")) {
+    if (!id || (!isLegacyBackupSummaryPage(page, titlePropertyName) && !isCategoryBackupPage(page, titlePropertyName))) {
       continue;
     }
 
@@ -420,6 +451,48 @@ async function trashLegacyBackupSummaryPages(
   }
 
   return removed;
+}
+
+function compareNotionPagesByLatestEdit(left: NotionInstitutionPage, right: NotionInstitutionPage) {
+  return pageEditedTime(right) - pageEditedTime(left);
+}
+
+function pageEditedTime(page: NotionInstitutionPage) {
+  const timestamp = page.last_edited_time ? Date.parse(page.last_edited_time) : 0;
+
+  return Number.isFinite(timestamp) ? timestamp : 0;
+}
+
+function isLegacyBackupSummaryPage(page: NotionInstitutionPage, titlePropertyName: string) {
+  return textFragmentsValue(page.properties?.[titlePropertyName]?.title).startsWith("Household account backup ");
+}
+
+function isCategoryBackupPage(page: NotionInstitutionPage, titlePropertyName: string) {
+  const recordTypes = optionNamesValue(page.properties?.recordType);
+
+  if (recordTypes.includes("category")) {
+    return true;
+  }
+
+  const rowId = textFragmentsValue(page.properties?.[titlePropertyName]?.title);
+
+  if (!rowId.startsWith("expense-") && !rowId.startsWith("income-") && !rowId.startsWith("cat_")) {
+    return false;
+  }
+
+  return (
+    !textFragmentsValue(page.properties?.date?.rich_text) &&
+    typeof page.properties?.amount?.number !== "number" &&
+    optionNamesValue(page.properties?.source).length === 0
+  );
+}
+
+function optionNamesValue(property: NotionInstitutionPage["properties"][string] | undefined): string[] {
+  return [
+    property?.select?.name ?? "",
+    property?.status?.name ?? "",
+    ...(property?.multi_select ?? []).map((option) => option.name ?? ""),
+  ].filter(Boolean);
 }
 
 async function trashNotionPage(env: RequiredNotionEnv, pageId: string): Promise<void> {

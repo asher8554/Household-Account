@@ -82,10 +82,6 @@ const requiredBackupSchema: Record<string, unknown> = {
     },
   },
   name: { rich_text: {} },
-  color: { rich_text: {} },
-  isDefault: { checkbox: {} },
-  isActive: { checkbox: {} },
-  sortOrder: { number: {} },
   createdAt: { rich_text: {} },
   updatedAt: { rich_text: {} },
   date: { rich_text: {} },
@@ -141,10 +137,7 @@ export function buildNotionBackupRows(
   titlePropertyName: string,
   schema: Record<string, NotionPropertySchema> = {},
 ): NotionBackupRow[] {
-  return [
-    ...backup.categories.map((category) => buildCategoryRow(category, titlePropertyName, schema)),
-    ...backup.transactions.map((transaction) => buildTransactionRow(transaction, titlePropertyName, schema)),
-  ];
+  return backup.transactions.map((transaction) => buildTransactionRow(transaction, titlePropertyName, schema));
 }
 
 export function buildNotionBackupSchemaPatch(schema: Record<string, NotionPropertySchema>): NotionSchemaPatch {
@@ -182,29 +175,6 @@ export function buildNotionBackupSchemaPatch(schema: Record<string, NotionProper
 
 export function getTitlePropertyName(schema: Record<string, NotionPropertySchema>) {
   return Object.entries(schema).find(([, property]) => property.type === "title")?.[0] ?? "id";
-}
-
-function buildCategoryRow(
-  category: BackupCategoryPayload,
-  titlePropertyName: string,
-  schema: Record<string, NotionPropertySchema>,
-): NotionBackupRow {
-  return {
-    id: category.id,
-    recordType: "category",
-    properties: {
-      [titlePropertyName]: titleValue(category.id),
-      recordType: optionValue("recordType", "category", schema),
-      type: optionValue("type", category.type, schema),
-      name: richTextValue(category.name),
-      color: richTextValue(category.color),
-      isDefault: { checkbox: category.isDefault },
-      isActive: { checkbox: category.isActive },
-      sortOrder: { number: category.sortOrder },
-      createdAt: richTextValue(category.createdAt),
-      updatedAt: richTextValue(category.updatedAt),
-    },
-  };
 }
 
 function buildTransactionRow(
