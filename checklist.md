@@ -480,3 +480,11 @@
 - [x] 버튼 조작 시 차트와 카드 목록이 같은 개수 기준으로 갱신되는지 검증한다.
 - [x] 관련 테스트와 production build를 통과시킨다.
 - [x] 변경사항을 커밋하고 push한다.
+
+## iPhone 카테고리 변화 차트 legend 간격 조정
+
+- [x] iPhone 16 폭에서 legend와 x축 월 표시가 겹치는 구조를 확인한다.
+- [x] 카테고리별 소비 변화 차트 legend를 x축과 분리해 별도 영역으로 배치한다.
+- [x] iPhone 16 폭에서 legend와 x축 사이 간격, 가로 overflow, console error를 검증한다.
+- [x] 관련 테스트와 production build를 통과시킨다.
+- [x] 변경사항을 커밋하고 push한다.

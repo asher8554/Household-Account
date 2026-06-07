@@ -15,7 +15,6 @@ import {
   Bar,
   BarChart,
   CartesianGrid,
-  Legend,
   ReferenceLine,
   ResponsiveContainer,
   Tooltip,
@@ -315,10 +314,11 @@ function CategoryTrendSection({
               minHeight={300}
               initialDimension={{ width: 720, height: 360 }}
             >
-              <BarChart data={trend.months} margin={{ top: 12, right: 12, bottom: 0, left: 0 }}>
+              <BarChart data={trend.months} margin={{ top: 12, right: 12, bottom: 16, left: 0 }}>
                 <CartesianGrid stroke="rgb(var(--color-line))" strokeDasharray="4 4" vertical={false} />
                 <XAxis
                   dataKey="label"
+                  tickMargin={8}
                   tickLine={false}
                   axisLine={false}
                   tick={{ fill: "rgb(var(--color-muted))", fontSize: 12 }}
@@ -345,11 +345,6 @@ function CategoryTrendSection({
                   }}
                   labelStyle={{ color: "rgb(var(--color-muted))" }}
                 />
-                <Legend
-                  formatter={(value) => (
-                    <span className="text-xs text-muted">{categoryNameMap.get(String(value)) ?? String(value)}</span>
-                  )}
-                />
                 {trend.categories.map((category) => (
                   <Bar
                     key={category.categoryId}
@@ -363,6 +358,7 @@ function CategoryTrendSection({
               </BarChart>
             </ResponsiveContainer>
           </div>
+          <CategoryTrendLegend categories={trend.categories} />
 
           <div className="grid gap-2 lg:grid-cols-2">
             {trend.categories.map((category) => (
@@ -409,6 +405,19 @@ function CategoryTrendSection({
         </div>
       )}
     </SectionPanel>
+  );
+}
+
+function CategoryTrendLegend({ categories }: { categories: AnnualCategoryTrendResult["categories"] }) {
+  return (
+    <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-2 px-1 text-xs text-muted" aria-label="카테고리 범례">
+      {categories.map((category) => (
+        <span key={category.categoryId} className="inline-flex min-w-0 items-center gap-1.5">
+          <span className="h-2.5 w-2.5 shrink-0 rounded-sm" style={{ backgroundColor: category.color }} />
+          <span className="max-w-24 truncate">{category.name}</span>
+        </span>
+      ))}
+    </div>
   );
 }
 

@@ -960,3 +960,19 @@
 - Playwright 임시 컨텍스트에 2026년 지출 카테고리 10개를 넣어 데스크톱 1280px과 iPhone 16 393px에서 검증했다.
 - 두 viewport 모두 `상위 8개`에서 감소 버튼 클릭 시 `상위 7개`, 증가 버튼 클릭 시 다시 `상위 8개`로 바뀌었다. 카드 수는 9개, 8개, 9개로 함께 바뀌었다.
 - `npm run build`와 `npx playwright test` 42개를 통과했다. Vite는 기존 chunk size 경고만 표시했다.
+
+## iPhone 카테고리 변화 차트 legend 간격 조정 계획
+
+- 사용자는 iPhone 16에서 `카테고리별 소비 변화` 하단 legend가 x축 월 표시 구간과 겹쳐 불편하다고 보고했다.
+- 원인은 Recharts 기본 `Legend`가 차트 내부 하단 영역을 사용하면서 모바일 폭에서 여러 줄로 접히는 구조다.
+- legend를 차트 내부에서 제거하고 차트 아래 별도 flex-wrap 영역으로 렌더링한다. x축에는 하단 margin과 tick margin을 추가한다.
+- 데이터 계산, 표시 개수 조절 상태, 공유 데이터 동기화 로직은 변경하지 않는다.
+
+## iPhone 카테고리 변화 차트 legend 간격 조정 결과
+
+- `AnnualTrendScreen`의 카테고리 변화 차트에서 Recharts 기본 `Legend`를 제거하고 `CategoryTrendLegend`를 차트 아래 별도 영역으로 렌더링했다.
+- 카테고리 변화 차트의 `BarChart` 하단 margin을 16px로 늘리고 `XAxis`에 `tickMargin=8`을 적용했다.
+- iPhone 16 393px Playwright 검증에서 SVG 텍스트 하단과 legend 상단 사이 간격이 약 48px로 확보됐다.
+- iPhone 16 393px과 데스크톱 1280px 모두 가로 overflow와 console error가 없었다.
+- in-app Browser로도 `127.0.0.1:5173`의 앱 로딩, 연간 소비 추세 이동, console error 없음, 가로 overflow 없음 상태를 확인했다.
+- `npx playwright test` 42개와 `npm run build`를 통과했다. Vite는 기존 chunk size 경고만 표시했다.
