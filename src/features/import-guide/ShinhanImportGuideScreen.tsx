@@ -1,5 +1,5 @@
 // 금융기관 파일과 신한카드 알림 텍스트 가져오기 화면입니다.
-import { ChangeEvent, DragEvent, useEffect, useState } from "react";
+import { ChangeEvent, DragEvent, useState } from "react";
 import {
   Bell,
   CheckCircle2,
@@ -8,7 +8,6 @@ import {
   ExternalLink,
   FileSpreadsheet,
   MonitorCog,
-  RefreshCw,
   Search,
   Upload,
 } from "lucide-react";
@@ -30,7 +29,6 @@ import {
 } from "../shared-data/github-shared-data-service";
 import { useInstitutionCatalog } from "../institutions/use-institution-catalog";
 import type { InstitutionConfig } from "../institutions/institution-types";
-import { toParserHints } from "./parser-hints";
 
 type Step = {
   title: string;
@@ -72,11 +70,9 @@ const roadmap = [
 const emptyPreview: ShinhanPreviewItem[] = [];
 
 export function ShinhanImportGuideScreen() {
-  const { catalog, isLoading: isLoadingInstitutions, error: institutionError, refresh } = useInstitutionCatalog();
+  const { catalog } = useInstitutionCatalog();
   const institutions = catalog.institutions;
-  const [selectedInstitutionName, setSelectedInstitutionName] = useState("");
-  const selectedInstitution =
-    institutions.find((institution) => institution.name === selectedInstitutionName) ?? institutions[0] ?? null;
+  const guideInstitution = institutions[0] ?? null;
   const [filePreview, setFilePreview] = useState(emptyPreview);
   const [notificationText, setNotificationText] = useState("");
   const [notificationPreview, setNotificationPreview] = useState(emptyPreview);
@@ -85,15 +81,6 @@ export function ShinhanImportGuideScreen() {
   const [isImportingFile, setIsImportingFile] = useState(false);
   const [isImportingNotification, setIsImportingNotification] = useState(false);
   const [isDragActive, setIsDragActive] = useState(false);
-
-  useEffect(() => {
-    if (!institutions[0]) return;
-
-    const hasSelectedInstitution = institutions.some((institution) => institution.name === selectedInstitutionName);
-    if (!selectedInstitutionName || !hasSelectedInstitution) {
-      setSelectedInstitutionName(institutions[0].name);
-    }
-  }, [institutions, selectedInstitutionName]);
 
   async function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -111,10 +98,7 @@ export function ShinhanImportGuideScreen() {
     setStatusMessage("");
 
     try {
-      const candidates = await parseShinhanTransactionFile(
-        file,
-        selectedInstitution ? toParserHints(selectedInstitution) : undefined,
-      );
+      const candidates = await parseShinhanTransactionFile(file);
       const preview = buildShinhanPreview(candidates, await listTransactions());
       await recordFileLoadStatus(file.name, preview);
       setFilePreview(preview);
@@ -260,41 +244,13 @@ export function ShinhanImportGuideScreen() {
       <div className="grid gap-5 xl:grid-cols-2">
         <SectionPanel title="CSV/TSV/TXT/xls/xlsx 파일 가져오기" eyebrow="카드/은행/페이 파일">
           <div className="grid gap-4">
-            <div className="grid gap-3 border-b border-line pb-4">
-              <div className="flex flex-wrap items-start justify-between gap-3">
-                <div>
-                  <p className="text-sm font-semibold text-ink">금융기관 설정</p>
-                  <p className="mt-1 text-xs leading-5 text-muted">
-                    {getCatalogSourceLabel(catalog.source)} · {formatCatalogFetchedAt(catalog.fetchedAt)}
-                  </p>
-                </div>
-                <Button
-                  size="sm"
-                  variant="secondary"
-                  onClick={() => void refresh()}
-                  disabled={isLoadingInstitutions}
-                  className="shrink-0"
-                >
-                  <RefreshCw className={isLoadingInstitutions ? "animate-spin" : undefined} size={15} aria-hidden="true" />
-                  새로고침
-                </Button>
-              </div>
-              {institutionError ? <p className="text-sm leading-6 text-coral">{institutionError}</p> : null}
-              <FormField label="가져올 금융기관">
-                <select
-                  className="h-10 w-full rounded-lg border border-line bg-panel px-3 text-sm"
-                  value={selectedInstitution?.name ?? ""}
-                  onChange={(event) => setSelectedInstitutionName(event.target.value)}
-                  disabled={institutions.length === 0}
-                >
-                  {institutions.map((institution) => (
-                    <option key={institution.name} value={institution.name}>
-                      {institution.name}
-                    </option>
-                  ))}
-                </select>
-              </FormField>
-              {selectedInstitution ? <InstitutionHintSummary institution={selectedInstitution} /> : null}
+            <div className="border-b border-line pb-4 text-sm leading-6 text-muted">
+              <p className="font-semibold text-ink">파일 자동 판정</p>
+              <p className="mt-1">
+                파일명과 헤더로 신한카드, 현대카드, 은행, 네이버페이를 자동 구분합니다. Notion 금융기관 선택값은 파일 파싱에
+                사용하지 않습니다.
+              </p>
+              <p className="mt-1 text-xs">예: Shinhancard_20260607.xlsx, hyundaicard_20260607.xls.</p>
             </div>
             <FormField label="카드 또는 은행 거래내역 파일">
               <input
@@ -362,21 +318,21 @@ export function ShinhanImportGuideScreen() {
         </SectionPanel>
       </div>
 
-      {selectedInstitution ? (
+      {guideInstitution ? (
         <div className="grid gap-5 xl:grid-cols-2">
           <GuideStepsPanel
             eyebrow="PC"
-            title={`${selectedInstitution.name} PC에서 받기`}
-            steps={toGuideSteps(selectedInstitution.pcSteps)}
-            linkLabel={`${selectedInstitution.name} 열기`}
-            linkHref={getInstitutionHref(selectedInstitution, "homepage")}
+            title={`${guideInstitution.name} PC에서 받기`}
+            steps={toGuideSteps(guideInstitution.pcSteps)}
+            linkLabel={`${guideInstitution.name} 열기`}
+            linkHref={getInstitutionHref(guideInstitution, "homepage")}
           />
           <GuideStepsPanel
             eyebrow="Mobile"
-            title={`${selectedInstitution.name} iPhone에서 찾기`}
-            steps={toGuideSteps(selectedInstitution.mobileSteps)}
-            linkLabel={`${selectedInstitution.name} 앱`}
-            linkHref={getInstitutionHref(selectedInstitution, "mobile")}
+            title={`${guideInstitution.name} iPhone에서 찾기`}
+            steps={toGuideSteps(guideInstitution.mobileSteps)}
+            linkLabel={`${guideInstitution.name} 앱`}
+            linkHref={getInstitutionHref(guideInstitution, "mobile")}
           />
         </div>
       ) : null}
@@ -384,7 +340,7 @@ export function ShinhanImportGuideScreen() {
       <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_420px]">
         <SectionPanel title="다운로드 후 파일 확인" eyebrow="검수">
           <div className="grid gap-3 md:grid-cols-2">
-            {getRequiredColumns(selectedInstitution).map((column) => (
+            {getRequiredColumns(guideInstitution).map((column) => (
               <div key={column} className="flex items-center gap-2 rounded-lg border border-line bg-field px-3 py-2 text-sm">
                 <CheckCircle2 className="text-mint" size={16} aria-hidden="true" />
                 <span>{column}</span>
@@ -433,56 +389,6 @@ export function ShinhanImportGuideScreen() {
       </SectionPanel>
     </div>
   );
-}
-
-function InstitutionHintSummary({ institution }: { institution: InstitutionConfig }) {
-  const parserHintGroups = [
-    { label: "날짜", values: institution.dateColumnHints },
-    { label: "금액", values: institution.amountColumnHints },
-    { label: "가맹점", values: institution.merchantColumnHints },
-    { label: "상태", values: institution.statusColumnHints },
-  ];
-
-  return (
-    <div className="grid gap-2 text-sm text-muted">
-      <p>
-        지원 형식{" "}
-        <span className="font-semibold text-ink">
-          {institution.supportedFormats.length > 0 ? institution.supportedFormats.join(", ") : "미정"}
-        </span>
-        <span className="mx-2 text-line">|</span>
-        파서 <span className="font-semibold text-ink">{institution.parserKey || "기본"}</span>
-      </p>
-      <div className="flex flex-wrap gap-2">
-        {getRequiredColumns(institution).map((column) => (
-          <span key={column} className="rounded-md bg-moss-soft px-2 py-1 text-xs font-medium text-moss">
-            {column}
-          </span>
-        ))}
-      </div>
-      <div className="grid gap-1.5">
-        {parserHintGroups.map((group) => (
-          <p key={group.label} className="text-xs leading-5">
-            <span className="font-semibold text-ink">{group.label}</span>{" "}
-            {group.values.length > 0 ? group.values.join(", ") : "기본 별칭"}
-          </p>
-        ))}
-      </div>
-      {institution.notes ? <p className="leading-6">{institution.notes}</p> : null}
-    </div>
-  );
-}
-
-function getCatalogSourceLabel(source: "remote" | "cache" | "fallback") {
-  if (source === "remote") return "Notion 최신 정보";
-  if (source === "cache") return "저장된 Notion 캐시";
-  return "내장 기본값";
-}
-
-function formatCatalogFetchedAt(fetchedAt: string) {
-  const date = new Date(fetchedAt);
-  if (Number.isNaN(date.getTime())) return "동기화 시각 미정";
-  return date.toLocaleString("ko-KR");
 }
 
 function getInstitutionHref(institution: InstitutionConfig, preferred: "homepage" | "mobile") {

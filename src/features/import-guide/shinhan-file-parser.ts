@@ -210,10 +210,13 @@ function detectFileInstitution(
 ): FileInstitution {
   const normalizedFileName = fileName.toLowerCase();
   const hasBankColumns = mapping.withdrawalAmount >= 0 || mapping.depositAmount >= 0;
-  const cardInstitution =
+  const fileNameCardInstitution =
     normalizedFileName.includes("hyundai") || normalizedFileName.includes("현대")
       ? { name: "현대카드", source: "hyundai-card-file" as const }
-      : { name: "신한카드", source: "shinhan-file" as const };
+      : normalizedFileName.includes("shinhan") || normalizedFileName.includes("신한")
+        ? { name: "신한카드", source: "shinhan-file" as const }
+        : null;
+  const cardInstitution = fileNameCardInstitution ?? { name: "신한카드", source: "shinhan-file" as const };
   const isNaverPayFile = normalizedFileName.includes("naver") || normalizedFileName.includes("npay") || normalizedFileName.includes("네이버");
   const bankName =
     normalizedFileName.includes("kb") || normalizedFileName.includes("kbstar") || normalizedFileName.includes("국민")
@@ -244,6 +247,26 @@ function detectFileInstitution(
         };
 
   if (!hints) {
+    return detectedInstitution;
+  }
+
+  if (hints.parserKey === "bank-file" && detectedInstitution.kind === "bank") {
+    return {
+      name: hints.institutionName || detectedInstitution.name,
+      source: "bank-file",
+      kind: "bank",
+    };
+  }
+
+  if (hints.parserKey === "naver-pay" && detectedInstitution.kind === "pay") {
+    return {
+      name: hints.institutionName || detectedInstitution.name,
+      source: "naver-pay-file",
+      kind: "pay",
+    };
+  }
+
+  if (detectedInstitution.kind !== "card" || fileNameCardInstitution) {
     return detectedInstitution;
   }
 

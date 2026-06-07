@@ -628,3 +628,23 @@
 - `npx playwright test`가 10개 테스트 통과로 완료됐다.
 - `npm run build`가 TypeScript check와 Vite production build를 통과했다. 기존처럼 500 kB 초과 chunk warning은 출력됐다.
 - Browser로 `http://localhost:5174/`에서 금융기관 가져오기 화면을 열고 네이버페이 링크, selector 옵션, 선택 후 PC 안내와 `Npay 머니 내역` 문구, 콘솔 오류 없음까지 확인했다.
+
+## 파일 업로드 자동 카드사 판정 계획
+
+- 사용자는 Notion 금융기관 설정을 거래 파일 파싱의 필수 입력으로 쓰는 흐름을 원하지 않는다.
+- 파일 업로드는 `Shinhancard_20260607.xlsx`, `hyundaicard_20260607.xls`처럼 파일명과 실제 헤더를 기준으로 신한카드와 현대카드를 자동 판정해야 한다.
+- Notion catalog는 홈페이지 링크나 안내 CMS로는 유지할 수 있지만, 파일 파서 선택값으로 쓰지 않는다.
+- 파서 내부도 방어적으로 수정한다. UI가 실수로 신한카드 힌트를 넘겨도 `hyundaicard` 파일명은 현대카드 출처로 저장되어야 한다.
+- 은행과 네이버페이는 기존 명시 힌트와 파일명 판정 흐름을 유지한다.
+
+## 파일 업로드 자동 카드사 판정 결과
+
+- UI 파일 업로드 경로는 더 이상 선택된 Notion 기관의 parser hint를 `parseShinhanTransactionFile`에 넘기지 않는다.
+- 가져오기 화면의 `금융기관 설정`과 `가져올 금융기관` 선택 박스를 제거하고 `파일 자동 판정` 안내로 바꿨다.
+- 파서 내부는 파일명에서 `hyundai` 또는 `현대`를 보면 현대카드 출처를, `shinhan` 또는 `신한`을 보면 신한카드 출처를 우선 사용한다.
+- 방어 테스트로 `hyundaicard_20260607.csv`가 신한카드 힌트를 받아도 `현대카드`와 `hyundai-card-file`로 저장되는 동작을 고정했다.
+- `npx playwright test`는 13개 테스트 통과로 완료됐다.
+- `npm run build`가 TypeScript check와 Vite production build를 통과했다. 기존처럼 500 kB 초과 chunk warning은 출력됐다.
+- Playwright 화면 스모크에서 자동 판정 문구가 보이고 `금융기관 설정`과 `가져올 금융기관` 선택 박스가 사라진 것을 확인했다.
+- 사용자가 제공한 `Shinhancard_20260607.xlsx`는 101건을 읽었고 오류는 0건이었다.
+- 사용자가 제공한 `hyundaicard_20260607.xls`는 39건을 읽었고 오류는 0건이었다.
