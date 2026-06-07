@@ -927,3 +927,20 @@
 - Notion 캘린더 view `3783d76f-8874-80cb-8afd-000c6b9638ec`는 `SHOW "id"`로 되돌려 title만 표시되게 했다.
 - `npx playwright test` 42개, `npm run build`, Worker TypeScript 검증을 통과했다.
 - Cloudflare Worker `household-account-institution-cms`를 배포했다. Version ID는 `c615c98e-f51f-4398-b838-73d518378452`이다.
+
+## 반응형 화면 개선 계획
+
+- 사용자는 웹페이지, iPhone 16, iPhone 15 Pro에서 보기 적절하도록 화면 크기 조정이 유연하길 원한다.
+- iPhone 16과 iPhone 15 Pro의 일반 CSS viewport는 393px 폭 기준으로 검증한다.
+- 우선 대시보드 첫 화면을 대상으로 한다. 이 화면에는 요약 카드, 달력, 소비 차트, 거래 입력, 현재 기록 업데이트 버튼, 날짜 상세, 카테고리 관리가 함께 있어 모바일 overflow 위험이 가장 높다.
+- 변경은 Tailwind class 중심으로 제한한다. 데이터 구조나 동기화 로직은 건드리지 않는다.
+
+## 반응형 화면 개선 결과
+
+- 데스크톱 1440px, iPhone 16 393px, iPhone 15 Pro 393px에서 Playwright로 캡처했다.
+- 수정 전에는 달력과 우측 패널 때문에 `documentElement.scrollWidth > clientWidth` 상태였고, iPhone 화면에서 일요일 열이 잘렸다.
+- `AppShell`, `SectionPanel`, 대시보드 그리드, 달력, 차트, 거래 입력, 카테고리 관리에 `min-w-0`, `overflow-hidden`, 모바일 padding, 모바일 grid stack을 적용했다.
+- 수정 후 데스크톱 1440px은 `scrollWidth=1440`, iPhone 16과 iPhone 15 Pro는 `scrollWidth=393`으로 모두 가로 overflow가 사라졌다.
+- 수정 후 세 viewport 모두 console error가 없었고, 달력 `다음 달` 버튼 클릭 시 `2026년 6월`에서 `2026년 7월`로 변경되는 상호작용을 확인했다.
+- 거래 입력 영역까지 스크롤한 iPhone 16과 iPhone 15 Pro 화면에서도 `현재 기록 업데이트` 버튼이 폭 343px로 잘리지 않고 표시되는 것을 확인했다.
+- `npx playwright test` 42개와 `npm run build`를 통과했다. Vite는 기존 chunk size 경고만 표시했다.

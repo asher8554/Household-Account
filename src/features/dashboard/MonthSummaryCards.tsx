@@ -36,16 +36,16 @@ export function MonthSummaryCards({ summary }: MonthSummaryCardsProps) {
   ];
 
   return (
-    <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+    <section className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-4">
       {items.map((item) => {
         const Icon = item.icon;
 
         return (
-          <article key={item.label} className="rounded-lg border border-line bg-panel px-4 py-3 shadow-panel">
+          <article key={item.label} className="min-w-0 overflow-hidden rounded-lg border border-line bg-panel px-3 py-3 shadow-panel sm:px-4">
             <div className="flex items-start justify-between gap-3">
-              <div>
+              <div className="min-w-0">
                 <p className="text-sm text-muted">{item.label}</p>
-                <p className="mt-1 text-xl font-semibold tracking-normal">{item.value}</p>
+                <p className="mt-1 break-words text-lg font-semibold tracking-normal sm:text-xl">{item.value}</p>
               </div>
               <Icon className={item.tone} size={22} aria-hidden="true" />
             </div>

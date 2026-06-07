@@ -45,13 +45,13 @@ export function CalendarGrid({
   const categoryMap = new Map(categories.map((category) => [category.id, category]));
 
   return (
-    <section className="rounded-lg border border-line bg-panel shadow-panel">
-      <div className="flex flex-col gap-3 border-b border-line px-4 py-3 md:flex-row md:items-center md:justify-between">
-        <div>
+    <section className="min-w-0 overflow-hidden rounded-lg border border-line bg-panel shadow-panel">
+      <div className="flex flex-col gap-3 border-b border-line px-3 py-3 md:flex-row md:items-center md:justify-between md:px-4">
+        <div className="min-w-0">
           <p className="text-sm text-muted">월간 달력</p>
-          <h2 className="text-2xl font-semibold tracking-normal">{formatMonthTitle(monthDate)}</h2>
+          <h2 className="text-xl font-semibold tracking-normal sm:text-2xl">{formatMonthTitle(monthDate)}</h2>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button size="sm" variant="secondary" onClick={onPreviousMonth} aria-label="이전 달" title="이전 달">
             <ChevronLeft size={17} aria-hidden="true" />
           </Button>
@@ -65,7 +65,7 @@ export function CalendarGrid({
         </div>
       </div>
 
-      <div className="grid grid-cols-7 border-b border-line bg-moss-soft text-center text-xs font-semibold text-moss">
+      <div className="grid min-w-0 grid-cols-7 border-b border-line bg-moss-soft text-center text-xs font-semibold text-moss">
         {weekdayLabels.map((label) => (
           <div key={label} className="py-2">
             {label}
@@ -73,8 +73,8 @@ export function CalendarGrid({
         ))}
       </div>
 
-      <div className="grid grid-cols-7">
-        {days.map((day) => {
+      <div className="grid min-w-0 grid-cols-7">
+        {days.map((day, index) => {
           const summary = dailySummaries.get(day.dateKey);
           const topCategory = summary?.topExpenseCategoryId
             ? categoryMap.get(summary.topExpenseCategoryId)
@@ -86,17 +86,18 @@ export function CalendarGrid({
               key={day.dateKey}
               type="button"
               className={cx(
-                "min-h-[104px] border-b border-r border-line p-2 text-left transition hover:ring-2 hover:ring-mint/50 md:min-h-[132px]",
+                "min-h-[76px] min-w-0 overflow-hidden border-b border-r border-line p-1.5 text-left transition hover:ring-2 hover:ring-mint/50 sm:min-h-[104px] sm:p-2 md:min-h-[132px]",
                 intensityClass(summary?.expense ?? 0, maxDailyExpense),
                 !day.isCurrentMonth && "opacity-45",
                 isSelected && "ring-2 ring-mint",
+                index % 7 === 6 && "border-r-0",
               )}
               onClick={() => onSelectDate(day.dateKey, day.date)}
             >
               <div className="flex items-center justify-between gap-1">
                 <span
                   className={cx(
-                    "flex h-6 min-w-6 items-center justify-center rounded-lg px-1 text-sm font-semibold",
+                    "flex h-6 min-w-5 items-center justify-center rounded-lg px-1 text-xs font-semibold sm:min-w-6 sm:text-sm",
                     day.isToday && "bg-mint text-white",
                   )}
                 >
@@ -107,9 +108,9 @@ export function CalendarGrid({
                 ) : null}
               </div>
 
-              <div className="mt-3 grid gap-1">
+              <div className="mt-2 grid min-w-0 gap-1 sm:mt-3">
                 {summary?.expense ? (
-                  <span className="truncate text-sm font-semibold text-coral">
+                  <span className="truncate text-xs font-semibold text-coral sm:text-sm">
                     -{formatCompactKrw(summary.expense)}
                   </span>
                 ) : (

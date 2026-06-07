@@ -83,7 +83,7 @@ export function CategoryExpenseChart({
       title="카테고리별 지출"
       eyebrow={formatMonthTitle(monthDate)}
       action={
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button size="sm" variant="secondary" onClick={onPreviousMonth} aria-label="이전 달" title="이전 달">
             <ChevronLeft size={17} aria-hidden="true" />
           </Button>
@@ -102,15 +102,15 @@ export function CategoryExpenseChart({
           지출 데이터 없음.
         </p>
       ) : (
-        <div className="grid gap-4">
-          <div className="grid gap-4 lg:grid-cols-[minmax(15rem,0.85fr)_minmax(0,1fr)]">
-            <div className="relative h-[280px]">
+        <div className="grid min-w-0 gap-4">
+          <div className="grid min-w-0 gap-4 lg:grid-cols-[minmax(13rem,0.85fr)_minmax(0,1fr)]">
+            <div className="relative h-[220px] min-w-0 sm:h-[280px]">
               <ResponsiveContainer
                 width="100%"
                 height="100%"
-                minWidth={240}
+                minWidth={0}
                 minHeight={240}
-                initialDimension={{ width: 320, height: 280 }}
+                initialDimension={{ width: 260, height: 220 }}
               >
                 <PieChart margin={{ top: 8, right: 8, bottom: 8, left: 8 }}>
                   <Tooltip
@@ -151,19 +151,19 @@ export function CategoryExpenseChart({
               </ResponsiveContainer>
               <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center">
                 <span className="text-xs text-muted">총 지출</span>
-                <span className="mt-1 text-xl font-bold text-coral">{formatKrw(totalExpense)}</span>
+                <span className="mt-1 text-lg font-bold text-coral sm:text-xl">{formatKrw(totalExpense)}</span>
               </div>
             </div>
 
-            <div className="grid content-center gap-2">
+            <div className="grid min-w-0 content-center gap-2">
               <div className="flex items-end justify-between gap-3 border-b border-line pb-2">
-                <div>
+                <div className="min-w-0">
                   <p className="text-xs text-muted">이번 달 사용한 총금액</p>
-                  <p className="text-lg font-bold text-coral">{formatKrw(totalExpense)}</p>
+                  <p className="break-words text-base font-bold text-coral sm:text-lg">{formatKrw(totalExpense)}</p>
                 </div>
                 <p className="text-xs text-muted">{chartData.length}개 카테고리</p>
               </div>
-              <div className="grid max-h-72 gap-1 overflow-auto pr-1">
+              <div className="grid max-h-72 min-w-0 gap-1 overflow-auto pr-1">
                 {chartData.map((entry) => {
                   const isSelected = selectedCategoryId === entry.categoryId;
 

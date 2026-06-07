@@ -78,7 +78,7 @@ export function TransactionForm({ categories, defaultDateKey }: TransactionFormP
 
       <FormField label="날짜">
         <input
-          className="h-10 rounded-lg border border-line bg-field px-3 text-sm"
+          className="h-10 w-full rounded-lg border border-line bg-field px-3 text-sm"
           type="date"
           value={date}
           onChange={(event) => setDate(event.target.value)}
@@ -87,7 +87,7 @@ export function TransactionForm({ categories, defaultDateKey }: TransactionFormP
 
       <FormField label="금액">
         <input
-          className="h-10 rounded-lg border border-line bg-field px-3 text-sm"
+          className="h-10 w-full rounded-lg border border-line bg-field px-3 text-sm"
           inputMode="numeric"
           placeholder="예: 12500"
           value={amountText}
@@ -97,7 +97,7 @@ export function TransactionForm({ categories, defaultDateKey }: TransactionFormP
 
       <FormField label="카테고리">
         <select
-          className="h-10 rounded-lg border border-line bg-field px-3 text-sm"
+          className="h-10 w-full rounded-lg border border-line bg-field px-3 text-sm"
           value={categoryId}
           onChange={(event) => setCategoryId(event.target.value)}
         >
@@ -111,7 +111,7 @@ export function TransactionForm({ categories, defaultDateKey }: TransactionFormP
 
       <FormField label="메모">
         <textarea
-          className="min-h-20 resize-y rounded-lg border border-line bg-field px-3 py-2 text-sm"
+          className="min-h-20 w-full resize-y rounded-lg border border-line bg-field px-3 py-2 text-sm"
           placeholder="선택 입력"
           value={memo}
           onChange={(event) => setMemo(event.target.value)}

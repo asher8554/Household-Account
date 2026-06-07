@@ -63,9 +63,9 @@ export function CategoryManager({ categories }: CategoryManagerProps) {
   return (
     <SectionPanel title="카테고리" eyebrow="관리">
       <form onSubmit={handleAdd} className="grid gap-2">
-        <div className="grid grid-cols-[1fr_1fr_minmax(7.5rem,auto)] gap-2">
+        <div className="grid gap-2 sm:grid-cols-[1fr_1fr_minmax(7.5rem,auto)]">
           <select
-            className="h-10 rounded-lg border border-line bg-field px-3 text-sm"
+            className="h-10 w-full rounded-lg border border-line bg-field px-3 text-sm"
             value={newType}
             onChange={(event) => setNewType(event.target.value as CategoryType)}
           >
@@ -73,7 +73,7 @@ export function CategoryManager({ categories }: CategoryManagerProps) {
             <option value="income">수입</option>
           </select>
           <input
-            className="h-10 rounded-lg border border-line bg-field px-3 text-sm"
+            className="h-10 w-full rounded-lg border border-line bg-field px-3 text-sm"
             placeholder="이름"
             value={newName}
             onChange={(event) => setNewName(event.target.value)}
@@ -98,7 +98,7 @@ export function CategoryManager({ categories }: CategoryManagerProps) {
               title="무작위 색상"
             >
               <Shuffle size={15} aria-hidden="true" />
-              Random
+              <span className="hidden min-[360px]:inline">Random</span>
             </Button>
           </div>
         </div>

@@ -463,3 +463,11 @@
 - [x] 이미 name title로 migration된 row는 다음 push에서 다시 업데이트하지 않도록 Worker를 수정한다.
 - [x] 관련 테스트와 production build를 통과시킨다.
 - [x] Worker를 배포하고 변경사항을 커밋, push한다.
+
+## 반응형 화면 개선
+
+- [x] 데스크톱, iPhone 16, iPhone 15 Pro viewport에서 현재 깨짐을 캡처한다.
+- [x] 대시보드 상단, 달력, 거래 입력/상세 영역이 작은 폭에서 겹치지 않도록 레이아웃을 조정한다.
+- [x] iPhone 16과 iPhone 15 Pro 크기에서 overflow, clipping, console error가 없는지 확인한다.
+- [x] 관련 테스트와 production build를 통과시킨다.
+- [x] 변경사항을 커밋하고 push한다.
