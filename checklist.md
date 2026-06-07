@@ -1,3 +1,12 @@
+## Notion 백업 캘린더 날짜 연동
+
+- [x] Notion data source와 캘린더 뷰 schema를 확인한다.
+- [x] 백업 row가 `날짜` date 속성을 채우는 테스트를 추가한다.
+- [x] Worker 백업 변환 로직에 `날짜` date 속성을 추가한다.
+- [x] Notion 캘린더 뷰를 `날짜` 기준 거래 row로 정리한다.
+- [x] 관련 테스트와 빌드를 통과시킨다.
+- [x] 변경사항을 커밋하고 GitHub에 push한다.
+
 ## GitHub Pages 공유 안내 문구 정리
 
 - [x] 혼동되는 GitHub token 안내 문구 위치를 확인한다.

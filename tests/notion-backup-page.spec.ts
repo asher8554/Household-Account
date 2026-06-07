@@ -49,6 +49,7 @@ test("buildNotionBackupRows maps only transactions to data source row properties
   expect(rows[0].properties.id.title[0]?.text.content).toBe("tx-1");
   expect(rows[0].properties.recordType.select.name).toBe("transaction");
   expect(rows[0].properties.date.rich_text[0]?.text.content).toBe("2026-06-07");
+  expect(rows[0].properties["날짜"].date.start).toBe("2026-06-07");
   expect(rows[0].properties.type.select.name).toBe("expense");
   expect(rows[0].properties.amount.number).toBe(12000);
   expect(rows[0].properties.categoryId.rich_text[0]?.text.content).toBe("expense-food");
@@ -116,6 +117,7 @@ test("buildNotionBackupSchemaPatch adds missing meaningful backup columns", () =
       memo: { rich_text: {} },
       source: { select: {} },
       date: { rich_text: {} },
+      "날짜": { date: {} },
       type: {
         select: {
           options: [
@@ -805,6 +807,7 @@ function completeBackupSchema() {
     createdAt: { type: "rich_text" },
     updatedAt: { type: "rich_text" },
     date: { type: "rich_text" },
+    "날짜": { type: "date" },
     amount: { type: "number" },
     categoryId: { type: "rich_text" },
     memo: { type: "rich_text" },

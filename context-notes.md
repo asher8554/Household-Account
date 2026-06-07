@@ -813,6 +813,23 @@
 - `npx playwright test`는 29개 테스트 통과로 완료됐다.
 - `npm run build`가 TypeScript check와 Vite production build를 통과했다. 기존처럼 500 kB 초과 chunk warning은 출력됐다.
 - Browser QA에서 `http://127.0.0.1:5173/` 데스크톱과 390px 모바일 폭 모두 백업 패널, `Notion 백업 키`, `Notion 기록` 버튼 렌더링을 확인했고 콘솔 오류는 없었다.
+## Notion 백업 캘린더 날짜 연동 계획
+
+- 사용자는 Notion data source `3783d76f-8874-8055-af3a-000befc853fc`가 `https://app.notion.com/p/3783d76f887480299913e7fe4231957a?v=3783d76f887480179dfc000c486c0dbd&source=copy_link` 캘린더에 정리되기를 원한다.
+- Notion fetch 결과 해당 database에는 data source `Household account`, date 타입 속성 `날짜`, calendar view `캘린더 보기`가 이미 있다.
+- 현재 Worker는 거래일을 text 속성 `date`에만 쓰고 있으므로 calendar view가 쓰는 `날짜` date 속성을 백업 row에 같이 채워야 한다.
+- 캘린더 view는 `CALENDAR BY "날짜"`와 `recordType = transaction` 기준으로 정리한다.
+
+## Notion 백업 캘린더 날짜 연동 결과
+
+- `buildNotionBackupRows`가 기존 text `date`와 함께 date 타입 `날짜` 속성도 `transaction.date`로 채우게 했다.
+- `buildNotionBackupSchemaPatch`가 `날짜` date 속성이 없는 Notion data source에는 `{ date: {} }` schema patch를 추가한다.
+- Notion view `3783d76f-8874-8017-9dfc-000c486c0dbd` 이름을 `거래 캘린더`로 바꾸고 `CALENDAR BY "날짜"`, `recordType = transaction` 기준으로 설정했다.
+- 기존 Notion row는 다음 Notion 백업 실행 때 `날짜` 속성이 채워져 캘린더에 표시된다.
+- Notion connector의 structured query 도구는 내부 `notion-query-data-sources not found` 오류로 row 조회가 막혀 기존 row 직접 backfill은 진행하지 못했다.
+- 현재 환경은 `CLOUDFLARE_API_TOKEN`과 Wrangler 로그인 세션이 없어 Worker deploy를 바로 실행할 수 없다.
+- `npx playwright test` 37개, `npm run build`, Worker TypeScript 명시 검증을 통과했다.
+
 ## GitHub Pages 공유 안내 문구 정리 계획
 
 - 사용자가 GitHub 공유 설정 하단의 token 권한 문구가 GitHub Pages 공유 방식과 혼동된다고 지적했다.
