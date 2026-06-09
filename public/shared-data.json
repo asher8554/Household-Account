@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-06-09T09:15:17.302Z",
+  "exportedAt": "2026-06-09T14:00:58.064Z",
   "categories": [
     {
       "id": "expense-food",
@@ -5769,6 +5769,17 @@
       "updatedAt": "2026-06-07T06:52:12.426Z"
     },
     {
+      "id": "tx_b27a44ca-1d99-4b8e-b18d-2ae4866d7c5f",
+      "date": "2026-05-25",
+      "type": "income",
+      "amount": 28200,
+      "categoryId": "income-other",
+      "memo": "[신한카드] 한국철도공사 (직승인) / 상태 신용 / 카드 신용 / 승인번호 13454423",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-09T14:00:53.890Z",
+      "updatedAt": "2026-06-09T14:00:53.890Z"
+    },
+    {
       "id": "tx_d0460500-7d80-4889-a092-91df90c2eba9",
       "date": "2026-05-25",
       "type": "expense",
@@ -5789,6 +5800,17 @@
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
       "updatedAt": "2026-06-07T06:52:02.931Z"
+    },
+    {
+      "id": "tx_eb9669d1-530f-4815-9c1a-01ca50615cbd",
+      "date": "2026-05-25",
+      "type": "income",
+      "amount": 32000,
+      "categoryId": "income-other",
+      "memo": "[신한카드] 한국철도공사 (직승인) / 상태 신용 / 카드 신용 / 승인번호 13561901",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-09T14:00:53.890Z",
+      "updatedAt": "2026-06-09T14:00:53.890Z"
     },
     {
       "id": "tx_630e50b9-1c3a-45cc-bb54-2ab54fa48293",
@@ -6207,6 +6229,28 @@
       "source": "hyundai-card-file",
       "createdAt": "2026-06-07T11:53:59.507Z",
       "updatedAt": "2026-06-07T11:54:24.468Z"
+    },
+    {
+      "id": "tx_01471544-6e19-4c3a-9b9f-17523195b943",
+      "date": "2026-06-08",
+      "type": "expense",
+      "amount": 29000,
+      "categoryId": "expense-other",
+      "memo": "[신한카드] 쿠팡이츠 / 상태 신용 / 카드 신용 / 승인번호 09215787",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-09T14:00:53.890Z",
+      "updatedAt": "2026-06-09T14:00:53.890Z"
+    },
+    {
+      "id": "tx_57958f4e-d00a-485a-988e-b8fd47b21772",
+      "date": "2026-06-09",
+      "type": "expense",
+      "amount": 30500,
+      "categoryId": "expense-other",
+      "memo": "[신한카드] 쿠팡이츠 / 상태 신용 / 카드 신용 / 승인번호 22915494",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-09T14:00:53.890Z",
+      "updatedAt": "2026-06-09T14:00:53.890Z"
     }
   ]
 }
