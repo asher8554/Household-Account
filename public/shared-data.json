@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-06-09T14:00:58.064Z",
+  "exportedAt": "2026-06-10T05:56:34.681Z",
   "categories": [
     {
       "id": "expense-food",
@@ -6251,6 +6251,17 @@
       "source": "shinhan-file",
       "createdAt": "2026-06-09T14:00:53.890Z",
       "updatedAt": "2026-06-09T14:00:53.890Z"
+    },
+    {
+      "id": "tx_0ffc35f3-1a6a-49f4-86e7-f7771a9e732e",
+      "date": "2026-06-10",
+      "type": "expense",
+      "amount": 22800,
+      "categoryId": "cat_8c294edb-cff3-40d9-aaa1-d931082a49b4",
+      "memo": "우준우 과자",
+      "source": "manual",
+      "createdAt": "2026-06-10T05:56:34.029Z",
+      "updatedAt": "2026-06-10T05:56:34.029Z"
     }
   ]
 }
