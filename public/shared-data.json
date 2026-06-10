@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-06-10T05:56:34.681Z",
+  "exportedAt": "2026-06-10T14:17:21.955Z",
   "categories": [
     {
       "id": "expense-food",
@@ -6235,22 +6235,22 @@
       "date": "2026-06-08",
       "type": "expense",
       "amount": 29000,
-      "categoryId": "expense-other",
+      "categoryId": "expense-food",
       "memo": "[신한카드] 쿠팡이츠 / 상태 신용 / 카드 신용 / 승인번호 09215787",
       "source": "shinhan-file",
       "createdAt": "2026-06-09T14:00:53.890Z",
-      "updatedAt": "2026-06-09T14:00:53.890Z"
+      "updatedAt": "2026-06-10T13:54:54.237Z"
     },
     {
       "id": "tx_57958f4e-d00a-485a-988e-b8fd47b21772",
       "date": "2026-06-09",
       "type": "expense",
       "amount": 30500,
-      "categoryId": "expense-other",
+      "categoryId": "expense-food",
       "memo": "[신한카드] 쿠팡이츠 / 상태 신용 / 카드 신용 / 승인번호 22915494",
       "source": "shinhan-file",
       "createdAt": "2026-06-09T14:00:53.890Z",
-      "updatedAt": "2026-06-09T14:00:53.890Z"
+      "updatedAt": "2026-06-10T13:54:54.237Z"
     },
     {
       "id": "tx_0ffc35f3-1a6a-49f4-86e7-f7771a9e732e",
@@ -6262,6 +6262,28 @@
       "source": "manual",
       "createdAt": "2026-06-10T05:56:34.029Z",
       "updatedAt": "2026-06-10T05:56:34.029Z"
+    },
+    {
+      "id": "tx_1b55f7bb-a6d0-499d-9fa3-40511792a641",
+      "date": "2026-06-10",
+      "type": "expense",
+      "amount": 420,
+      "categoryId": "expense-other",
+      "memo": "[신한카드] 주식회사 다큐 / 상태 신용 / 카드 신용 / 승인번호 36612153",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-10T14:15:34.502Z",
+      "updatedAt": "2026-06-10T14:15:34.502Z"
+    },
+    {
+      "id": "tx_8bb3f2d2-8fb0-4efd-a72d-2ecd38694648",
+      "date": "2026-06-10",
+      "type": "expense",
+      "amount": 22800,
+      "categoryId": "expense-shopping",
+      "memo": "[신한카드] 쿠팡 / 상태 신용 / 카드 신용 / 승인번호 35945710",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-10T14:15:34.502Z",
+      "updatedAt": "2026-06-10T14:15:47.724Z"
     }
   ]
 }
