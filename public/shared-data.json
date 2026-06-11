@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-06-10T14:17:21.955Z",
+  "exportedAt": "2026-06-11T11:19:00.310Z",
   "categories": [
     {
       "id": "expense-food",
@@ -1967,11 +1967,11 @@
       "date": "2026-02-02",
       "type": "expense",
       "amount": 306772,
-      "categoryId": "expense-shopping",
+      "categoryId": "cat_83444c34-46aa-4dd7-956c-517089172366",
       "memo": "[신한카드] WWW.ALIEXPRESS.COM / 카드 신용 / 승인번호 385936",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-07T07:03:12.551Z"
+      "updatedAt": "2026-06-11T11:18:40.819Z"
     },
     {
       "id": "tx_0cd0d429-7a8b-43cd-a967-9c7df1a7c96f",
@@ -2385,11 +2385,11 @@
       "date": "2026-02-21",
       "type": "expense",
       "amount": 44078,
-      "categoryId": "expense-shopping",
+      "categoryId": "cat_83444c34-46aa-4dd7-956c-517089172366",
       "memo": "[신한카드] WWW.ALIEXPRESS.COM / 카드 신용 / 승인번호 242039",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-07T07:03:12.551Z"
+      "updatedAt": "2026-06-11T11:18:40.819Z"
     },
     {
       "id": "tx_21e54bbd-8c17-48b2-a3b3-c8069dac4632",
@@ -2902,22 +2902,22 @@
       "date": "2026-03-08",
       "type": "expense",
       "amount": 43294,
-      "categoryId": "expense-shopping",
+      "categoryId": "cat_83444c34-46aa-4dd7-956c-517089172366",
       "memo": "[신한카드] WWW.ALIEXPRESS.COM / 카드 신용 / 승인번호 472349",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-07T07:03:12.551Z"
+      "updatedAt": "2026-06-11T11:18:40.819Z"
     },
     {
       "id": "tx_efe26067-cd25-4782-bf5a-fc0564011e51",
       "date": "2026-03-08",
       "type": "expense",
       "amount": 42590,
-      "categoryId": "expense-shopping",
+      "categoryId": "cat_83444c34-46aa-4dd7-956c-517089172366",
       "memo": "[신한카드] WWW.ALIEXPRESS.COM / 카드 신용 / 승인번호 472349",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-07T07:03:12.551Z"
+      "updatedAt": "2026-06-11T11:18:40.819Z"
     },
     {
       "id": "tx_27b97cb0-f11a-46ba-91af-d8294b4d0100",
@@ -3870,11 +3870,11 @@
       "date": "2026-04-11",
       "type": "expense",
       "amount": 54223,
-      "categoryId": "expense-shopping",
+      "categoryId": "cat_83444c34-46aa-4dd7-956c-517089172366",
       "memo": "[신한카드] WWW.ALIEXPRESS.COM / 카드 신용 / 승인번호 636469",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-07T07:03:12.551Z"
+      "updatedAt": "2026-06-11T11:18:40.819Z"
     },
     {
       "id": "tx_85d08da1-3861-4c56-9123-119241d69313",
