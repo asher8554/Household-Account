@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-06-11T11:37:19.013Z",
+  "exportedAt": "2026-06-13T13:17:14.624Z",
   "categories": [
     {
       "id": "expense-food",
@@ -5670,6 +5670,17 @@
       "updatedAt": "2026-06-07T06:57:53.042Z"
     },
     {
+      "id": "tx_3dbf3ec9-301b-4a02-b7c2-820927e50789",
+      "date": "2026-05-24",
+      "type": "income",
+      "amount": 56000,
+      "categoryId": "income-other",
+      "memo": "[신한카드] 신세계백화점 천안아산점(아카데 / 상태 신용 / 카드 신용 / 승인번호 05512369",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-13T13:17:03.402Z",
+      "updatedAt": "2026-06-13T13:17:03.402Z"
+    },
+    {
       "id": "tx_656b77f6-73af-4c3f-aaf9-44ec621445f6",
       "date": "2026-05-24",
       "type": "expense",
@@ -6284,6 +6295,50 @@
       "source": "shinhan-file",
       "createdAt": "2026-06-10T14:15:34.502Z",
       "updatedAt": "2026-06-10T14:15:47.724Z"
+    },
+    {
+      "id": "tx_759aa7e7-d362-44d5-99b3-de24f713b288",
+      "date": "2026-06-11",
+      "type": "expense",
+      "amount": 1100,
+      "categoryId": "expense-other",
+      "memo": "[신한카드] SK텔레콤 / 상태 신용 / 카드 신용 / 승인번호 45140475",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-13T13:17:03.402Z",
+      "updatedAt": "2026-06-13T13:17:03.402Z"
+    },
+    {
+      "id": "tx_5f3e6968-db30-492a-aed9-2b88e941315c",
+      "date": "2026-06-12",
+      "type": "income",
+      "amount": 142430,
+      "categoryId": "income-other",
+      "memo": "[신한카드] 지자체세입금(네이버페이) / 상태 신용 / 카드 신용 / 승인번호 14367978",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-13T13:17:03.402Z",
+      "updatedAt": "2026-06-13T13:17:03.402Z"
+    },
+    {
+      "id": "tx_70b6d1a2-4be4-4df3-9471-3b299727f21e",
+      "date": "2026-06-12",
+      "type": "expense",
+      "amount": 19722,
+      "categoryId": "expense-other",
+      "memo": "[신한카드] STEAMGAMES.COM 4259522 / 상태 신용 / 카드 신용 / 승인번호 408984",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-13T13:17:03.402Z",
+      "updatedAt": "2026-06-13T13:17:03.402Z"
+    },
+    {
+      "id": "tx_f6a89918-b38a-4fde-b570-296047ea39b9",
+      "date": "2026-06-12",
+      "type": "expense",
+      "amount": 29000,
+      "categoryId": "expense-other",
+      "memo": "[신한카드] 쿠팡이츠 / 상태 신용 / 카드 신용 / 승인번호 19039479",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-13T13:17:03.402Z",
+      "updatedAt": "2026-06-13T13:17:03.402Z"
     }
   ]
 }
