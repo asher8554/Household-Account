@@ -110,16 +110,15 @@ export function getCardExpenseStats(transactions: Transaction[]): CardExpenseSta
     const fallbackLabel = cardSourceLabels[transaction.source];
     if (!fallbackLabel) continue;
 
-    const label = getCardExpenseLabel(transaction.memo, fallbackLabel);
-    const current = totals.get(label) ?? {
-      label,
+    const current = totals.get(fallbackLabel) ?? {
+      label: fallbackLabel,
       amount: 0,
       transactionCount: 0,
     };
 
     current.amount += transaction.amount;
     current.transactionCount += 1;
-    totals.set(label, current);
+    totals.set(fallbackLabel, current);
   }
 
   return [...totals.values()].sort(
@@ -155,11 +154,4 @@ export function getCategoryExpenseStats(
       };
     })
     .sort((a, b) => b.amount - a.amount);
-}
-
-function getCardExpenseLabel(memo: string, fallbackLabel: string) {
-  const cardName = memo.match(/(?:^|\/)\s*카드\s*[:：]?\s*([^/]+)/)?.[1]?.trim();
-  if (cardName) return cardName;
-
-  return memo.match(/^\[([^\]]+)\]/)?.[1]?.trim() || fallbackLabel;
 }

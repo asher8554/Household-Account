@@ -1029,6 +1029,24 @@
 - `npx playwright test tests/dashboard-calculations.spec.ts`, `npx playwright test`, `npm run build`를 통과했다.
 - in-app Browser에서 기본 폭과 393px 모바일 폭 모두 `카드별 사용금액` 섹션이 1회 렌더링되고, console error와 가로 overflow가 없음을 확인했다.
 
+## 카드별 사용금액 카드사 기준 수정 계획
+
+- 사용자는 `신용`, `본인` 같은 카드 종류가 아니라 `신한카드`, `현대카드` 카드사 기준으로 나뉘길 원한다고 정정했다.
+- 이전 구현은 가져오기 메모의 `/ 카드 ...` 값을 우선 사용해 신한카드의 `신용`, 현대카드의 `본인` 같은 원본 카드 구분값이 라벨로 노출됐다.
+- 집계 라벨은 memo의 카드명 세부값이 아니라 `transaction.source`에 매핑된 카드사 라벨을 사용한다.
+- `shinhan-file`과 `shinhan-notification`은 `신한카드`, `hyundai-card-file`은 `현대카드`로 묶는다.
+- 은행, 네이버페이, 수동 입력, CSV 제외 기준은 그대로 유지한다.
+
+## 카드별 사용금액 카드사 기준 수정 결과
+
+- `tests/dashboard-calculations.spec.ts`의 기대값을 `Deep Dream` 대신 `신한카드`로 바꿔 RED를 확인했다.
+- RED 수신값은 `현대카드 30000원`, `Deep Dream 20000원`이어서 카드 세부값이 라벨로 노출되는 문제가 재현됐다.
+- `getCardExpenseStats`는 memo를 읽지 않고 `transaction.source`의 카드사 라벨만 사용하도록 단순화했다.
+- focused 테스트가 `현대카드 30000원`, `신한카드 20000원` 기준으로 GREEN을 통과했다.
+- `npx playwright test` 45개와 `npm run build`를 통과했다. Vite는 기존 chunk size 경고만 표시했다.
+- in-app Browser에서 `localhost:5176` 새 origin으로 실제 공유 데이터가 로드된 화면을 확인했다.
+- 카드별 사용금액은 `신한카드 21건 905,058원`, `현대카드 2건 305,010원`으로 표시됐고 `신용`, `본인` 라벨은 없었다.
+
 ## 프로젝트 해설서와 PDF 문서화 기록
 
 - 사용자는 프로그램 구조도 그림, 해설서, 예시 코드, 구현 주석, PDF 산출물을 요청했다.
