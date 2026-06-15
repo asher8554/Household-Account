@@ -16,7 +16,10 @@ import {
 import { SectionPanel } from "../../shared/ui/SectionPanel";
 import {
   buildDailySummaries,
+  cardCompanyOptions,
+  filterTransactionsByCardCompanies,
   getCategoryExpenseStats,
+  getCardExpenseStats,
   getMaxDailyExpense,
   getMonthSummary,
   getTransactionsForMonth,
@@ -31,9 +34,12 @@ const initialData = {
   transactions: [],
 };
 
+const defaultSelectedCardCompanyIds = cardCompanyOptions.map((option) => option.id);
+
 export function DashboardScreen() {
   const [currentMonth, setCurrentMonth] = useState(() => startOfMonth(new Date()));
   const [selectedDateKey, setSelectedDateKey] = useState(getTodayKey());
+  const [selectedCardCompanyIds, setSelectedCardCompanyIds] = useState(defaultSelectedCardCompanyIds);
   const { data, error, isLoading } = useLiveQuery(
     async () => ({
       categories: await listCategories(),
@@ -51,22 +57,30 @@ export function DashboardScreen() {
     () => getTransactionsForMonth(data.transactions, currentMonth),
     [data.transactions, currentMonth],
   );
-  const dailySummaries = useMemo(() => buildDailySummaries(monthlyTransactions), [monthlyTransactions]);
+  const filteredMonthlyTransactions = useMemo(
+    () => filterTransactionsByCardCompanies(monthlyTransactions, selectedCardCompanyIds),
+    [monthlyTransactions, selectedCardCompanyIds],
+  );
+  const cardExpenseStats = useMemo(() => getCardExpenseStats(monthlyTransactions), [monthlyTransactions]);
+  const dailySummaries = useMemo(
+    () => buildDailySummaries(filteredMonthlyTransactions),
+    [filteredMonthlyTransactions],
+  );
   const maxDailyExpense = useMemo(() => getMaxDailyExpense(dailySummaries), [dailySummaries]);
   const monthSummary = useMemo(
-    () => getMonthSummary(monthlyTransactions, currentMonth),
-    [monthlyTransactions, currentMonth],
+    () => getMonthSummary(filteredMonthlyTransactions, currentMonth),
+    [filteredMonthlyTransactions, currentMonth],
   );
   const categoryStats = useMemo(
-    () => getCategoryExpenseStats(monthlyTransactions, data.categories),
-    [monthlyTransactions, data.categories],
+    () => getCategoryExpenseStats(filteredMonthlyTransactions, data.categories),
+    [filteredMonthlyTransactions, data.categories],
   );
   const selectedDateTransactions = useMemo(
     () =>
-      data.transactions
+      filteredMonthlyTransactions
         .filter((transaction) => transaction.date === selectedDateKey)
         .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)),
-    [data.transactions, selectedDateKey],
+    [filteredMonthlyTransactions, selectedDateKey],
   );
 
   function moveMonth(nextMonth: Date) {
@@ -91,6 +105,20 @@ export function DashboardScreen() {
     setSelectedDateKey(toDateKey(today));
   }
 
+  function toggleCardCompanyFilter(cardCompanyId: (typeof defaultSelectedCardCompanyIds)[number]) {
+    setSelectedCardCompanyIds((previous) => {
+      const next = new Set(previous);
+
+      if (next.has(cardCompanyId)) {
+        next.delete(cardCompanyId);
+      } else {
+        next.add(cardCompanyId);
+      }
+
+      return defaultSelectedCardCompanyIds.filter((id) => next.has(id));
+    });
+  }
+
   if (error) {
     return (
       <SectionPanel title="오류">
@@ -101,7 +129,12 @@ export function DashboardScreen() {
 
   return (
     <div className="grid min-w-0 gap-4 md:gap-5">
-      <MonthSummaryCards summary={monthSummary} />
+      <MonthSummaryCards
+        summary={monthSummary}
+        cardExpenseStats={cardExpenseStats}
+        selectedCardCompanyIds={selectedCardCompanyIds}
+        onToggleCardCompany={toggleCardCompanyFilter}
+      />
 
       <div className="grid min-w-0 gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(20rem,24rem)] xl:gap-5">
         <div className="grid min-w-0 gap-4 md:gap-5">
@@ -125,7 +158,7 @@ export function DashboardScreen() {
           <CategoryExpenseChart
             monthDate={currentMonth}
             stats={categoryStats}
-            transactions={monthlyTransactions}
+            transactions={filteredMonthlyTransactions}
             categories={data.categories}
             onPreviousMonth={moveToPreviousMonth}
             onCurrentMonth={moveToCurrentMonth}

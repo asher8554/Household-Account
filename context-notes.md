@@ -1055,3 +1055,24 @@
 - 기능 변경은 목표가 아니므로 실행 로직은 그대로 두고 문서와 이해 보조 주석만 추가한다.
 - `make-pdf` 전용 바이너리는 이 환경에 없어서 PDF skill 기준으로 Python Playwright와 `pypdf` 검증을 사용한다.
 - 최종 문서는 `docs/project-guide.md`, 그림은 `docs/assets/`, PDF는 `output/pdf/household-account-project-guide.pdf`에 둔다.
+
+## 카드사별 달력 표시 토글 계획
+
+- 사용자는 카드별 사용금액의 신한카드, 현대카드 부분을 토글 버튼으로 만들어 해당 카드사만 달력에 보이길 원한다.
+- 버튼은 기존 `카드별 사용금액` 영역 안에 둔다. 새 설정 저장소는 만들지 않고 현재 화면 상태로만 유지한다.
+- 기본값은 신한카드와 현대카드 모두 선택이다. 사용자가 현대카드를 끄면 신한카드 거래만, 신한카드를 끄면 현대카드 거래만 표시한다.
+- 양쪽을 모두 끄면 카드 거래가 없는 빈 달력 상태를 표시한다.
+- 필터 적용 범위는 달력과 그 달력에서 파생되는 월 요약, 카테고리 차트, 선택일 상세 거래로 맞춘다.
+- 거래 입력 폼, 카테고리 관리, 데이터 저장/동기화 로직은 변경하지 않는다.
+
+## 카드사별 달력 표시 토글 구현 기록
+
+- `filterTransactionsByCardCompanies` 테스트를 먼저 추가해 helper 누락 RED를 확인했다.
+- `cardCompanyOptions`를 추가해 `shinhan-file`, `shinhan-notification`은 `신한카드`, `hyundai-card-file`은 `현대카드`로 묶었다.
+- 대시보드는 선택된 카드사 source 거래만 `filteredMonthlyTransactions`로 만들고, 달력, 월 요약, 카테고리 차트, 선택일 상세 거래에 이 배열을 사용한다.
+- 카드별 사용금액 버튼 목록은 필터 전 월 카드사 통계로 계속 렌더링해 모든 카드사를 꺼도 다시 켤 수 있다.
+- focused 테스트 `npx playwright test tests/dashboard-calculations.spec.ts` 2개가 통과했다.
+- 전체 Playwright 테스트 46개와 `npm run build`를 통과했다. Vite는 기존 chunk size 경고만 표시했다.
+- in-app Browser에서 로컬 `localhost:5177` 기준으로 기본 전체, 신한카드만, 현대카드만 토글 상태를 확인했다.
+- 신한카드만 선택하면 카드별 사용금액과 달력 총 지출이 `905,058원`으로 바뀌고, 현대카드만 선택하면 `305,010원`으로 바뀐다.
+- 390px 모바일 viewport에서도 카드사 토글 버튼이 보이고 가로 overflow가 없음을 확인했다.

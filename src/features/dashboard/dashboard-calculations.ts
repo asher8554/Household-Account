@@ -20,7 +20,10 @@ export type MonthSummary = {
   cardExpenses: CardExpenseStat[];
 };
 
+export type CardCompanyId = "shinhan-card" | "hyundai-card";
+
 export type CardExpenseStat = {
+  id: CardCompanyId;
   label: string;
   amount: number;
   transactionCount: number;
@@ -33,14 +36,30 @@ export type CategoryExpenseStat = {
   amount: number;
 };
 
-const cardSourceLabels: Partial<Record<Transaction["source"], string>> = {
-  "shinhan-file": "신한카드",
-  "hyundai-card-file": "현대카드",
-  "shinhan-notification": "신한카드",
-};
+export const cardCompanyOptions: Array<{
+  id: CardCompanyId;
+  label: string;
+  sources: Array<Transaction["source"]>;
+}> = [
+  { id: "shinhan-card", label: "신한카드", sources: ["shinhan-file", "shinhan-notification"] },
+  { id: "hyundai-card", label: "현대카드", sources: ["hyundai-card-file"] },
+];
 
 export function getTransactionsForMonth(transactions: Transaction[], monthDate: Date) {
   return transactions.filter((transaction) => isDateKeyInMonth(transaction.date, monthDate));
+}
+
+export function filterTransactionsByCardCompanies(
+  transactions: Transaction[],
+  selectedCardCompanyIds: CardCompanyId[],
+) {
+  const selectedCardCompanyIdSet = new Set(selectedCardCompanyIds);
+
+  return transactions.filter((transaction) => {
+    const cardCompany = getCardCompanyForSource(transaction.source);
+
+    return cardCompany ? selectedCardCompanyIdSet.has(cardCompany.id) : false;
+  });
 }
 
 export function buildDailySummaries(transactions: Transaction[]) {
@@ -107,18 +126,19 @@ export function getCardExpenseStats(transactions: Transaction[]): CardExpenseSta
   for (const transaction of transactions) {
     if (transaction.type !== "expense") continue;
 
-    const fallbackLabel = cardSourceLabels[transaction.source];
-    if (!fallbackLabel) continue;
+    const cardCompany = getCardCompanyForSource(transaction.source);
+    if (!cardCompany) continue;
 
-    const current = totals.get(fallbackLabel) ?? {
-      label: fallbackLabel,
+    const current = totals.get(cardCompany.id) ?? {
+      id: cardCompany.id,
+      label: cardCompany.label,
       amount: 0,
       transactionCount: 0,
     };
 
     current.amount += transaction.amount;
     current.transactionCount += 1;
-    totals.set(fallbackLabel, current);
+    totals.set(cardCompany.id, current);
   }
 
   return [...totals.values()].sort(
@@ -154,4 +174,8 @@ export function getCategoryExpenseStats(
       };
     })
     .sort((a, b) => b.amount - a.amount);
+}
+
+function getCardCompanyForSource(source: Transaction["source"]) {
+  return cardCompanyOptions.find((option) => option.sources.includes(source));
 }
