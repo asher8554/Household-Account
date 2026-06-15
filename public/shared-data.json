@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-06-15T15:21:55.523Z",
+  "exportedAt": "2026-06-15T15:23:03.484Z",
   "categories": [
     {
       "id": "expense-food",
@@ -6339,6 +6339,17 @@
       "source": "shinhan-file",
       "createdAt": "2026-06-13T13:17:03.402Z",
       "updatedAt": "2026-06-13T13:17:03.402Z"
+    },
+    {
+      "id": "tx_4c38b92d-ccc0-4282-8138-2ef7ca9ffa14",
+      "date": "2026-06-15",
+      "type": "expense",
+      "amount": 11440,
+      "categoryId": "cat_8c294edb-cff3-40d9-aaa1-d931082a49b4",
+      "memo": "준우과일",
+      "source": "manual",
+      "createdAt": "2026-06-15T15:23:02.666Z",
+      "updatedAt": "2026-06-15T15:23:02.666Z"
     }
   ]
 }
