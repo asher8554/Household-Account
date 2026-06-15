@@ -1009,3 +1009,29 @@
 - 짧은 터치는 `#admin-import`로 이동하지 않았고, 5.1초 long-press는 기존 관리자 화면으로 이동했다.
 - in-app Browser에서 앱 로딩, 아이콘 버튼 클래스, console error 없음, 가로 overflow 없음도 확인했다.
 - `npx playwright test` 44개와 `npm run build`를 통과했다. Vite는 기존 chunk size 경고만 표시했다.
+
+## 카드별 사용금액 표시 계획
+
+- 사용자는 카드별 사용금액도 대시보드에서 볼 수 있길 원한다.
+- 현재 `Transaction`에는 별도 카드 필드가 없고, 가져오기 저장 메모는 `[기관명] 가맹점 / 카드 카드명 / 승인번호 ...` 형식을 사용한다.
+- 새 스키마를 추가하면 백업, GitHub 공유 데이터, Notion 동기화까지 변경 범위가 커진다.
+- 이번 변경은 기존 memo/source에서 카드 라벨을 추출하는 표시 전용 월 집계로 제한한다.
+- 카드명이 있으면 카드명으로 묶고, 카드명이 없으면 `신한카드`, `현대카드` 같은 기관 라벨로 묶는다.
+- 은행 파일, 네이버페이 파일, 수동 입력, CSV는 카드별 사용금액에서 제외한다.
+
+## 카드별 사용금액 표시 결과
+
+- `tests/dashboard-calculations.spec.ts`를 추가해 `getMonthSummary`가 월 거래에서 카드별 지출 배열을 반환하는지 먼저 실패시켰다.
+- 실패는 `summary.cardExpenses`가 `undefined`인 기대한 RED였다.
+- `dashboard-calculations`에 카드 파일과 신한카드 알림 출처만 대상으로 하는 `getCardExpenseStats`를 추가했다.
+- 메모의 `/ 카드 ...` 값을 우선 카드 라벨로 쓰고, 카드 라벨이 없으면 `[기관명]` 또는 source fallback을 사용한다.
+- `MonthSummaryCards`가 카드별 사용금액 총액과 카드별 금액, 건수를 표시하도록 확장됐다.
+- `npx playwright test tests/dashboard-calculations.spec.ts`, `npx playwright test`, `npm run build`를 통과했다.
+- in-app Browser에서 기본 폭과 393px 모바일 폭 모두 `카드별 사용금액` 섹션이 1회 렌더링되고, console error와 가로 overflow가 없음을 확인했다.
+
+## 프로젝트 해설서와 PDF 문서화 기록
+
+- 사용자는 프로그램 구조도 그림, 해설서, 예시 코드, 구현 주석, PDF 산출물을 요청했다.
+- 기능 변경은 목표가 아니므로 실행 로직은 그대로 두고 문서와 이해 보조 주석만 추가한다.
+- `make-pdf` 전용 바이너리는 이 환경에 없어서 PDF skill 기준으로 Python Playwright와 `pypdf` 검증을 사용한다.
+- 최종 문서는 `docs/project-guide.md`, 그림은 `docs/assets/`, PDF는 `output/pdf/household-account-project-guide.pdf`에 둔다.

@@ -506,3 +506,24 @@
 - [x] iPhone 16 폭에서 짧은 터치와 5초 long-press를 검증한다.
 - [x] 관련 테스트와 production build를 통과시킨다.
 - [x] 변경사항을 커밋하고 push한다.
+
+## 카드별 사용금액 표시
+
+- [x] 현재 월 거래 요약과 카드 import 메모 구조를 확인한다.
+- [x] 카드별 월 지출 집계 실패 테스트를 추가한다.
+- [x] 카드명 또는 카드 기관명 기준으로 월 지출을 집계한다.
+- [x] 대시보드 월 요약에 카드별 사용금액을 표시한다.
+- [x] 관련 테스트, 전체 테스트, production build, 브라우저 검증을 통과시킨다.
+- [x] 변경사항을 커밋한다.
+
+## 프로젝트 해설서와 PDF 문서화
+
+- [x] 현재 저장소 구조, 주요 모듈, 빌드 명령을 확인한다.
+- [x] Superpowers 실행 계획을 `docs/superpowers/plans/2026-06-15-project-documentation-guide.md`에 기록한다.
+- [ ] 프로그램 구조도와 데이터 흐름도를 SVG로 추가한다.
+- [ ] `docs/project-guide.md`에 구조 설명, 운영 흐름, 예시 코드를 작성한다.
+- [ ] 핵심 구현 파일에 구조 이해용 주석을 추가한다.
+- [ ] PDF 빌드 스크립트를 만들고 `output/pdf/household-account-project-guide.pdf`를 생성한다.
+- [ ] PDF 텍스트와 렌더링을 검증한다.
+- [ ] `npm run build`와 `git diff --check`를 통과시킨다.
+- [ ] 이번 문서화 변경만 커밋한다.
