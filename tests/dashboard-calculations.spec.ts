@@ -24,7 +24,7 @@ function transaction(
   };
 }
 
-test("getMonthSummary groups monthly card expenses by card detail and source fallback", () => {
+test("getMonthSummary groups monthly card expenses by card company source", () => {
   const monthDate = new Date("2026-06-01T00:00:00.000Z");
   const transactions = [
     transaction(
@@ -58,7 +58,7 @@ test("getMonthSummary groups monthly card expenses by card detail and source fal
       transactionCount: 1,
     },
     {
-      label: "Deep Dream",
+      label: "신한카드",
       amount: 20000,
       transactionCount: 2,
     },

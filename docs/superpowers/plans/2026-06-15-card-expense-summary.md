@@ -30,3 +30,14 @@
 - `npx playwright test` passed 45 tests.
 - `npm run build` passed with the existing Vite chunk size warning.
 - In-app Browser verification passed on default width and 393px mobile width with no console errors or horizontal overflow.
+
+## Card Company Grouping Correction
+
+**Goal:** Group card spending by card company, not by imported card detail values such as `신용` or `본인`.
+
+**Tasks**
+
+- [x] Add RED test expecting `신한카드` and `현대카드` groups.
+- [x] Make card expense labels come from `transaction.source`.
+- [x] Verify focused test, full test suite, build, and browser behavior.
+- [ ] Verify Pages deployment.
