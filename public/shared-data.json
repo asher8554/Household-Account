@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-06-15T15:23:03.484Z",
+  "exportedAt": "2026-06-15T23:23:31.991Z",
   "categories": [
     {
       "id": "expense-food",
@@ -6350,6 +6350,39 @@
       "source": "manual",
       "createdAt": "2026-06-15T15:23:02.666Z",
       "updatedAt": "2026-06-15T15:23:02.666Z"
+    },
+    {
+      "id": "tx_63ef5047-5c64-43fd-ab7b-3db1ace0ed7e",
+      "date": "2026-06-15",
+      "type": "expense",
+      "amount": 38267,
+      "categoryId": "expense-other",
+      "memo": "[신한카드] 흥국화재해상보험(주) / 상태 신용 / 카드 신용 / 승인번호 07776695",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-15T23:23:24.790Z",
+      "updatedAt": "2026-06-15T23:23:24.790Z"
+    },
+    {
+      "id": "tx_bdf342db-fa5f-4693-9da1-cd5adb900d5d",
+      "date": "2026-06-15",
+      "type": "expense",
+      "amount": 8140,
+      "categoryId": "expense-other",
+      "memo": "[현대카드] 이튼약국 / 상태 본인 / 카드 본인 / 승인번호 00888582",
+      "source": "hyundai-card-file",
+      "createdAt": "2026-06-15T23:23:28.989Z",
+      "updatedAt": "2026-06-15T23:23:28.989Z"
+    },
+    {
+      "id": "tx_fe0016f6-a235-4684-895c-204f32910084",
+      "date": "2026-06-15",
+      "type": "expense",
+      "amount": 11440,
+      "categoryId": "expense-other",
+      "memo": "[현대카드] 이마트천안터미널점 / 상태 본인 / 카드 본인 / 승인번호 00340470",
+      "source": "hyundai-card-file",
+      "createdAt": "2026-06-15T23:23:28.989Z",
+      "updatedAt": "2026-06-15T23:23:28.989Z"
     }
   ]
 }
