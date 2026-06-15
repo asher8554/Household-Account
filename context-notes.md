@@ -1046,6 +1046,8 @@
 - `npx playwright test` 45개와 `npm run build`를 통과했다. Vite는 기존 chunk size 경고만 표시했다.
 - in-app Browser에서 `localhost:5176` 새 origin으로 실제 공유 데이터가 로드된 화면을 확인했다.
 - 카드별 사용금액은 `신한카드 21건 905,058원`, `현대카드 2건 305,010원`으로 표시됐고 `신용`, `본인` 라벨은 없었다.
+- `3443260` 커밋을 `main`에 push했고 GitHub Pages run `27547918734`가 성공했다.
+- 라이브 URL에서도 새 번들 `/Household-Account/assets/index-CHpcrMvO.js`가 로드되고 `신한카드 21건 905,058원`, `현대카드 2건 305,010원`으로 표시됨을 확인했다.
 
 ## 프로젝트 해설서와 PDF 문서화 기록
 

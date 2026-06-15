@@ -40,4 +40,4 @@
 - [x] Add RED test expecting `신한카드` and `현대카드` groups.
 - [x] Make card expense labels come from `transaction.source`.
 - [x] Verify focused test, full test suite, build, and browser behavior.
-- [ ] Verify Pages deployment.
+- [x] Verify Pages deployment.
