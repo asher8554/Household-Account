@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-06-16T02:48:14.343Z",
+  "exportedAt": "2026-06-16T04:18:55.919Z",
   "categories": [
     {
       "id": "expense-food",
@@ -6405,6 +6405,17 @@
       "source": "hyundai-card-file",
       "createdAt": "2026-06-15T23:23:28.989Z",
       "updatedAt": "2026-06-16T02:35:42.089Z"
+    },
+    {
+      "id": "tx_71d0a9ac-ff6c-47ce-94f7-b6ca0cba2ef4",
+      "date": "2026-06-16",
+      "type": "expense",
+      "amount": 29800,
+      "categoryId": "cat_8c294edb-cff3-40d9-aaa1-d931082a49b4",
+      "memo": "우준우 과자 베베쿡",
+      "source": "manual",
+      "createdAt": "2026-06-16T04:18:53.917Z",
+      "updatedAt": "2026-06-16T04:18:53.917Z"
     }
   ]
 }
