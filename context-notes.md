@@ -1097,3 +1097,4 @@
 - 2026-06-16. GitHub Contents API push 전에 원격 `shared-data.json` content를 읽어 `importBackupData`로 먼저 병합한 뒤 `createBackupData`를 만든다. 409 재시도 때도 최신 원격 데이터를 다시 병합하므로 다른 기기 업데이트를 덮어쓰지 않는다.
 - 2026-06-16. GitHub API 401, 403, 404, 409, 422 실패는 토큰 만료, 권한 부족, 대상 설정 오류, 동시 업데이트, branch/path 오류로 나누어 한국어 조치 메시지를 보여주도록 했다.
 - 2026-06-16. `npx playwright test tests/public-shared-data-security.spec.ts` 8개, `npx playwright test` 48개, `npm run build`가 통과했다.
+- 2026-06-16. commit `f1b44fa`를 `main`에 push했고 GitHub Pages run `27590485882` build와 deploy가 성공했다. live index는 새 bundle `assets/index-DIRWLpia.js`를 반환하고 토큰, Contents 권한, 새로고침 안내 메시지를 포함한다.
