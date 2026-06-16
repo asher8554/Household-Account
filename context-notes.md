@@ -1076,3 +1076,13 @@
 - in-app Browser에서 로컬 `localhost:5177` 기준으로 기본 전체, 신한카드만, 현대카드만 토글 상태를 확인했다.
 - 신한카드만 선택하면 카드별 사용금액과 달력 총 지출이 `905,058원`으로 바뀌고, 현대카드만 선택하면 `305,010원`으로 바뀐다.
 - 390px 모바일 viewport에서도 카드사 토글 버튼이 보이고 가로 overflow가 없음을 확인했다.
+## 2026-06-16 다기기 공유 데이터 자동 반영 진단
+
+- 2026-06-16. 사용자는 아내 휴대폰에서 GitHub 업데이트 성공 메시지를 본 뒤 PC에서 새 지출이 보이지 않는다고 보고했다.
+- 2026-06-16. `git fetch origin main` 결과 원격 `main`이 `data: shared-data 2026-06-16` 커밋 `5e65424`까지 앞서 있었다.
+- 2026-06-16. GitHub Pages deploy run `27588137576`은 성공했고 live `https://asher8554.github.io/Household-Account/shared-data.json`은 HTTP 200과 `exportedAt=2026-06-16T01:36:11.083Z`를 반환했다.
+- 2026-06-16. 원격 shared-data는 로컬 파일보다 거래 17건이 더 많고 최신 거래 `tx_9294499b-0cc8-42ef-9a50-cb9e2bdefd4a`가 포함되어 있었다.
+- 2026-06-16. `loadPublishedSharedData`는 원격 스냅샷을 전체 교체 대상으로 보고 로컬 최신 거래 timestamp가 원격 export보다 크면 `skipped-local-newer`로 건너뛰었다. 이 조건은 다기기 병합 요구와 맞지 않는다.
+- 2026-06-16. `loadPublishedSharedData`를 `replaceWithBackupData` 전체 교체에서 `importBackupData` 병합으로 바꾸고 `skipped-local-newer` 조건을 제거했다.
+- 2026-06-16. `npx playwright test tests/public-shared-data-security.spec.ts` 7개, `npx playwright test` 46개, `npm run build`가 통과했다.
+- 2026-06-16. Edge headless smoke에서 live Pages shared-data 554건을 주입했고 첫 로드 count 554, 로컬 future 거래 1건을 심은 뒤 reload count 555, 원격 거래 `tx_9294499b-0cc8-42ef-9a50-cb9e2bdefd4a`와 로컬 거래 모두 존재, console error 0건을 확인했다.

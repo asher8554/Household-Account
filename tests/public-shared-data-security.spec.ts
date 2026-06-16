@@ -26,6 +26,15 @@ test("app startup imports published shared-data for other devices", () => {
   expect(appSource).toContain("loadPublishedSharedData");
 });
 
+test("published shared-data auto load merges remote records instead of skipping local-newer records", () => {
+  const serviceSource = readSource("src/features/shared-data/shared-data-service.ts");
+
+  expect(serviceSource).toContain("importBackupData");
+  expect(serviceSource).not.toContain("replaceWithBackupData");
+  expect(serviceSource).not.toContain("skipped-local-newer");
+  expect(serviceSource).not.toContain("latestLocalTransactionTimestamp");
+});
+
 test("financial import no longer auto-pushes GitHub shared data", () => {
   const importScreenSource = readSource("src/features/import-guide/ShinhanImportGuideScreen.tsx");
 
