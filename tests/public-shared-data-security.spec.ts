@@ -57,6 +57,20 @@ test("GitHub panel copy explains the Pages public shared-data target", () => {
   expect(panelSource).not.toContain("권한은 이 repo의 Contents read/write로 제한하세요.");
 });
 
+test("GitHub shared-data push retries conflicts and explains common API failures", () => {
+  const serviceSource = readSource("src/features/shared-data/github-shared-data-service.ts");
+
+  expect(serviceSource).toContain("maxGitHubContentUpdateAttempts");
+  expect(serviceSource).toContain("fetchExistingContent");
+  expect(serviceSource).toContain("importBackupData(existingContent.raw)");
+  expect(serviceSource).toContain("decodeBase64Utf8");
+  expect(serviceSource).toContain("response.status === 409");
+  expect(serviceSource).toContain("토큰이 만료되었거나 잘못되었습니다.");
+  expect(serviceSource).toContain("Contents 권한을 Read and write로 설정하세요.");
+  expect(serviceSource).toContain("저장 대상");
+  expect(serviceSource).toContain("페이지를 새로고침한 뒤 다시 누르세요.");
+});
+
 function readSource(path: string) {
   return readFileSync(resolve(projectRoot, path), "utf8");
 }

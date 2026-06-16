@@ -1086,3 +1086,14 @@
 - 2026-06-16. `loadPublishedSharedData`를 `replaceWithBackupData` 전체 교체에서 `importBackupData` 병합으로 바꾸고 `skipped-local-newer` 조건을 제거했다.
 - 2026-06-16. `npx playwright test tests/public-shared-data-security.spec.ts` 7개, `npx playwright test` 46개, `npm run build`가 통과했다.
 - 2026-06-16. Edge headless smoke에서 live Pages shared-data 554건을 주입했고 첫 로드 count 554, 로컬 future 거래 1건을 심은 뒤 reload count 555, 원격 거래 `tx_9294499b-0cc8-42ef-9a50-cb9e2bdefd4a`와 로컬 거래 모두 존재, console error 0건을 확인했다.
+## 2026-06-16 GitHub push 실패 재발 방지 진단
+
+- 2026-06-16. 사용자는 아내 휴대폰에서 `GitHub push 실패`가 표시된다고 보고했다.
+- 2026-06-16. `gh run list` 확인 결과 `fix: 공유 데이터 자동 반영 병합 처리` 배포 뒤 `data: shared-data 2026-06-16` run `27590239145`가 성공했다.
+- 2026-06-16. 최신 `origin/main`은 `84b29e6 data: shared-data 2026-06-16`이고 `public/shared-data.json`은 `exportedAt=2026-06-16T02:35:28.344Z`, 거래 555건이다.
+- 2026-06-16. 서버의 Pages 배포와 shared-data commit은 정상이다. 폰의 실패는 브라우저 localStorage token과 GitHub Contents API 요청 사이에서 발생한 것으로 본다.
+- 2026-06-16. 현재 `pushCurrentSharedDataToGitHub`는 GET sha 뒤 PUT 한 번만 시도하고, 실패 시 GitHub API `message`만 붙인다. 토큰 만료, 권한 부족, 잘못된 repo/path, 동시 업데이트 409가 모두 사용자가 조치하기 어려운 `push 실패`로 보일 수 있다.
+- 2026-06-16. 재발 방지는 409 충돌 자동 재시도와 HTTP status별 조치 메시지로 처리한다.
+- 2026-06-16. GitHub Contents API push 전에 원격 `shared-data.json` content를 읽어 `importBackupData`로 먼저 병합한 뒤 `createBackupData`를 만든다. 409 재시도 때도 최신 원격 데이터를 다시 병합하므로 다른 기기 업데이트를 덮어쓰지 않는다.
+- 2026-06-16. GitHub API 401, 403, 404, 409, 422 실패는 토큰 만료, 권한 부족, 대상 설정 오류, 동시 업데이트, branch/path 오류로 나누어 한국어 조치 메시지를 보여주도록 했다.
+- 2026-06-16. `npx playwright test tests/public-shared-data-security.spec.ts` 8개, `npx playwright test` 48개, `npm run build`가 통과했다.
