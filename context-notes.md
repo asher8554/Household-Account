@@ -1098,3 +1098,13 @@
 - 2026-06-16. GitHub API 401, 403, 404, 409, 422 실패는 토큰 만료, 권한 부족, 대상 설정 오류, 동시 업데이트, branch/path 오류로 나누어 한국어 조치 메시지를 보여주도록 했다.
 - 2026-06-16. `npx playwright test tests/public-shared-data-security.spec.ts` 8개, `npx playwright test` 48개, `npm run build`가 통과했다.
 - 2026-06-16. commit `f1b44fa`를 `main`에 push했고 GitHub Pages run `27590485882` build와 deploy가 성공했다. live index는 새 bundle `assets/index-DIRWLpia.js`를 반환하고 토큰, Contents 권한, 새로고침 안내 메시지를 포함한다.
+
+## 2026-06-16 열린 PC 탭 공유 데이터 재동기화 진단
+
+- 2026-06-16. 사용자는 아내 휴대폰에서 카테고리를 `장보기`에서 `육아`로 바꿨지만 PC 달력에는 여전히 `장보기`가 보인다고 보고했다.
+- 2026-06-16. live `shared-data.json`은 `exportedAt=2026-06-16T02:48:14.343Z`, 거래 554건, 카테고리 28건을 반환했다.
+- 2026-06-16. 최신 데이터 커밋 `917b6fe`에는 `tx_e7444146-b2bd-42fc-980b-9099323ff7a1`, `tx_d1b4ccab-4623-4cf0-b037-c0163749b159`, `tx_c0a5ae45-420b-4391-97dd-0ad1de35661a`, `tx_fe0016f6-a235-4684-895c-204f32910084`가 `장보기`에서 `육아`로 변경된 내용이 포함되어 있다.
+- 2026-06-16. `App`은 mount 시 `ensureDefaultCategories().then(() => loadPublishedSharedData())`를 한 번만 실행한다. 이미 열린 PC 탭은 휴대폰 push 이후 새 공유 파일을 다시 읽지 않으므로 IndexedDB와 달력 집계가 이전 상태로 남을 수 있다.
+- 2026-06-16. 수정 방향은 앱 시작 동기화는 유지하되 window focus와 visibility 복귀 시 공유 데이터를 다시 확인하는 것이다. 원격 fetch는 `shared-data.json?v=Date.now()`와 `cache: no-store`를 이미 사용하므로 이벤트 기반 재호출만 추가하면 된다.
+- 2026-06-16. `usePublishedSharedDataSync`를 추가해 시작 시, window focus, document visibility 복귀, 60초 interval에서 공유 데이터를 다시 확인하도록 했다. 같은 탭에서 너무 잦은 요청은 5초 최소 간격으로 막는다.
+- 2026-06-16. `npx playwright test tests/public-shared-data-security.spec.ts`, `npx playwright test`, `npm run build`, 로컬 Chromium smoke가 통과했다. Chromium smoke는 focus 이벤트 후 `shared-data.json` 요청이 다시 발생했고 console/page error가 없음을 확인했다.

@@ -3,19 +3,15 @@ import { useEffect, useState } from "react";
 import { AppShell } from "./AppShell";
 import { DashboardScreen } from "../features/dashboard/DashboardScreen";
 import { AnnualTrendScreen } from "../features/dashboard/AnnualTrendScreen";
-import { ensureDefaultCategories } from "../features/categories/category-service";
 import { useTheme } from "../features/theme/theme-service";
 import { secretImportHash, type AppView } from "./app-navigation";
 import { ShinhanImportGuideScreen } from "../features/import-guide/ShinhanImportGuideScreen";
-import { loadPublishedSharedData } from "../features/shared-data/shared-data-service";
+import { usePublishedSharedDataSync } from "../features/shared-data/use-published-shared-data-sync";
 
 export function App() {
   const { theme, toggleTheme } = useTheme();
   const [currentView, setCurrentView] = useState<AppView>(() => getInitialView());
-
-  useEffect(() => {
-    void ensureDefaultCategories().then(() => loadPublishedSharedData());
-  }, []);
+  usePublishedSharedDataSync();
 
   useEffect(() => {
     function syncViewFromHash() {

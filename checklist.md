@@ -561,3 +561,12 @@
 - [x] 관련 테스트를 추가하거나 갱신한다.
 - [x] 전체 테스트와 production build를 통과시킨다.
 - [x] main에 push하고 Pages deploy를 확인한다.
+
+## 2026-06-16 열린 PC 탭 공유 데이터 재동기화
+
+- [x] live `shared-data.json`에 `장보기 -> 육아` 변경이 올라왔는지 확인한다.
+- [x] 앱이 시작 시 한 번만 공유 데이터를 읽는 구조인지 확인한다.
+- [x] focus/visible 이벤트에서 공유 데이터를 다시 읽는 테스트를 추가한다.
+- [x] 공유 데이터 재동기화 hook을 추가하고 `App`에 연결한다.
+- [x] 전체 테스트와 production build를 통과시킨다.
+- [ ] main에 push하고 Pages deploy를 확인한다.

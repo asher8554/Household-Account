@@ -22,8 +22,24 @@ test("GitHub Pages shared-data file is not ignored by git", () => {
 
 test("app startup imports published shared-data for other devices", () => {
   const appSource = readSource("src/app/App.tsx");
+  const syncHookSource = readSource("src/features/shared-data/use-published-shared-data-sync.ts");
 
-  expect(appSource).toContain("loadPublishedSharedData");
+  expect(appSource).toContain("usePublishedSharedDataSync()");
+  expect(syncHookSource).toContain("loadPublishedSharedData");
+  expect(syncHookSource).toContain("ensureDefaultCategories");
+});
+
+test("open app tabs refresh published shared-data after another device pushes", () => {
+  const appSource = readSource("src/app/App.tsx");
+  const syncHookSource = readSource("src/features/shared-data/use-published-shared-data-sync.ts");
+
+  expect(appSource).toContain("usePublishedSharedDataSync()");
+  expect(syncHookSource).toContain("loadPublishedSharedData");
+  expect(syncHookSource).toContain("window.addEventListener(\"focus\"");
+  expect(syncHookSource).toContain("document.addEventListener(\"visibilitychange\"");
+  expect(syncHookSource).toContain("window.setInterval");
+  expect(syncHookSource).toContain("publishedSharedDataRefreshIntervalMs");
+  expect(syncHookSource).toContain("minimumSharedDataSyncIntervalMs");
 });
 
 test("published shared-data auto load merges remote records instead of skipping local-newer records", () => {
