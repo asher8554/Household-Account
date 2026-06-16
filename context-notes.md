@@ -1108,3 +1108,4 @@
 - 2026-06-16. 수정 방향은 앱 시작 동기화는 유지하되 window focus와 visibility 복귀 시 공유 데이터를 다시 확인하는 것이다. 원격 fetch는 `shared-data.json?v=Date.now()`와 `cache: no-store`를 이미 사용하므로 이벤트 기반 재호출만 추가하면 된다.
 - 2026-06-16. `usePublishedSharedDataSync`를 추가해 시작 시, window focus, document visibility 복귀, 60초 interval에서 공유 데이터를 다시 확인하도록 했다. 같은 탭에서 너무 잦은 요청은 5초 최소 간격으로 막는다.
 - 2026-06-16. `npx playwright test tests/public-shared-data-security.spec.ts`, `npx playwright test`, `npm run build`, 로컬 Chromium smoke가 통과했다. Chromium smoke는 focus 이벤트 후 `shared-data.json` 요청이 다시 발생했고 console/page error가 없음을 확인했다.
+- 2026-06-16. commit `888972b`를 main에 push했고 GitHub Pages run `27590969316` build와 deploy가 성공했다. live index는 `assets/index-tlAiMKFy.js`를 반환하고 bundle에 `visibilitychange`와 `setInterval` 기반 공유 데이터 재동기화 코드가 포함되어 있다.
