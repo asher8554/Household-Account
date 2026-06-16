@@ -543,3 +543,12 @@
 - [x] 선택한 카드사 거래만 달력, 월 요약, 카테고리 차트, 일자 상세에 반영한다.
 - [x] 관련 테스트, 전체 테스트, production build, Browser QA를 통과시킨다.
 - [x] 변경사항을 커밋하고 push한다.
+## 2026-06-16 다기기 공유 데이터 자동 반영
+
+- [x] 원격 `main`의 최신 shared-data 커밋과 Pages deploy 성공 여부를 확인한다.
+- [x] live Pages `shared-data.json`의 `exportedAt`과 추가 거래를 확인한다.
+- [x] 로컬 최신 timestamp 때문에 원격 추가 거래 반영이 막히는 조건을 테스트로 재현한다.
+- [x] 시작 시 공유 데이터 로드를 updatedAt 기준 병합 방식으로 수정한다.
+- [x] 관련 테스트를 통과시킨다.
+- [x] production build를 통과시킨다.
+- [x] 변경 내용을 커밋한다.
