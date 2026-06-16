@@ -560,4 +560,4 @@
 - [x] GitHub API 실패 원인별 안내 메시지를 추가한다.
 - [x] 관련 테스트를 추가하거나 갱신한다.
 - [x] 전체 테스트와 production build를 통과시킨다.
-- [ ] main에 push하고 Pages deploy를 확인한다.
+- [x] main에 push하고 Pages deploy를 확인한다.
