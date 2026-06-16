@@ -569,4 +569,4 @@
 - [x] focus/visible 이벤트에서 공유 데이터를 다시 읽는 테스트를 추가한다.
 - [x] 공유 데이터 재동기화 hook을 추가하고 `App`에 연결한다.
 - [x] 전체 테스트와 production build를 통과시킨다.
-- [ ] main에 push하고 Pages deploy를 확인한다.
+- [x] main에 push하고 Pages deploy를 확인한다.
