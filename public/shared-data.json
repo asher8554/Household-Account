@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-06-16T02:35:28.344Z",
+  "exportedAt": "2026-06-16T02:48:14.343Z",
   "categories": [
     {
       "id": "expense-food",
@@ -4442,11 +4442,11 @@
       "date": "2026-04-23",
       "type": "expense",
       "amount": 32880,
-      "categoryId": "expense-grocery",
+      "categoryId": "cat_8c294edb-cff3-40d9-aaa1-d931082a49b4",
       "memo": "[현대카드] 이마트천안터미널점 / 상태 전표접수 / 카드 본인 / 승인번호 00064490",
       "source": "hyundai-card-file",
       "createdAt": "2026-06-07T06:51:37.596Z",
-      "updatedAt": "2026-06-07T06:57:12.624Z"
+      "updatedAt": "2026-06-16T02:35:42.089Z"
     },
     {
       "id": "tx_0c7ea56d-85c3-4057-bd53-67534f70a2d8",
@@ -4596,11 +4596,11 @@
       "date": "2026-04-27",
       "type": "expense",
       "amount": 7960,
-      "categoryId": "expense-grocery",
+      "categoryId": "cat_8c294edb-cff3-40d9-aaa1-d931082a49b4",
       "memo": "[현대카드] 이마트천안터미널점 / 상태 전표접수 / 카드 본인 / 승인번호 00655927",
       "source": "hyundai-card-file",
       "createdAt": "2026-06-07T06:51:37.596Z",
-      "updatedAt": "2026-06-07T06:57:12.624Z"
+      "updatedAt": "2026-06-16T02:35:42.089Z"
     },
     {
       "id": "tx_d3566317-b50c-4154-bdf3-c044e4d8c8ad",
@@ -5410,11 +5410,11 @@
       "date": "2026-05-18",
       "type": "expense",
       "amount": 16710,
-      "categoryId": "expense-grocery",
+      "categoryId": "cat_8c294edb-cff3-40d9-aaa1-d931082a49b4",
       "memo": "[현대카드] 이마트천안터미널점 / 상태 전표접수 / 카드 본인 / 승인번호 00723665",
       "source": "hyundai-card-file",
       "createdAt": "2026-06-07T06:51:37.596Z",
-      "updatedAt": "2026-06-07T06:57:12.624Z"
+      "updatedAt": "2026-06-16T02:35:42.089Z"
     },
     {
       "id": "tx_39e677b9-19bd-4e64-9f70-b347b19df1a3",
@@ -6374,17 +6374,6 @@
       "updatedAt": "2026-06-15T23:23:50.642Z"
     },
     {
-      "id": "tx_74fe9b34-c820-4a3d-b99e-651659e5c05f",
-      "date": "2026-06-15",
-      "type": "expense",
-      "amount": 11440,
-      "categoryId": "cat_8c294edb-cff3-40d9-aaa1-d931082a49b4",
-      "memo": "우준우 과일",
-      "source": "manual",
-      "createdAt": "2026-06-16T02:35:27.389Z",
-      "updatedAt": "2026-06-16T02:35:27.389Z"
-    },
-    {
       "id": "tx_9294499b-0cc8-42ef-9a50-cb9e2bdefd4a",
       "date": "2026-06-15",
       "type": "expense",
@@ -6393,7 +6382,7 @@
       "memo": "우준우 과일",
       "source": "manual",
       "createdAt": "2026-06-16T01:36:09.654Z",
-      "updatedAt": "2026-06-16T01:36:09.654Z"
+      "updatedAt": "2026-06-16T02:35:27.389Z"
     },
     {
       "id": "tx_bdf342db-fa5f-4693-9da1-cd5adb900d5d",
@@ -6411,11 +6400,11 @@
       "date": "2026-06-15",
       "type": "expense",
       "amount": 11440,
-      "categoryId": "expense-grocery",
+      "categoryId": "cat_8c294edb-cff3-40d9-aaa1-d931082a49b4",
       "memo": "[현대카드] 이마트천안터미널점 / 상태 본인 / 카드 본인 / 승인번호 00340470",
       "source": "hyundai-card-file",
       "createdAt": "2026-06-15T23:23:28.989Z",
-      "updatedAt": "2026-06-15T23:23:45.377Z"
+      "updatedAt": "2026-06-16T02:35:42.089Z"
     }
   ]
 }
