@@ -552,3 +552,12 @@
 - [x] 관련 테스트를 통과시킨다.
 - [x] production build를 통과시킨다.
 - [x] 변경 내용을 커밋한다.
+## 2026-06-16 GitHub push 실패 재발 방지
+
+- [x] 최신 `main` shared-data push 성공 여부를 확인한다.
+- [x] 실패 지점이 GitHub API 쓰기 단계인지 코드 경로로 확인한다.
+- [x] GitHub Contents API 409 충돌 재시도를 추가한다.
+- [x] GitHub API 실패 원인별 안내 메시지를 추가한다.
+- [x] 관련 테스트를 추가하거나 갱신한다.
+- [x] 전체 테스트와 production build를 통과시킨다.
+- [ ] main에 push하고 Pages deploy를 확인한다.
