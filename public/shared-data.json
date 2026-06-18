@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-06-16T04:18:55.919Z",
+  "exportedAt": "2026-06-18T01:42:01.051Z",
   "categories": [
     {
       "id": "expense-food",
@@ -6407,6 +6407,17 @@
       "updatedAt": "2026-06-16T02:35:42.089Z"
     },
     {
+      "id": "tx_5f5f5276-dc1d-45e8-8314-04ccb631e91a",
+      "date": "2026-06-16",
+      "type": "expense",
+      "amount": 29800,
+      "categoryId": "expense-other",
+      "memo": "[신한카드] 베베쿡 / 상태 신용 / 카드 신용 / 승인번호 19885271",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-18T01:41:51.569Z",
+      "updatedAt": "2026-06-18T01:41:51.569Z"
+    },
+    {
       "id": "tx_71d0a9ac-ff6c-47ce-94f7-b6ca0cba2ef4",
       "date": "2026-06-16",
       "type": "expense",
@@ -6416,6 +6427,72 @@
       "source": "manual",
       "createdAt": "2026-06-16T04:18:53.917Z",
       "updatedAt": "2026-06-16T04:18:53.917Z"
+    },
+    {
+      "id": "tx_87e596fc-bd22-46b5-b666-4b447c599273",
+      "date": "2026-06-16",
+      "type": "expense",
+      "amount": 21940,
+      "categoryId": "expense-other",
+      "memo": "[신한카드] 쿠팡 / 상태 신용 / 카드 신용 / 승인번호 19451109",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-18T01:41:51.569Z",
+      "updatedAt": "2026-06-18T01:41:51.569Z"
+    },
+    {
+      "id": "tx_322cfa87-fde3-45b9-8b06-4f661db47084",
+      "date": "2026-06-17",
+      "type": "expense",
+      "amount": 36599,
+      "categoryId": "expense-other",
+      "memo": "[신한카드] GAMSGO / 상태 신용 / 카드 신용 / 승인번호 289759",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-18T01:41:51.569Z",
+      "updatedAt": "2026-06-18T01:41:51.569Z"
+    },
+    {
+      "id": "tx_659fa83f-e1ac-41cb-9ed4-57491cd9b62f",
+      "date": "2026-06-17",
+      "type": "expense",
+      "amount": 2200,
+      "categoryId": "expense-other",
+      "memo": "[신한카드] 우리아이약국 / 상태 신용 / 카드 신용 / 승인번호 30505412",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-18T01:41:51.569Z",
+      "updatedAt": "2026-06-18T01:41:51.569Z"
+    },
+    {
+      "id": "tx_65f254b3-8a0e-460e-95c7-d0d3f56abc00",
+      "date": "2026-06-17",
+      "type": "expense",
+      "amount": 31400,
+      "categoryId": "expense-other",
+      "memo": "[신한카드] 쿠팡 / 상태 신용 / 카드 신용 / 승인번호 39823096",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-18T01:41:51.569Z",
+      "updatedAt": "2026-06-18T01:41:51.569Z"
+    },
+    {
+      "id": "tx_8e3a1f1a-b08b-48f2-882a-f46ea3f0e570",
+      "date": "2026-06-17",
+      "type": "expense",
+      "amount": 11200,
+      "categoryId": "expense-other",
+      "memo": "[신한카드] 텐퍼센트커피 천안삼성SDI점 / 상태 신용 / 카드 신용 / 승인번호 32462345",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-18T01:41:51.569Z",
+      "updatedAt": "2026-06-18T01:41:51.569Z"
+    },
+    {
+      "id": "tx_af619ef9-8959-4d29-8b6f-b5208e2b1c78",
+      "date": "2026-06-17",
+      "type": "expense",
+      "amount": 2900,
+      "categoryId": "expense-other",
+      "memo": "[신한카드] 미래아이소아청소년과의원 / 상태 신용 / 카드 신용 / 승인번호 30480136",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-18T01:41:51.569Z",
+      "updatedAt": "2026-06-18T01:41:51.569Z"
     }
   ]
 }
