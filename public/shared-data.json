@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-06-21T12:26:54.296Z",
+  "exportedAt": "2026-06-24T12:08:56.600Z",
   "categories": [
     {
       "id": "expense-food",
@@ -504,11 +504,11 @@
       "date": "2025-12-10",
       "type": "expense",
       "amount": 52920,
-      "categoryId": "expense-food",
+      "categoryId": "expense-grocery",
       "memo": "[신한카드] (주)이마트 천안터미널점 / 카드 신용 / 승인번호 39618018",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:17.661Z",
-      "updatedAt": "2026-06-18T04:33:58.519Z"
+      "updatedAt": "2026-06-24T12:07:15.862Z"
     },
     {
       "id": "tx_71eead78-c3bb-4f96-8246-e038a940db4a",
@@ -614,11 +614,11 @@
       "date": "2025-12-17",
       "type": "expense",
       "amount": 21320,
-      "categoryId": "expense-food",
+      "categoryId": "expense-grocery",
       "memo": "[신한카드] (주)이마트 천안터미널점 / 카드 신용 / 승인번호 31752675",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:17.661Z",
-      "updatedAt": "2026-06-18T04:33:58.519Z"
+      "updatedAt": "2026-06-24T12:07:15.862Z"
     },
     {
       "id": "tx_44443b27-d1b5-4746-8766-49c9fb0da179",
@@ -988,11 +988,11 @@
       "date": "2025-12-29",
       "type": "expense",
       "amount": 18330,
-      "categoryId": "expense-food",
+      "categoryId": "expense-grocery",
       "memo": "[신한카드] (주)이마트 천안터미널점 / 카드 신용 / 승인번호 48798350",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:17.661Z",
-      "updatedAt": "2026-06-18T04:33:58.519Z"
+      "updatedAt": "2026-06-24T12:07:15.862Z"
     },
     {
       "id": "tx_d1b74a75-12b9-4b99-b694-86148acd697f",
@@ -1560,11 +1560,11 @@
       "date": "2026-01-21",
       "type": "expense",
       "amount": 44320,
-      "categoryId": "expense-food",
+      "categoryId": "expense-grocery",
       "memo": "[신한카드] (주)이마트 천안터미널점 / 카드 신용 / 승인번호 39361151",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-18T04:33:58.519Z"
+      "updatedAt": "2026-06-24T12:07:15.862Z"
     },
     {
       "id": "tx_4e3397ef-c320-4b86-81a6-3e100c46bef6",
@@ -1670,11 +1670,11 @@
       "date": "2026-01-24",
       "type": "expense",
       "amount": 33880,
-      "categoryId": "expense-food",
+      "categoryId": "expense-grocery",
       "memo": "[신한카드] (주)이마트 천안터미널점 / 카드 신용 / 승인번호 30364097",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-18T04:33:58.519Z"
+      "updatedAt": "2026-06-24T12:07:15.862Z"
     },
     {
       "id": "tx_e67ef133-4dcb-4ca5-9976-4db27e9da818",
@@ -2528,11 +2528,11 @@
       "date": "2026-02-23",
       "type": "expense",
       "amount": 12560,
-      "categoryId": "expense-food",
+      "categoryId": "expense-grocery",
       "memo": "[신한카드] (주)이마트 천안터미널점 / 카드 신용 / 승인번호 10587718",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-18T04:33:58.519Z"
+      "updatedAt": "2026-06-24T12:07:15.862Z"
     },
     {
       "id": "tx_e3456636-7b6a-4bf5-9bc1-881eadefc91b",
@@ -3177,11 +3177,11 @@
       "date": "2026-03-18",
       "type": "expense",
       "amount": 10750,
-      "categoryId": "expense-food",
+      "categoryId": "expense-grocery",
       "memo": "[신한카드] (주)이마트 천안터미널점 / 카드 신용 / 승인번호 18700746",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-18T04:33:58.519Z"
+      "updatedAt": "2026-06-24T12:07:15.862Z"
     },
     {
       "id": "tx_6bd88111-5e56-407a-a737-9198bad5a495",
@@ -3397,11 +3397,11 @@
       "date": "2026-03-25",
       "type": "expense",
       "amount": 10110,
-      "categoryId": "expense-food",
+      "categoryId": "expense-grocery",
       "memo": "[신한카드] (주)이마트 천안터미널점 / 카드 신용 / 승인번호 14072835",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-18T04:33:58.519Z"
+      "updatedAt": "2026-06-24T12:07:15.862Z"
     },
     {
       "id": "tx_2c1f695d-d214-46e9-b121-081344a4f354",
@@ -3749,11 +3749,11 @@
       "date": "2026-04-02",
       "type": "expense",
       "amount": 19420,
-      "categoryId": "expense-food",
+      "categoryId": "expense-grocery",
       "memo": "[신한카드] (주)이마트 천안터미널점 / 카드 신용 / 승인번호 23952909",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-18T04:33:58.519Z"
+      "updatedAt": "2026-06-24T12:07:15.862Z"
     },
     {
       "id": "tx_976b33b6-75fe-45bb-bed4-a8765eef6478",
@@ -4123,11 +4123,11 @@
       "date": "2026-04-17",
       "type": "expense",
       "amount": 8160,
-      "categoryId": "expense-food",
+      "categoryId": "expense-grocery",
       "memo": "[신한카드] (주)이마트 천안터미널점 / 카드 신용 / 승인번호 33540069",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-18T04:33:58.519Z"
+      "updatedAt": "2026-06-24T12:07:15.862Z"
     },
     {
       "id": "tx_7d06e282-56c4-4742-91c7-acbe9348e5bf",
@@ -4211,11 +4211,11 @@
       "date": "2026-04-19",
       "type": "expense",
       "amount": 19040,
-      "categoryId": "expense-food",
+      "categoryId": "expense-grocery",
       "memo": "[신한카드] (주)이마트 천안터미널점 / 카드 신용 / 승인번호 09824731",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-18T04:33:58.519Z"
+      "updatedAt": "2026-06-24T12:07:15.862Z"
     },
     {
       "id": "tx_c90f4616-8aa4-4617-b952-6f6ac3b2a12e",
@@ -4871,11 +4871,11 @@
       "date": "2026-05-05",
       "type": "expense",
       "amount": 26050,
-      "categoryId": "expense-food",
+      "categoryId": "expense-grocery",
       "memo": "[신한카드] (주)이마트 천안터미널점 / 카드 신용 / 승인번호 34426183",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-18T04:33:58.519Z"
+      "updatedAt": "2026-06-24T12:07:15.862Z"
     },
     {
       "id": "tx_c2708556-c321-4fc5-a6c7-389c326844be",
@@ -5201,22 +5201,22 @@
       "date": "2026-05-14",
       "type": "expense",
       "amount": 14980,
-      "categoryId": "expense-food",
+      "categoryId": "expense-grocery",
       "memo": "[신한카드] (주)이마트 천안터미널점 / 카드 신용 / 승인번호 05843552",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-18T04:33:58.519Z"
+      "updatedAt": "2026-06-24T12:07:15.862Z"
     },
     {
       "id": "tx_4915d078-f2d0-44f3-80c6-608a0a3b7326",
       "date": "2026-05-14",
       "type": "expense",
       "amount": 15390,
-      "categoryId": "expense-food",
+      "categoryId": "expense-grocery",
       "memo": "[신한카드] (주)이마트 천안터미널점 / 카드 신용 / 승인번호 05961431",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-18T04:33:58.519Z"
+      "updatedAt": "2026-06-24T12:07:15.862Z"
     },
     {
       "id": "tx_f0dfc63f-3981-46da-a731-a36f76444429",
@@ -5982,11 +5982,11 @@
       "date": "2026-05-27",
       "type": "expense",
       "amount": 7350,
-      "categoryId": "expense-food",
+      "categoryId": "expense-grocery",
       "memo": "[신한카드] (주)이마트 천안터미널점 / 카드 신용 / 승인번호 47176965",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-18T04:33:58.519Z"
+      "updatedAt": "2026-06-24T12:07:15.862Z"
     },
     {
       "id": "tx_911e5654-9e08-4538-8ef9-e294c3df9421",
@@ -6048,22 +6048,22 @@
       "date": "2026-05-30",
       "type": "expense",
       "amount": 22000,
-      "categoryId": "expense-food",
+      "categoryId": "expense-grocery",
       "memo": "[신한카드] (주)이마트 천안터미널점 / 카드 신용 / 승인번호 39152814",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-18T04:33:58.519Z"
+      "updatedAt": "2026-06-24T12:07:15.862Z"
     },
     {
       "id": "tx_3b48116a-ad9c-4d3b-95d3-c2975500475c",
       "date": "2026-05-31",
       "type": "expense",
       "amount": 23030,
-      "categoryId": "expense-food",
+      "categoryId": "expense-grocery",
       "memo": "[신한카드] (주)이마트 천안터미널점 / 카드 신용 / 승인번호 48199168",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-18T04:33:58.519Z"
+      "updatedAt": "2026-06-24T12:07:15.862Z"
     },
     {
       "id": "tx_ccb52425-aebb-441c-bb3a-c8cd002a8f71",
@@ -6251,6 +6251,17 @@
       "source": "hyundai-card-file",
       "createdAt": "2026-06-07T11:53:59.507Z",
       "updatedAt": "2026-06-07T11:54:24.468Z"
+    },
+    {
+      "id": "tx_ec306e45-9c6c-422b-9a14-1a840a29f281",
+      "date": "2026-06-07",
+      "type": "income",
+      "amount": 301510,
+      "categoryId": "income-other",
+      "memo": "[현대카드] 코스트코코리아 / 상태 본인 / 카드 본인 / 승인번호 00841812",
+      "source": "hyundai-card-file",
+      "createdAt": "2026-06-24T12:05:32.300Z",
+      "updatedAt": "2026-06-24T12:05:32.300Z"
     },
     {
       "id": "tx_01471544-6e19-4c3a-9b9f-17523195b943",
@@ -6495,15 +6506,26 @@
       "updatedAt": "2026-06-18T01:42:24.149Z"
     },
     {
+      "id": "tx_d949692a-27b6-4888-a7d8-2aa676356a27",
+      "date": "2026-06-17",
+      "type": "income",
+      "amount": 31400,
+      "categoryId": "income-other",
+      "memo": "[신한카드] 쿠팡 / 상태 신용 / 카드 신용 / 승인번호 39823096",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-24T12:05:26.310Z",
+      "updatedAt": "2026-06-24T12:05:26.310Z"
+    },
+    {
       "id": "tx_46c0944b-fc33-4249-a631-550b35023042",
       "date": "2026-06-18",
       "type": "expense",
       "amount": 14980,
-      "categoryId": "expense-food",
+      "categoryId": "expense-grocery",
       "memo": "[신한카드] (주)이마트 천안터미널점 / 상태 신용 / 카드 신용 / 승인번호 45469232",
       "source": "shinhan-file",
       "createdAt": "2026-06-18T04:33:32.719Z",
-      "updatedAt": "2026-06-18T04:33:58.519Z"
+      "updatedAt": "2026-06-24T12:07:15.862Z"
     },
     {
       "id": "tx_e10bdf30-25ef-4e72-96cb-2355b3c18822",
@@ -6592,6 +6614,127 @@
       "source": "shinhan-file",
       "createdAt": "2026-06-21T12:25:25.991Z",
       "updatedAt": "2026-06-21T12:25:43.265Z"
+    },
+    {
+      "id": "tx_056e997c-36d5-43e1-aeee-8bcd6fc98624",
+      "date": "2026-06-22",
+      "type": "expense",
+      "amount": 50130,
+      "categoryId": "expense-insurance",
+      "memo": "[신한카드] 신한라이프생명보험 주식회사 / 상태 신용 / 카드 신용 / 승인번호 49228804",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-24T12:05:26.310Z",
+      "updatedAt": "2026-06-24T12:06:44.969Z"
+    },
+    {
+      "id": "tx_34a9719b-b89e-4637-bb3c-28cf075ef20e",
+      "date": "2026-06-22",
+      "type": "expense",
+      "amount": 63710,
+      "categoryId": "expense-insurance",
+      "memo": "[신한카드] 신한라이프생명보험 주식회사 / 상태 신용 / 카드 신용 / 승인번호 48741983",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-24T12:05:26.310Z",
+      "updatedAt": "2026-06-24T12:06:44.969Z"
+    },
+    {
+      "id": "tx_3f32e0bb-7681-4670-ace8-36b24b557175",
+      "date": "2026-06-22",
+      "type": "expense",
+      "amount": 7460,
+      "categoryId": "expense-insurance",
+      "memo": "[신한카드] 신한라이프생명보험 주식회사 / 상태 신용 / 카드 신용 / 승인번호 48804924",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-24T12:05:26.310Z",
+      "updatedAt": "2026-06-24T12:06:44.969Z"
+    },
+    {
+      "id": "tx_48e6377a-a447-409c-856e-81d34ecd90d3",
+      "date": "2026-06-22",
+      "type": "expense",
+      "amount": 240250,
+      "categoryId": "expense-grocery",
+      "memo": "[현대카드] 코스트코코리아 / 상태 본인 / 카드 본인 / 승인번호 00620811",
+      "source": "hyundai-card-file",
+      "createdAt": "2026-06-24T12:05:32.300Z",
+      "updatedAt": "2026-06-24T12:06:51.224Z"
+    },
+    {
+      "id": "tx_2e39c529-c99d-4b92-bba7-660e683209ed",
+      "date": "2026-06-23",
+      "type": "expense",
+      "amount": 11400,
+      "categoryId": "expense-food",
+      "memo": "[신한카드] GS25 천안필하우스점 / 상태 신용 / 카드 신용 / 승인번호 24112499",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-24T12:05:26.310Z",
+      "updatedAt": "2026-06-24T12:06:55.679Z"
+    },
+    {
+      "id": "tx_43308466-9737-428b-bd87-867e6efc618f",
+      "date": "2026-06-23",
+      "type": "expense",
+      "amount": 1600,
+      "categoryId": "expense-medical",
+      "memo": "[신한카드] 우리아이약국 / 상태 신용 / 카드 신용 / 승인번호 14585490",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-24T12:05:26.310Z",
+      "updatedAt": "2026-06-24T12:06:17.536Z"
+    },
+    {
+      "id": "tx_6292f7f9-3c0b-449e-b1b9-c090a4478393",
+      "date": "2026-06-23",
+      "type": "expense",
+      "amount": 2900,
+      "categoryId": "expense-medical",
+      "memo": "[신한카드] 미래아이소아청소년과의원 / 상태 신용 / 카드 신용 / 승인번호 14550228",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-24T12:05:26.310Z",
+      "updatedAt": "2026-06-24T12:06:13.988Z"
+    },
+    {
+      "id": "tx_77213feb-c107-4aff-a87c-ee1e2af7d901",
+      "date": "2026-06-23",
+      "type": "expense",
+      "amount": 610000,
+      "categoryId": "cat_841432eb-3d37-47cd-9ccc-b749c87a3d2f",
+      "memo": "[신한카드] 21그램 반려동물 장례식장 천안 / 상태 신용 / 카드 신용 / 승인번호 23855514",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-24T12:05:26.310Z",
+      "updatedAt": "2026-06-24T12:06:09.337Z"
+    },
+    {
+      "id": "tx_df75fe47-c295-43d2-8562-9f6460b63005",
+      "date": "2026-06-23",
+      "type": "expense",
+      "amount": 6700,
+      "categoryId": "expense-grocery",
+      "memo": "[신한카드] (주)이마트 천안터미널점 / 상태 신용 / 카드 신용 / 승인번호 14756184",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-24T12:05:26.310Z",
+      "updatedAt": "2026-06-24T12:07:15.862Z"
+    },
+    {
+      "id": "tx_1b5ef68e-6aec-47cd-968f-9a142bc91e21",
+      "date": "2026-06-24",
+      "type": "expense",
+      "amount": 26500,
+      "categoryId": "cat_0ba2a7f7-580b-45e7-be29-86b408c9e53f",
+      "memo": "[신한카드] 쿠팡이츠 / 상태 신용 / 카드 신용 / 승인번호 35900857",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-24T12:05:26.310Z",
+      "updatedAt": "2026-06-24T12:06:02.004Z"
+    },
+    {
+      "id": "tx_d68f50c3-dd71-48a9-897e-f10311b81b90",
+      "date": "2026-06-24",
+      "type": "expense",
+      "amount": 253120,
+      "categoryId": "expense-housing",
+      "memo": "[신한카드] 아파트관리비 / 상태 신용 / 카드 신용 / 승인번호 34351307",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-24T12:05:26.310Z",
+      "updatedAt": "2026-06-24T12:05:58.844Z"
     }
   ]
 }
