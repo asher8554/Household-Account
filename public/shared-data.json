@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-06-24T12:08:56.600Z",
+  "exportedAt": "2026-06-27T06:32:27.619Z",
   "categories": [
     {
       "id": "expense-food",
@@ -3485,11 +3485,11 @@
       "date": "2026-03-27",
       "type": "expense",
       "amount": 900,
-      "categoryId": "expense-insurance",
+      "categoryId": "expense-subscription",
       "memo": "[현대카드] 나이스_마이홈 / 상태 전표접수 / 카드 본인 / 승인번호 94852602",
       "source": "hyundai-card-file",
       "createdAt": "2026-06-07T06:51:37.596Z",
-      "updatedAt": "2026-06-07T06:54:27.422Z"
+      "updatedAt": "2026-06-27T06:31:11.010Z"
     },
     {
       "id": "tx_00b03420-8839-4eb9-bcb4-ee8317e5cd6e",
@@ -4442,11 +4442,11 @@
       "date": "2026-04-23",
       "type": "expense",
       "amount": 32880,
-      "categoryId": "cat_8c294edb-cff3-40d9-aaa1-d931082a49b4",
+      "categoryId": "expense-grocery",
       "memo": "[현대카드] 이마트천안터미널점 / 상태 전표접수 / 카드 본인 / 승인번호 00064490",
       "source": "hyundai-card-file",
       "createdAt": "2026-06-07T06:51:37.596Z",
-      "updatedAt": "2026-06-16T02:35:42.089Z"
+      "updatedAt": "2026-06-27T06:32:12.391Z"
     },
     {
       "id": "tx_0c7ea56d-85c3-4057-bd53-67534f70a2d8",
@@ -4519,11 +4519,11 @@
       "date": "2026-04-27",
       "type": "expense",
       "amount": 900,
-      "categoryId": "expense-insurance",
+      "categoryId": "expense-subscription",
       "memo": "[현대카드] 나이스_마이홈 / 상태 전표접수 / 카드 본인 / 승인번호 94412274",
       "source": "hyundai-card-file",
       "createdAt": "2026-06-07T06:51:37.596Z",
-      "updatedAt": "2026-06-07T06:54:27.422Z"
+      "updatedAt": "2026-06-27T06:31:11.010Z"
     },
     {
       "id": "tx_134f3234-e923-4b81-b557-259da6cc4680",
@@ -4596,11 +4596,11 @@
       "date": "2026-04-27",
       "type": "expense",
       "amount": 7960,
-      "categoryId": "cat_8c294edb-cff3-40d9-aaa1-d931082a49b4",
+      "categoryId": "expense-grocery",
       "memo": "[현대카드] 이마트천안터미널점 / 상태 전표접수 / 카드 본인 / 승인번호 00655927",
       "source": "hyundai-card-file",
       "createdAt": "2026-06-07T06:51:37.596Z",
-      "updatedAt": "2026-06-16T02:35:42.089Z"
+      "updatedAt": "2026-06-27T06:32:12.391Z"
     },
     {
       "id": "tx_d3566317-b50c-4154-bdf3-c044e4d8c8ad",
@@ -5410,11 +5410,11 @@
       "date": "2026-05-18",
       "type": "expense",
       "amount": 16710,
-      "categoryId": "cat_8c294edb-cff3-40d9-aaa1-d931082a49b4",
+      "categoryId": "expense-grocery",
       "memo": "[현대카드] 이마트천안터미널점 / 상태 전표접수 / 카드 본인 / 승인번호 00723665",
       "source": "hyundai-card-file",
       "createdAt": "2026-06-07T06:51:37.596Z",
-      "updatedAt": "2026-06-16T02:35:42.089Z"
+      "updatedAt": "2026-06-27T06:32:12.391Z"
     },
     {
       "id": "tx_39e677b9-19bd-4e64-9f70-b347b19df1a3",
@@ -5927,11 +5927,11 @@
       "date": "2026-05-27",
       "type": "expense",
       "amount": 900,
-      "categoryId": "expense-insurance",
+      "categoryId": "expense-subscription",
       "memo": "[현대카드] 나이스_마이홈 / 상태 전표접수 / 카드 본인 / 승인번호 94181830",
       "source": "hyundai-card-file",
       "createdAt": "2026-06-07T06:51:37.596Z",
-      "updatedAt": "2026-06-07T06:54:27.422Z"
+      "updatedAt": "2026-06-27T06:31:11.010Z"
     },
     {
       "id": "tx_678ae99b-26a2-489e-88d4-ec2da4c82282",
@@ -6411,11 +6411,11 @@
       "date": "2026-06-15",
       "type": "expense",
       "amount": 11440,
-      "categoryId": "cat_8c294edb-cff3-40d9-aaa1-d931082a49b4",
+      "categoryId": "expense-grocery",
       "memo": "[현대카드] 이마트천안터미널점 / 상태 본인 / 카드 본인 / 승인번호 00340470",
       "source": "hyundai-card-file",
       "createdAt": "2026-06-15T23:23:28.989Z",
-      "updatedAt": "2026-06-16T02:35:42.089Z"
+      "updatedAt": "2026-06-27T06:32:12.391Z"
     },
     {
       "id": "tx_5f5f5276-dc1d-45e8-8314-04ccb631e91a",
@@ -6735,6 +6735,160 @@
       "source": "shinhan-file",
       "createdAt": "2026-06-24T12:05:26.310Z",
       "updatedAt": "2026-06-24T12:05:58.844Z"
+    },
+    {
+      "id": "tx_1e05b008-8b38-433d-8a8f-b184746aa6d7",
+      "date": "2026-06-25",
+      "type": "expense",
+      "amount": 9460,
+      "categoryId": "expense-grocery",
+      "memo": "[현대카드] 이마트천안터미널점 / 상태 본인 / 카드 본인 / 승인번호 00611319",
+      "source": "hyundai-card-file",
+      "createdAt": "2026-06-27T06:30:52.552Z",
+      "updatedAt": "2026-06-27T06:32:12.391Z"
+    },
+    {
+      "id": "tx_25c07217-8ca5-4eb3-97cb-b4e4ce371ddc",
+      "date": "2026-06-25",
+      "type": "expense",
+      "amount": 56000,
+      "categoryId": "cat_8c294edb-cff3-40d9-aaa1-d931082a49b4",
+      "memo": "[신한카드] 신세계백화점 천안아산점(아카데 / 상태 신용 / 카드 신용 / 승인번호 04632218",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-27T06:30:48.970Z",
+      "updatedAt": "2026-06-27T06:31:54.316Z"
+    },
+    {
+      "id": "tx_61ef9a3b-ac4b-4407-80b8-11e0294a9c51",
+      "date": "2026-06-25",
+      "type": "expense",
+      "amount": 260810,
+      "categoryId": "expense-insurance",
+      "memo": "[신한카드] 현대해상화재보험(주) / 상태 신용 / 카드 신용 / 승인번호 46921610",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-27T06:30:48.970Z",
+      "updatedAt": "2026-06-27T06:31:59.963Z"
+    },
+    {
+      "id": "tx_7c518365-4d97-48a4-af59-f255fa33ca63",
+      "date": "2026-06-25",
+      "type": "expense",
+      "amount": 29000,
+      "categoryId": "expense-grocery",
+      "memo": "[현대카드] 이마트천안터미널점 / 상태 본인 / 카드 본인 / 승인번호 00918586",
+      "source": "hyundai-card-file",
+      "createdAt": "2026-06-27T06:30:52.552Z",
+      "updatedAt": "2026-06-27T06:32:12.391Z"
+    },
+    {
+      "id": "tx_b83bc24a-73d1-445e-9e41-61a3e7c5c050",
+      "date": "2026-06-25",
+      "type": "expense",
+      "amount": 27730,
+      "categoryId": "expense-housing",
+      "memo": "[신한카드] 제이비(가스) / 상태 신용 / 카드 신용 / 승인번호 46862731",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-27T06:30:48.970Z",
+      "updatedAt": "2026-06-27T06:31:39.526Z"
+    },
+    {
+      "id": "tx_0be794fe-6386-4450-9aad-2f956403ecf3",
+      "date": "2026-06-26",
+      "type": "expense",
+      "amount": 35500,
+      "categoryId": "cat_0ba2a7f7-580b-45e7-be29-86b408c9e53f",
+      "memo": "[신한카드] 쿠팡이츠 / 상태 신용 / 카드 신용 / 승인번호 14538834",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-27T06:30:48.970Z",
+      "updatedAt": "2026-06-27T06:31:32.776Z"
+    },
+    {
+      "id": "tx_4aa56531-f1db-4b61-9633-76b58871b746",
+      "date": "2026-06-26",
+      "type": "expense",
+      "amount": 2900,
+      "categoryId": "expense-medical",
+      "memo": "[신한카드] 미래아이소아청소년과의원 / 상태 신용 / 카드 신용 / 승인번호 12778110",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-27T06:30:48.970Z",
+      "updatedAt": "2026-06-27T06:31:44.011Z"
+    },
+    {
+      "id": "tx_4cacf672-aa10-45dd-9027-1811bfd8d87d",
+      "date": "2026-06-26",
+      "type": "expense",
+      "amount": 3500,
+      "categoryId": "expense-medical",
+      "memo": "[신한카드] 우리아이약국 / 상태 신용 / 카드 신용 / 승인번호 12863603",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-27T06:30:48.970Z",
+      "updatedAt": "2026-06-27T06:31:28.561Z"
+    },
+    {
+      "id": "tx_a579e00f-6e51-4892-9a39-7e30fb4e5909",
+      "date": "2026-06-26",
+      "type": "expense",
+      "amount": 24252,
+      "categoryId": "expense-insurance",
+      "memo": "[현대카드] 에이아이지손해보험 / 상태 본인 / 카드 본인 / 승인번호 92106860",
+      "source": "hyundai-card-file",
+      "createdAt": "2026-06-27T06:30:52.552Z",
+      "updatedAt": "2026-06-27T06:32:18.391Z"
+    },
+    {
+      "id": "tx_b8e85551-5e58-4394-8404-f605645e3e1f",
+      "date": "2026-06-26",
+      "type": "expense",
+      "amount": 790000,
+      "categoryId": "expense-other",
+      "memo": "[신한카드] 페이플 / 상태 신용 / 카드 신용 / 승인번호 17278290",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-27T06:30:48.970Z",
+      "updatedAt": "2026-06-27T06:30:48.970Z"
+    },
+    {
+      "id": "tx_0e658cd1-65cc-4b21-96ae-0cd3b1ed900d",
+      "date": "2026-06-27",
+      "type": "expense",
+      "amount": 900,
+      "categoryId": "expense-subscription",
+      "memo": "[현대카드] 나이스_마이홈 / 상태 본인 / 카드 본인 / 승인번호 94753351",
+      "source": "hyundai-card-file",
+      "createdAt": "2026-06-27T06:30:52.552Z",
+      "updatedAt": "2026-06-27T06:31:11.010Z"
+    },
+    {
+      "id": "tx_30ba5238-febc-4bf3-b4e0-260da18d756a",
+      "date": "2026-06-27",
+      "type": "expense",
+      "amount": 3000,
+      "categoryId": "cat_8c294edb-cff3-40d9-aaa1-d931082a49b4",
+      "memo": "[신한카드] 천안시육아종합지원센터 / 상태 신용 / 카드 신용 / 승인번호 23620737",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-27T06:30:48.970Z",
+      "updatedAt": "2026-06-27T06:31:24.362Z"
+    },
+    {
+      "id": "tx_46068fee-4f91-4157-b89c-3ef78bbfc751",
+      "date": "2026-06-27",
+      "type": "expense",
+      "amount": 43500,
+      "categoryId": "expense-food",
+      "memo": "[신한카드] 뚜쥬루제과(주) / 상태 신용 / 카드 신용 / 승인번호 24124186",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-27T06:30:48.970Z",
+      "updatedAt": "2026-06-27T06:31:14.225Z"
+    },
+    {
+      "id": "tx_68462dba-5adc-446d-b231-d869500aa0f2",
+      "date": "2026-06-27",
+      "type": "expense",
+      "amount": 17100,
+      "categoryId": "expense-food",
+      "memo": "[신한카드] 뚜쥬루제과(주) / 상태 신용 / 카드 신용 / 승인번호 24161586",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-27T06:30:48.970Z",
+      "updatedAt": "2026-06-27T06:31:14.225Z"
     }
   ]
 }
