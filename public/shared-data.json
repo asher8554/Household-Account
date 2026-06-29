@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-06-27T06:32:27.619Z",
+  "exportedAt": "2026-06-29T11:53:01.237Z",
   "categories": [
     {
       "id": "expense-food",
@@ -2774,7 +2774,7 @@
       "memo": "[신한카드] 티머니 고속버스 / 카드 신용 / 승인번호 38521732",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-07T07:03:19.107Z"
+      "updatedAt": "2026-06-29T11:52:53.795Z"
     },
     {
       "id": "tx_b8f5afd6-21a1-4a5d-a602-6a4f37e05889",
@@ -3830,7 +3830,7 @@
       "memo": "[신한카드] 티머니 고속버스 / 카드 신용 / 승인번호 48253099",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-07T07:03:19.107Z"
+      "updatedAt": "2026-06-29T11:52:53.795Z"
     },
     {
       "id": "tx_f9c047b3-282b-4644-8edc-f089b0225fd1",
@@ -6889,6 +6889,105 @@
       "source": "shinhan-file",
       "createdAt": "2026-06-27T06:30:48.970Z",
       "updatedAt": "2026-06-27T06:31:14.225Z"
+    },
+    {
+      "id": "tx_8d4f49fc-6502-48a6-b9cc-a8ba66f01273",
+      "date": "2026-06-28",
+      "type": "expense",
+      "amount": 34097,
+      "categoryId": "expense-leisure",
+      "memo": "[신한카드] Steam Purchase / 상태 신용 / 카드 신용 / 승인번호 339708",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-29T11:52:04.805Z",
+      "updatedAt": "2026-06-29T11:52:37.806Z"
+    },
+    {
+      "id": "tx_f93acd1d-c869-4116-8117-dfc27c0e95a6",
+      "date": "2026-06-28",
+      "type": "expense",
+      "amount": 28300,
+      "categoryId": "cat_0ba2a7f7-580b-45e7-be29-86b408c9e53f",
+      "memo": "[신한카드] 쿠팡이츠 / 상태 신용 / 카드 신용 / 승인번호 41552525",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-29T11:52:04.805Z",
+      "updatedAt": "2026-06-29T11:52:35.127Z"
+    },
+    {
+      "id": "tx_1abac813-0251-4e07-83ba-73f1aae4c7a1",
+      "date": "2026-06-29",
+      "type": "income",
+      "amount": 13400,
+      "categoryId": "income-other",
+      "memo": "[신한카드] 티머니 고속버스 / 상태 신용 / 카드 신용 / 승인번호 49425450",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-29T11:52:04.805Z",
+      "updatedAt": "2026-06-29T11:52:04.805Z"
+    },
+    {
+      "id": "tx_435e8e27-d564-4d9f-83bb-76e63a01fbdd",
+      "date": "2026-06-29",
+      "type": "expense",
+      "amount": 8500,
+      "categoryId": "expense-medical",
+      "memo": "[신한카드] 서울성모이비인후과의원 / 상태 신용 / 카드 신용 / 승인번호 03745100",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-29T11:52:04.805Z",
+      "updatedAt": "2026-06-29T11:52:32.149Z"
+    },
+    {
+      "id": "tx_84eed371-27a1-4617-8b82-2c0a2654100d",
+      "date": "2026-06-29",
+      "type": "expense",
+      "amount": 21630,
+      "categoryId": "expense-grocery",
+      "memo": "[신한카드] (주)이마트 천안터미널점 / 상태 신용 / 카드 신용 / 승인번호 03942324",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-29T11:52:04.805Z",
+      "updatedAt": "2026-06-29T11:52:43.992Z"
+    },
+    {
+      "id": "tx_d55bec39-5fe6-4c97-8159-c26ddc250f50",
+      "date": "2026-06-29",
+      "type": "expense",
+      "amount": 2900,
+      "categoryId": "expense-medical",
+      "memo": "[신한카드] 미래아이소아청소년과의원 / 상태 신용 / 카드 신용 / 승인번호 02851839",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-29T11:52:04.805Z",
+      "updatedAt": "2026-06-29T11:52:27.928Z"
+    },
+    {
+      "id": "tx_d5f3c580-6ce0-478d-9449-720d3e06f786",
+      "date": "2026-06-29",
+      "type": "expense",
+      "amount": 3700,
+      "categoryId": "expense-medical",
+      "memo": "[신한카드] 이튼약국 / 상태 신용 / 카드 신용 / 승인번호 04062176",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-29T11:52:04.805Z",
+      "updatedAt": "2026-06-29T11:52:25.602Z"
+    },
+    {
+      "id": "tx_ded8fe14-d2c5-4ce9-a4b1-5a787cff2768",
+      "date": "2026-06-29",
+      "type": "expense",
+      "amount": 13400,
+      "categoryId": "expense-transport",
+      "memo": "[신한카드] 티머니 고속버스 / 상태 신용 / 카드 신용 / 승인번호 49444038",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-29T11:52:04.805Z",
+      "updatedAt": "2026-06-29T11:52:53.795Z"
+    },
+    {
+      "id": "tx_f67ffc85-90d2-4a25-bf9b-8e7ee42838fc",
+      "date": "2026-06-29",
+      "type": "expense",
+      "amount": 2300,
+      "categoryId": "expense-medical",
+      "memo": "[신한카드] 우리아이약국 / 상태 신용 / 카드 신용 / 승인번호 02942256",
+      "source": "shinhan-file",
+      "createdAt": "2026-06-29T11:52:04.805Z",
+      "updatedAt": "2026-06-29T11:52:22.118Z"
     }
   ]
 }
