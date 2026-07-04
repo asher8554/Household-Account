@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-06-29T11:53:01.237Z",
+  "exportedAt": "2026-07-04T09:12:31.725Z",
   "categories": [
     {
       "id": "expense-food",
@@ -6759,6 +6759,17 @@
       "updatedAt": "2026-06-27T06:31:54.316Z"
     },
     {
+      "id": "tx_46ef012f-e86a-4008-8adf-c439cbaa23fd",
+      "date": "2026-06-25",
+      "type": "income",
+      "amount": 56000,
+      "categoryId": "income-other",
+      "memo": "[신한카드] 신세계백화점 천안아산점(아카데 / 상태 신용 / 카드 신용 / 승인번호 04632218",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-04T07:03:48.721Z",
+      "updatedAt": "2026-07-04T07:03:48.721Z"
+    },
+    {
       "id": "tx_61ef9a3b-ac4b-4407-80b8-11e0294a9c51",
       "date": "2026-06-25",
       "type": "expense",
@@ -6988,6 +6999,116 @@
       "source": "shinhan-file",
       "createdAt": "2026-06-29T11:52:04.805Z",
       "updatedAt": "2026-06-29T11:52:22.118Z"
+    },
+    {
+      "id": "tx_1bc4e957-03f3-4963-8f5d-e13e6d25bb46",
+      "date": "2026-07-01",
+      "type": "expense",
+      "amount": 3900,
+      "categoryId": "expense-cafe",
+      "memo": "[신한카드] 메가엠지씨커피 천안터미널점 / 상태 신용 / 카드 신용 / 승인번호 26654183",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-04T07:03:48.721Z",
+      "updatedAt": "2026-07-04T07:04:31.606Z"
+    },
+    {
+      "id": "tx_84f6f826-3cf2-4eba-9b07-f63979087e43",
+      "date": "2026-07-01",
+      "type": "expense",
+      "amount": 39000,
+      "categoryId": "cat_0ba2a7f7-580b-45e7-be29-86b408c9e53f",
+      "memo": "[신한카드] 쿠팡이츠 / 상태 신용 / 카드 신용 / 승인번호 33742061",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-04T07:03:48.721Z",
+      "updatedAt": "2026-07-04T07:04:27.159Z"
+    },
+    {
+      "id": "tx_b5b0ed5a-57da-43ba-9916-3b51ae863cc9",
+      "date": "2026-07-01",
+      "type": "expense",
+      "amount": 2900,
+      "categoryId": "expense-medical",
+      "memo": "[신한카드] 미래아이소아청소년과의원 / 상태 신용 / 카드 신용 / 승인번호 26521471",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-04T07:03:48.721Z",
+      "updatedAt": "2026-07-04T07:04:34.434Z"
+    },
+    {
+      "id": "tx_c8eed906-a224-4570-b6ad-ecfb9a696274",
+      "date": "2026-07-01",
+      "type": "expense",
+      "amount": 2000,
+      "categoryId": "expense-medical",
+      "memo": "[신한카드] 우리아이약국 / 상태 신용 / 카드 신용 / 승인번호 26559341",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-04T07:03:48.721Z",
+      "updatedAt": "2026-07-04T07:04:22.981Z"
+    },
+    {
+      "id": "tx_230c5fb6-1957-4dc2-91c3-497ad034cd38",
+      "date": "2026-07-02",
+      "type": "expense",
+      "amount": 21480,
+      "categoryId": "expense-shopping",
+      "memo": "[신한카드] 쿠팡 / 상태 신용 / 카드 신용 / 승인번호 37754988",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-04T07:03:48.721Z",
+      "updatedAt": "2026-07-04T07:04:48.700Z"
+    },
+    {
+      "id": "tx_67c27362-6fa1-44bc-892b-903188e4012a",
+      "date": "2026-07-02",
+      "type": "expense",
+      "amount": 70000,
+      "categoryId": "cat_02e7b86c-3ed5-4cce-9519-bb5b819ef138",
+      "memo": "[신한카드] (주)천안대로셀프 / 상태 신용 / 카드 신용 / 승인번호 45839615",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-04T07:03:48.721Z",
+      "updatedAt": "2026-07-04T07:04:40.441Z"
+    },
+    {
+      "id": "tx_936349a5-5174-41be-9355-234cef0edeea",
+      "date": "2026-07-02",
+      "type": "expense",
+      "amount": 36720,
+      "categoryId": "expense-shopping",
+      "memo": "[신한카드] 쿠팡 / 상태 신용 / 카드 신용 / 승인번호 48910499",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-04T07:03:48.721Z",
+      "updatedAt": "2026-07-04T07:04:48.700Z"
+    },
+    {
+      "id": "tx_1f9e33c4-aad1-41e3-9e6d-738f37823dc4",
+      "date": "2026-07-04",
+      "type": "expense",
+      "amount": 5900,
+      "categoryId": "expense-medical",
+      "memo": "[신한카드] 이수내과의원 / 상태 신용 / 카드 신용 / 승인번호 16583552",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-04T07:03:48.721Z",
+      "updatedAt": "2026-07-04T07:04:15.076Z"
+    },
+    {
+      "id": "tx_3f20bf99-7312-4c73-ac8d-51aae35f9e72",
+      "date": "2026-07-04",
+      "type": "expense",
+      "amount": 40200,
+      "categoryId": "expense-medical",
+      "memo": "[신한카드] 하임약국 / 상태 신용 / 카드 신용 / 승인번호 16586674",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-04T07:03:48.721Z",
+      "updatedAt": "2026-07-04T07:04:12.121Z"
+    },
+    {
+      "id": "tx_b09e9af0-b408-40dc-9d28-6c96513eb70b",
+      "date": "2026-07-04",
+      "type": "expense",
+      "amount": 25200,
+      "categoryId": "cat_0ba2a7f7-580b-45e7-be29-86b408c9e53f",
+      "memo": "[신한카드] 쿠팡이츠 / 상태 신용 / 카드 신용 / 승인번호 24261327",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-04T09:12:20.391Z",
+      "updatedAt": "2026-07-04T09:12:28.806Z"
     }
   ]
 }
