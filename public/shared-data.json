@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-07-14T02:52:33.322Z",
+  "exportedAt": "2026-07-18T06:08:29.616Z",
   "categories": [
     {
       "id": "expense-food",
@@ -7001,6 +7001,17 @@
       "updatedAt": "2026-06-29T11:52:53.795Z"
     },
     {
+      "id": "tx_dfb94577-d1fb-4c1f-aea0-aeff7e0e79db",
+      "date": "2026-06-29",
+      "type": "income",
+      "amount": 13400,
+      "categoryId": "income-other",
+      "memo": "[신한카드] 티머니 고속버스 / 상태 신용 / 카드 신용 / 승인번호 49444038",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-18T05:41:01.842Z",
+      "updatedAt": "2026-07-18T05:41:01.842Z"
+    },
+    {
       "id": "tx_f67ffc85-90d2-4a25-bf9b-8e7ee42838fc",
       "date": "2026-06-29",
       "type": "expense",
@@ -7364,6 +7375,17 @@
       "updatedAt": "2026-07-14T02:51:16.047Z"
     },
     {
+      "id": "tx_1871bbdc-c684-4408-9b3b-8a6c7c217014",
+      "date": "2026-07-14",
+      "type": "expense",
+      "amount": 3590,
+      "categoryId": "expense-shopping",
+      "memo": "[신한카드] 쿠팡 / 상태 신용 / 카드 신용 / 승인번호 09417703",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-18T05:41:01.842Z",
+      "updatedAt": "2026-07-18T05:41:41.718Z"
+    },
+    {
       "id": "tx_1b00ba62-0ff2-42c8-8402-4a511f20c040",
       "date": "2026-07-14",
       "type": "expense",
@@ -7406,6 +7428,39 @@
       "source": "shinhan-file",
       "createdAt": "2026-07-14T02:50:50.509Z",
       "updatedAt": "2026-07-14T02:51:08.323Z"
+    },
+    {
+      "id": "tx_7f0a8efd-1df4-4e46-a4bf-24904e55342b",
+      "date": "2026-07-16",
+      "type": "expense",
+      "amount": 6000,
+      "categoryId": "expense-food",
+      "memo": "[신한카드] 씨유천안로얄점 / 상태 신용 / 카드 신용 / 승인번호 33900289",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-18T05:41:01.842Z",
+      "updatedAt": "2026-07-18T05:43:17.095Z"
+    },
+    {
+      "id": "tx_cb1ebe0b-0631-470f-857f-b75649901c00",
+      "date": "2026-07-16",
+      "type": "expense",
+      "amount": 14000,
+      "categoryId": "expense-food",
+      "memo": "[신한카드] 신세계천안아산점FoodSteet(아라 / 상태 신용 / 카드 신용 / 승인번호 33330349",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-18T05:41:01.842Z",
+      "updatedAt": "2026-07-18T05:41:26.613Z"
+    },
+    {
+      "id": "tx_c9a32599-3b0b-4cab-bfa9-bdb93c9b3449",
+      "date": "2026-07-18",
+      "type": "expense",
+      "amount": 269200,
+      "categoryId": "expense-medical",
+      "memo": "[현대카드] 신내성모정혀외과의원 / 상태 본인 / 카드 본인 / 승인번호 00981173",
+      "source": "hyundai-card-file",
+      "createdAt": "2026-07-18T05:41:08.087Z",
+      "updatedAt": "2026-07-18T05:41:19.487Z"
     }
   ]
 }
