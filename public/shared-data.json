@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-07-18T06:08:29.616Z",
+  "exportedAt": "2026-07-29T09:07:48.267Z",
   "categories": [
     {
       "id": "expense-food",
@@ -361,22 +361,22 @@
       "date": "2025-12-05",
       "type": "expense",
       "amount": 51900,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 28410770",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:17.661Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_f394487f-6d15-497b-84a7-88eaeb159717",
       "date": "2025-12-05",
       "type": "expense",
       "amount": 51900,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 28415976",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:17.661Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_66f617dd-4dac-4104-946d-ba345720426a",
@@ -427,22 +427,22 @@
       "date": "2025-12-07",
       "type": "expense",
       "amount": 3950,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 48286645",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:17.661Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_e55a1560-f5f1-46f2-8b25-ac216b273826",
       "date": "2025-12-07",
       "type": "expense",
       "amount": 19000,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 05382087",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:17.661Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_dc8c0505-3408-4c59-b333-1f426d9d0cc1",
@@ -526,11 +526,11 @@
       "date": "2025-12-13",
       "type": "expense",
       "amount": 40980,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 28790455",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:17.661Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_58381ec9-0e1c-487b-8a2a-7d05d5a400f1",
@@ -603,11 +603,11 @@
       "date": "2025-12-15",
       "type": "expense",
       "amount": 32760,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 14304704",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:17.661Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_03e24fe3-8adb-4be9-b0ed-6850d35bb735",
@@ -625,33 +625,33 @@
       "date": "2025-12-17",
       "type": "expense",
       "amount": 31290,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 30619499",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:17.661Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_63aaa020-1ea9-4ffc-b29d-49c632dfb644",
       "date": "2025-12-17",
       "type": "expense",
       "amount": 15950,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 38132501",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:17.661Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_459299e6-e696-4661-83fe-3fffb9276a2f",
       "date": "2025-12-18",
       "type": "expense",
       "amount": 34530,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 40832678",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:17.661Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_6f103160-26d0-4648-972b-b7d7398113fe",
@@ -680,11 +680,11 @@
       "date": "2025-12-19",
       "type": "expense",
       "amount": 21660,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 05867353",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:17.661Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_23964d32-2c19-4ea8-b498-67d38a8a6de8",
@@ -724,11 +724,11 @@
       "date": "2025-12-20",
       "type": "expense",
       "amount": 12500,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 19255605",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:17.661Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_af1f6e4b-1b12-4273-97c5-fc75819f5bd0",
@@ -746,22 +746,22 @@
       "date": "2025-12-21",
       "type": "expense",
       "amount": 11170,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 41365943",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:17.661Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_20301605-6195-4b67-8af2-91d709950d6f",
       "date": "2025-12-21",
       "type": "expense",
       "amount": 40430,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 32169300",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:17.661Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_16e7c08b-dfdb-4777-b075-b57edac533cd",
@@ -867,11 +867,11 @@
       "date": "2025-12-24",
       "type": "expense",
       "amount": 11900,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 31108027",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:17.661Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_05d4ce9d-6993-45a3-aa09-db3e6676bc8a",
@@ -889,11 +889,11 @@
       "date": "2025-12-25",
       "type": "expense",
       "amount": 113000,
-      "categoryId": "expense-food",
+      "categoryId": "cat_ed2e80f5-df90-4a47-93b2-190f44e490c8",
       "memo": "[신한카드] 뚜쥬루제과(주) / 카드 신용 / 승인번호 39227337",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:17.661Z",
-      "updatedAt": "2026-06-07T06:56:58.291Z"
+      "updatedAt": "2026-07-29T08:54:57.432Z"
     },
     {
       "id": "tx_5154664d-2aae-4344-9cf3-816450e7858a",
@@ -944,11 +944,11 @@
       "date": "2025-12-28",
       "type": "expense",
       "amount": 20800,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 36851402",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:17.661Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_61365b3f-5989-44e9-9f0c-286718ae7369",
@@ -966,22 +966,22 @@
       "date": "2025-12-29",
       "type": "expense",
       "amount": 22800,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 37914383",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:17.661Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_4bb2cc13-a1de-4979-928a-34f96523537f",
       "date": "2025-12-29",
       "type": "expense",
       "amount": 39560,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 46963242",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:17.661Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_b0682ccc-bf04-40ec-84ac-4cf23f78e449",
@@ -999,11 +999,11 @@
       "date": "2025-12-30",
       "type": "expense",
       "amount": 26700,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 04190219",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:17.661Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_387f807a-716b-4f28-a671-05496ffdb2b3",
@@ -1076,11 +1076,11 @@
       "date": "2026-01-03",
       "type": "expense",
       "amount": 51930,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 03225572",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_fa8784e1-e67d-4142-81b1-ddaafa1a71f8",
@@ -1098,22 +1098,22 @@
       "date": "2026-01-04",
       "type": "expense",
       "amount": 13330,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 25352886",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_25c5fc64-1000-4e1e-a855-ecc39aa06c1f",
       "date": "2026-01-05",
       "type": "expense",
       "amount": 38880,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 37206770",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_4ee56d2b-6fce-4da4-9dae-bdfa93484b34",
@@ -1131,11 +1131,11 @@
       "date": "2026-01-05",
       "type": "expense",
       "amount": 35900,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 37316865",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_f37fc7d3-19e7-4221-b914-201f5284ad3a",
@@ -1164,11 +1164,11 @@
       "date": "2026-01-07",
       "type": "expense",
       "amount": 35270,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 12140769",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_d421352f-0f98-4841-a42d-0d461cdeb760",
@@ -1230,11 +1230,11 @@
       "date": "2026-01-10",
       "type": "expense",
       "amount": 4000,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 01811341",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_5e1d8be9-80c8-4beb-84fc-fc79beefd46c",
@@ -1263,11 +1263,11 @@
       "date": "2026-01-13",
       "type": "expense",
       "amount": 34200,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 41363560",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_899ad4cc-06cf-4b08-b06d-1040540ccd7a",
@@ -1417,11 +1417,11 @@
       "date": "2026-01-16",
       "type": "expense",
       "amount": 40500,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 29965008",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_b5becb7f-a38f-4869-8200-8c816eb59011",
@@ -1439,11 +1439,11 @@
       "date": "2026-01-18",
       "type": "expense",
       "amount": 53450,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 46293771",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_b30d421b-88b9-4dd0-baa5-161868b5aa3c",
@@ -1461,11 +1461,11 @@
       "date": "2026-01-19",
       "type": "expense",
       "amount": 23500,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 07637081",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_11026ac5-d377-4ec6-9e77-5326a22ee4ec",
@@ -1494,11 +1494,11 @@
       "date": "2026-01-20",
       "type": "expense",
       "amount": 469900,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 24589810",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_ac41af5d-3623-46a7-805a-ea7686d252f7",
@@ -1549,11 +1549,11 @@
       "date": "2026-01-21",
       "type": "expense",
       "amount": 14560,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 34986181",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_e1b8db16-9fc9-4901-aaa0-8e4898c48824",
@@ -1571,11 +1571,11 @@
       "date": "2026-01-22",
       "type": "expense",
       "amount": 13500,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 09016110",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_67afe1d6-7778-425f-8af2-c852c6fed6fb",
@@ -1648,11 +1648,11 @@
       "date": "2026-01-24",
       "type": "expense",
       "amount": 13220,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 23954075",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_b3684766-42ca-46d9-aa92-74fec786edf4",
@@ -1813,22 +1813,22 @@
       "date": "2026-01-29",
       "type": "expense",
       "amount": 52200,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 49777971",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_236db79c-923d-4bb8-a4b2-cacdc67a88f9",
       "date": "2026-01-30",
       "type": "expense",
       "amount": 72470,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 13245347",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_3fa0cc76-3b9a-4477-b008-491165f3a3a4",
@@ -2022,11 +2022,11 @@
       "date": "2026-02-03",
       "type": "expense",
       "amount": 5930,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 11993723",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_f7e78168-a341-4457-b4de-9cd216153a78",
@@ -2077,11 +2077,11 @@
       "date": "2026-02-06",
       "type": "expense",
       "amount": 38880,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 39702357",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_fbb8ff84-1804-47e2-a307-a750fc0a226b",
@@ -2099,11 +2099,11 @@
       "date": "2026-02-07",
       "type": "expense",
       "amount": 15220,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 13381540",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_a8af49c1-141c-48ff-bb7a-e3415b4594fe",
@@ -2209,11 +2209,11 @@
       "date": "2026-02-12",
       "type": "expense",
       "amount": 92930,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 28985332",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_7430c1d9-4ae7-45e6-b0a1-3aedbae6ba95",
@@ -2352,11 +2352,11 @@
       "date": "2026-02-20",
       "type": "expense",
       "amount": 32580,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 18240762",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_6336a5c5-f975-491f-b84d-f101d2663b3f",
@@ -2473,11 +2473,11 @@
       "date": "2026-02-23",
       "type": "expense",
       "amount": 19040,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 18631000",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_639dab75-f277-41f4-a3bb-40c004d8867e",
@@ -2561,11 +2561,11 @@
       "date": "2026-02-24",
       "type": "expense",
       "amount": 13600,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 33453613",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_f58f65f0-f086-4959-8e62-e3fa282f2cc9",
@@ -2616,22 +2616,22 @@
       "date": "2026-02-25",
       "type": "expense",
       "amount": 21630,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 41605902",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_82799c3e-2f59-4cfa-a7e6-f80cccb72994",
       "date": "2026-02-26",
       "type": "expense",
       "amount": 22860,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 12074697",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_38634eaa-3120-40c5-8194-86f9768a05d1",
@@ -2693,22 +2693,22 @@
       "date": "2026-02-28",
       "type": "expense",
       "amount": 5800,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 27488452",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_ef21bafd-1f84-4ac2-b3ef-b6943defa346",
       "date": "2026-02-28",
       "type": "expense",
       "amount": 18660,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 27358307",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_5de6674c-1881-42af-9498-11f1067c3d96",
@@ -2726,44 +2726,44 @@
       "date": "2026-03-03",
       "type": "expense",
       "amount": 10200,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 23466068",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_3bf09d04-a62f-42ab-bc7c-d603ce13ed12",
       "date": "2026-03-03",
       "type": "expense",
       "amount": 8500,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 18703918",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_9e9e43a8-aa7a-45ae-84ae-8dff15126697",
       "date": "2026-03-03",
       "type": "expense",
       "amount": 12240,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 28172596",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_c04b27c1-b85c-479b-ac85-1d71514ca863",
       "date": "2026-03-03",
       "type": "expense",
       "amount": 40170,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 16180995",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_0b69679c-2a53-46f6-b731-bb96f77a6afd",
@@ -2781,11 +2781,11 @@
       "date": "2026-03-04",
       "type": "expense",
       "amount": 17760,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 36729273",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_467dfffa-9682-498d-970a-d438bc141893",
@@ -2935,11 +2935,11 @@
       "date": "2026-03-11",
       "type": "expense",
       "amount": 38410,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 34734326",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_2a304c18-f63e-4975-8cf5-fcc9049466c1",
@@ -2957,11 +2957,11 @@
       "date": "2026-03-11",
       "type": "expense",
       "amount": 13810,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 34751998",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_78fcf498-500a-4652-8b72-64472d1a75b0",
@@ -3045,11 +3045,11 @@
       "date": "2026-03-13",
       "type": "expense",
       "amount": 35100,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 11130951",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_cbd16e14-06fa-4670-9e5c-0e366399f811",
@@ -3232,11 +3232,11 @@
       "date": "2026-03-19",
       "type": "expense",
       "amount": 70310,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 39845437",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_12ce4983-b670-47e0-9a02-6e95ff7cf74b",
@@ -3353,11 +3353,11 @@
       "date": "2026-03-22",
       "type": "expense",
       "amount": 39100,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 29680797",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_25de466e-d9c3-428b-851a-164b4d9e7c0b",
@@ -3441,11 +3441,11 @@
       "date": "2026-03-25",
       "type": "expense",
       "amount": 12960,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 09383928",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_29b1495f-6e27-4342-9557-311f644cd6d0",
@@ -3639,11 +3639,11 @@
       "date": "2026-03-30",
       "type": "expense",
       "amount": 33200,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 29442725",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_b6934205-8ba9-43b2-9b2e-228b90b1ac2e",
@@ -3661,11 +3661,11 @@
       "date": "2026-03-30",
       "type": "expense",
       "amount": 35410,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 31105450",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_f2325568-6294-49d3-a192-9068430c8faf",
@@ -3727,22 +3727,22 @@
       "date": "2026-04-01",
       "type": "expense",
       "amount": 23620,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 09366385",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_3b10edb5-7bc1-46e3-ba1a-97d74b531811",
       "date": "2026-04-02",
       "type": "expense",
       "amount": 20970,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 22366151",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_fc85f46f-feeb-4414-9834-ff58f0de6ece",
@@ -3760,11 +3760,11 @@
       "date": "2026-04-03",
       "type": "expense",
       "amount": 119900,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 41999333",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_ac609792-caee-4e0e-b8bb-fdc5830ba733",
@@ -4145,22 +4145,22 @@
       "date": "2026-04-17",
       "type": "expense",
       "amount": 89900,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 25859196",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_bbedec55-537a-44cb-8b25-16228e39befb",
       "date": "2026-04-17",
       "type": "expense",
       "amount": 12400,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 25929686",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_01c0ce1b-5301-4cf2-82e0-2b39309ccb1c",
@@ -4222,11 +4222,11 @@
       "date": "2026-04-19",
       "type": "expense",
       "amount": 13020,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 07657868",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_2cdc668b-44e4-48f9-bc5c-32566f96b4d5",
@@ -4332,11 +4332,11 @@
       "date": "2026-04-20",
       "type": "expense",
       "amount": 21240,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 12983449",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_1da51a74-d60f-4ea0-8381-5700fe5e23c8",
@@ -4398,11 +4398,11 @@
       "date": "2026-04-22",
       "type": "expense",
       "amount": 13720,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 42863293",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_144b4217-900b-4a8d-88e2-8f666d2cbb86",
@@ -4508,11 +4508,11 @@
       "date": "2026-04-26",
       "type": "expense",
       "amount": 43820,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 01531649",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_001b6929-a125-45ac-8ad5-f095b233239b",
@@ -4651,22 +4651,22 @@
       "date": "2026-04-28",
       "type": "expense",
       "amount": 11610,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 28970462",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_25e7424d-7963-4441-bf98-ba73e32713f7",
       "date": "2026-04-29",
       "type": "expense",
       "amount": 41020,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 40341622",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_40fdd415-01b6-448f-b433-c676d5481ff3",
@@ -4717,11 +4717,11 @@
       "date": "2026-05-01",
       "type": "expense",
       "amount": 71330,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 33842803",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_85ce6662-51af-448b-9cdb-b23425961ef6",
@@ -4926,11 +4926,11 @@
       "date": "2026-05-08",
       "type": "expense",
       "amount": 37030,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 27700625",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_57ce66fe-0aaf-4b9f-8dfd-980f863a1772",
@@ -4959,11 +4959,11 @@
       "date": "2026-05-08",
       "type": "expense",
       "amount": 12470,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 21185105",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_ca523535-ece0-429f-85a1-6c9cbbbb52ea",
@@ -5245,22 +5245,22 @@
       "date": "2026-05-15",
       "type": "expense",
       "amount": 14950,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 17420365",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_ccab6971-3d05-41b7-a6c1-490bb7e98188",
       "date": "2026-05-15",
       "type": "expense",
       "amount": 34390,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 23561194",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_dec8154a-6fa6-4fc4-b0c6-c38ba615fa77",
@@ -5278,11 +5278,11 @@
       "date": "2026-05-16",
       "type": "expense",
       "amount": 46030,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 43790641",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_87544599-d649-438d-8f13-f2aac3016a90",
@@ -5399,11 +5399,11 @@
       "date": "2026-05-18",
       "type": "expense",
       "amount": 42400,
-      "categoryId": "expense-food",
+      "categoryId": "cat_ed2e80f5-df90-4a47-93b2-190f44e490c8",
       "memo": "[신한카드] 뚜쥬루제과(주) / 카드 신용 / 승인번호 15983336",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-07T06:56:58.291Z"
+      "updatedAt": "2026-07-29T08:54:57.432Z"
     },
     {
       "id": "tx_c0a5ae45-420b-4391-97dd-0ad1de35661a",
@@ -5586,11 +5586,11 @@
       "date": "2026-05-22",
       "type": "expense",
       "amount": 10400,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 14141624",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_ddbd4cb1-acf2-471a-9b0c-c3587aa01448",
@@ -5729,11 +5729,11 @@
       "date": "2026-05-25",
       "type": "expense",
       "amount": 17670,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 06358564",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_35561fea-22c0-46f0-aa33-76add8e02f3e",
@@ -5806,11 +5806,11 @@
       "date": "2026-05-25",
       "type": "expense",
       "amount": 16800,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 17092768",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_e69c2809-50aa-49b8-a880-32e9489d33a4",
@@ -5839,11 +5839,11 @@
       "date": "2026-05-26",
       "type": "expense",
       "amount": 37500,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 35464629",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_a0a9e43a-ef8e-4515-8bba-ef623e1ebafd",
@@ -5872,11 +5872,11 @@
       "date": "2026-05-26",
       "type": "expense",
       "amount": 44540,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 35595532",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_c775ea22-ac17-42bb-9d8a-8b45c2dc3fb5",
@@ -5971,11 +5971,11 @@
       "date": "2026-05-27",
       "type": "expense",
       "amount": 4450,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 47740337",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_c8687e84-76c4-4a93-b335-e044d515ed04",
@@ -6026,11 +6026,11 @@
       "date": "2026-05-29",
       "type": "expense",
       "amount": 14910,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 카드 신용 / 승인번호 14422097",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:09.157Z",
-      "updatedAt": "2026-06-07T06:54:21.489Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_5e00f02b-faf8-4ea4-badf-7888775e8f3a",
@@ -6312,11 +6312,11 @@
       "date": "2026-06-10",
       "type": "expense",
       "amount": 22800,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 상태 신용 / 카드 신용 / 승인번호 35945710",
       "source": "shinhan-file",
       "createdAt": "2026-06-10T14:15:34.502Z",
-      "updatedAt": "2026-06-10T14:15:47.724Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_759aa7e7-d362-44d5-99b3-de24f713b288",
@@ -6444,11 +6444,11 @@
       "date": "2026-06-16",
       "type": "expense",
       "amount": 21940,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 상태 신용 / 카드 신용 / 승인번호 19451109",
       "source": "shinhan-file",
       "createdAt": "2026-06-18T01:41:51.569Z",
-      "updatedAt": "2026-06-18T01:42:53.811Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_322cfa87-fde3-45b9-8b06-4f661db47084",
@@ -6477,11 +6477,11 @@
       "date": "2026-06-17",
       "type": "expense",
       "amount": 31400,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 상태 신용 / 카드 신용 / 승인번호 39823096",
       "source": "shinhan-file",
       "createdAt": "2026-06-18T01:41:51.569Z",
-      "updatedAt": "2026-06-18T01:42:53.811Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_8e3a1f1a-b08b-48f2-882a-f46ea3f0e570",
@@ -6609,11 +6609,11 @@
       "date": "2026-06-20",
       "type": "expense",
       "amount": 43600,
-      "categoryId": "expense-food",
+      "categoryId": "cat_ed2e80f5-df90-4a47-93b2-190f44e490c8",
       "memo": "[신한카드] 뚜쥬루제과(주) / 상태 신용 / 카드 신용 / 승인번호 22173714",
       "source": "shinhan-file",
       "createdAt": "2026-06-21T12:25:25.991Z",
-      "updatedAt": "2026-06-21T12:25:43.265Z"
+      "updatedAt": "2026-07-29T08:54:57.432Z"
     },
     {
       "id": "tx_056e997c-36d5-43e1-aeee-8bcd6fc98624",
@@ -6895,22 +6895,22 @@
       "date": "2026-06-27",
       "type": "expense",
       "amount": 43500,
-      "categoryId": "expense-food",
+      "categoryId": "cat_ed2e80f5-df90-4a47-93b2-190f44e490c8",
       "memo": "[신한카드] 뚜쥬루제과(주) / 상태 신용 / 카드 신용 / 승인번호 24124186",
       "source": "shinhan-file",
       "createdAt": "2026-06-27T06:30:48.970Z",
-      "updatedAt": "2026-06-27T06:31:14.225Z"
+      "updatedAt": "2026-07-29T08:54:57.432Z"
     },
     {
       "id": "tx_68462dba-5adc-446d-b231-d869500aa0f2",
       "date": "2026-06-27",
       "type": "expense",
       "amount": 17100,
-      "categoryId": "expense-food",
+      "categoryId": "cat_ed2e80f5-df90-4a47-93b2-190f44e490c8",
       "memo": "[신한카드] 뚜쥬루제과(주) / 상태 신용 / 카드 신용 / 승인번호 24161586",
       "source": "shinhan-file",
       "createdAt": "2026-06-27T06:30:48.970Z",
-      "updatedAt": "2026-06-27T06:31:14.225Z"
+      "updatedAt": "2026-07-29T08:54:57.432Z"
     },
     {
       "id": "tx_8d4f49fc-6502-48a6-b9cc-a8ba66f01273",
@@ -7071,11 +7071,11 @@
       "date": "2026-07-02",
       "type": "expense",
       "amount": 21480,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 상태 신용 / 카드 신용 / 승인번호 37754988",
       "source": "shinhan-file",
       "createdAt": "2026-07-04T07:03:48.721Z",
-      "updatedAt": "2026-07-04T07:04:48.700Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_67c27362-6fa1-44bc-892b-903188e4012a",
@@ -7093,11 +7093,11 @@
       "date": "2026-07-02",
       "type": "expense",
       "amount": 36720,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 상태 신용 / 카드 신용 / 승인번호 48910499",
       "source": "shinhan-file",
       "createdAt": "2026-07-04T07:03:48.721Z",
-      "updatedAt": "2026-07-04T07:04:48.700Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_1f9e33c4-aad1-41e3-9e6d-738f37823dc4",
@@ -7236,11 +7236,11 @@
       "date": "2026-07-10",
       "type": "expense",
       "amount": 1000,
-      "categoryId": "expense-other",
+      "categoryId": "expense-telecom",
       "memo": "[신한카드] (주)신안정보통신 / 상태 신용 / 카드 신용 / 승인번호 03719952",
       "source": "shinhan-file",
       "createdAt": "2026-07-14T02:50:50.509Z",
-      "updatedAt": "2026-07-14T02:50:50.509Z"
+      "updatedAt": "2026-07-29T08:56:43.359Z"
     },
     {
       "id": "tx_d4e00078-82e4-4489-8556-ecb3427a1c27",
@@ -7379,11 +7379,11 @@
       "date": "2026-07-14",
       "type": "expense",
       "amount": 3590,
-      "categoryId": "expense-shopping",
+      "categoryId": "expense-household",
       "memo": "[신한카드] 쿠팡 / 상태 신용 / 카드 신용 / 승인번호 09417703",
       "source": "shinhan-file",
       "createdAt": "2026-07-18T05:41:01.842Z",
-      "updatedAt": "2026-07-18T05:41:41.718Z"
+      "updatedAt": "2026-07-29T08:56:09.407Z"
     },
     {
       "id": "tx_1b00ba62-0ff2-42c8-8402-4a511f20c040",
@@ -7412,11 +7412,11 @@
       "date": "2026-07-14",
       "type": "expense",
       "amount": 2000,
-      "categoryId": "expense-other",
+      "categoryId": "expense-leisure",
       "memo": "[신한카드] 동남구청 / 상태 신용 / 카드 신용 / 승인번호 05202881",
       "source": "shinhan-file",
       "createdAt": "2026-07-14T02:50:50.509Z",
-      "updatedAt": "2026-07-14T02:50:50.509Z"
+      "updatedAt": "2026-07-29T08:56:50.788Z"
     },
     {
       "id": "tx_c418ce36-8d24-47c4-a6a5-cc54bf2b4276",
@@ -7461,6 +7461,402 @@
       "source": "hyundai-card-file",
       "createdAt": "2026-07-18T05:41:08.087Z",
       "updatedAt": "2026-07-18T05:41:19.487Z"
+    },
+    {
+      "id": "tx_12d3d58f-30f0-4d18-a7d9-a5a31cd48b06",
+      "date": "2026-07-19",
+      "type": "expense",
+      "amount": 9200,
+      "categoryId": "expense-cafe",
+      "memo": "[현대카드] 파리바게뜨신내제일점 / 상태 본인 / 카드 본인 / 승인번호 00343278",
+      "source": "hyundai-card-file",
+      "createdAt": "2026-07-24T01:10:54.598Z",
+      "updatedAt": "2026-07-24T01:11:43.394Z"
+    },
+    {
+      "id": "tx_0da2bd6d-1b21-4e72-962e-4f37ade55736",
+      "date": "2026-07-20",
+      "type": "expense",
+      "amount": 18200,
+      "categoryId": "expense-medical",
+      "memo": "[현대카드] 아너스치과교정과치과의원 / 상태 본인 / 카드 본인 / 승인번호 00754176",
+      "source": "hyundai-card-file",
+      "createdAt": "2026-07-24T01:10:54.598Z",
+      "updatedAt": "2026-07-24T01:11:22.867Z"
+    },
+    {
+      "id": "tx_2e525d8d-e2f3-4ff1-8829-c5c6b702670d",
+      "date": "2026-07-20",
+      "type": "expense",
+      "amount": 70000,
+      "categoryId": "cat_02e7b86c-3ed5-4cce-9519-bb5b819ef138",
+      "memo": "[신한카드] (주)천안대로셀프 / 상태 신용 / 카드 신용 / 승인번호 45835602",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-24T01:10:51.367Z",
+      "updatedAt": "2026-07-24T01:11:52.281Z"
+    },
+    {
+      "id": "tx_35acce46-704a-4931-8091-3a9ebd9570b6",
+      "date": "2026-07-20",
+      "type": "expense",
+      "amount": 50130,
+      "categoryId": "expense-insurance",
+      "memo": "[신한카드] 신한라이프생명보험 주식회사 / 상태 신용 / 카드 신용 / 승인번호 34942588",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-24T01:10:51.367Z",
+      "updatedAt": "2026-07-24T01:11:28.703Z"
+    },
+    {
+      "id": "tx_379bf3b7-ac81-4494-8018-6c6d66024028",
+      "date": "2026-07-20",
+      "type": "expense",
+      "amount": 26010,
+      "categoryId": "expense-cafe",
+      "memo": "[신한카드] 파스쿠찌 센트로 천안점 / 상태 신용 / 카드 신용 / 승인번호 43912557",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-24T01:10:51.367Z",
+      "updatedAt": "2026-07-24T01:11:56.866Z"
+    },
+    {
+      "id": "tx_5dec6dde-9853-44a6-b76c-670efbd9cb3d",
+      "date": "2026-07-20",
+      "type": "expense",
+      "amount": 63710,
+      "categoryId": "expense-insurance",
+      "memo": "[신한카드] 신한라이프생명보험 주식회사 / 상태 신용 / 카드 신용 / 승인번호 34368807",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-24T01:10:51.367Z",
+      "updatedAt": "2026-07-24T01:11:28.703Z"
+    },
+    {
+      "id": "tx_5e29c016-dde7-4d78-b3ec-668662b076d7",
+      "date": "2026-07-20",
+      "type": "expense",
+      "amount": 36500,
+      "categoryId": "expense-housing",
+      "memo": "[신한카드] (주)세스코 / 상태 신용 / 카드 신용 / 승인번호 39794628",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-24T01:10:51.367Z",
+      "updatedAt": "2026-07-24T01:11:33.926Z"
+    },
+    {
+      "id": "tx_db5700dc-a7a1-4a6a-8139-70c98afa617f",
+      "date": "2026-07-20",
+      "type": "expense",
+      "amount": 7460,
+      "categoryId": "expense-insurance",
+      "memo": "[신한카드] 신한라이프생명보험 주식회사 / 상태 신용 / 카드 신용 / 승인번호 34456384",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-24T01:10:51.367Z",
+      "updatedAt": "2026-07-24T01:11:28.703Z"
+    },
+    {
+      "id": "tx_10689309-b0ab-4446-9807-9a1720c703db",
+      "date": "2026-07-22",
+      "type": "expense",
+      "amount": 29000,
+      "categoryId": "cat_0ba2a7f7-580b-45e7-be29-86b408c9e53f",
+      "memo": "[신한카드] 쿠팡이츠 / 상태 신용 / 카드 신용 / 승인번호 20917188",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-24T01:10:51.367Z",
+      "updatedAt": "2026-07-24T01:11:18.196Z"
+    },
+    {
+      "id": "tx_0501f6ad-9100-4382-afe2-81135a04f7ca",
+      "date": "2026-07-23",
+      "type": "expense",
+      "amount": 12100,
+      "categoryId": "expense-cafe",
+      "memo": "[신한카드] 텐퍼센트커피 천안삼성SDI점 / 상태 신용 / 카드 신용 / 승인번호 28881621",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-24T01:10:51.367Z",
+      "updatedAt": "2026-07-24T01:11:14.204Z"
+    },
+    {
+      "id": "tx_0b388032-2cb1-4bf3-96f2-8aa1644e96ab",
+      "date": "2026-07-23",
+      "type": "expense",
+      "amount": 32840,
+      "categoryId": "expense-household",
+      "memo": "[신한카드] 쿠팡 / 상태 신용 / 카드 신용 / 승인번호 30529835",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-24T01:10:51.367Z",
+      "updatedAt": "2026-07-29T08:56:09.407Z"
+    },
+    {
+      "id": "tx_75756e71-9beb-45d0-8651-e02e724b7389",
+      "date": "2026-07-24",
+      "type": "expense",
+      "amount": 15600,
+      "categoryId": "expense-food",
+      "memo": "[신한카드] 한국맥도날드(유) 천안원성DT점 / 상태 신용 / 카드 신용 / 승인번호 46224995",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-29T08:53:51.379Z",
+      "updatedAt": "2026-07-29T08:55:47.932Z"
+    },
+    {
+      "id": "tx_fd145734-f2cd-439f-bc5f-d120752af975",
+      "date": "2026-07-24",
+      "type": "expense",
+      "amount": 12700,
+      "categoryId": "expense-household",
+      "memo": "[신한카드] 쿠팡 / 상태 신용 / 카드 신용 / 승인번호 47921739",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-29T08:53:51.379Z",
+      "updatedAt": "2026-07-29T08:56:09.407Z"
+    },
+    {
+      "id": "tx_b1fd8f69-e688-4655-a4b5-16c99d47c4de",
+      "date": "2026-07-25",
+      "type": "expense",
+      "amount": 12000,
+      "categoryId": "expense-household",
+      "memo": "[신한카드] 쿠팡 / 상태 신용 / 카드 신용 / 승인번호 16337303",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-29T08:53:51.379Z",
+      "updatedAt": "2026-07-29T08:56:09.407Z"
+    },
+    {
+      "id": "tx_cc5df28a-d32f-4089-8afc-03a4c5d7cbbc",
+      "date": "2026-07-25",
+      "type": "expense",
+      "amount": 13600,
+      "categoryId": "expense-food",
+      "memo": "[신한카드] 한국맥도날드(유) 천안원성DT점 / 상태 신용 / 카드 신용 / 승인번호 11827066",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-29T08:53:51.379Z",
+      "updatedAt": "2026-07-29T08:55:47.932Z"
+    },
+    {
+      "id": "tx_031aea29-47f2-481c-9bd7-46d811e06b9e",
+      "date": "2026-07-26",
+      "type": "expense",
+      "amount": 12500,
+      "categoryId": "expense-food",
+      "memo": "[신한카드] 망향비빔국수 / 상태 신용 / 카드 신용 / 승인번호 24549500",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-29T08:53:51.379Z",
+      "updatedAt": "2026-07-29T08:55:38.482Z"
+    },
+    {
+      "id": "tx_6f4693a2-1985-4baa-a137-1c7e5d0fb1bc",
+      "date": "2026-07-26",
+      "type": "expense",
+      "amount": 70000,
+      "categoryId": "cat_02e7b86c-3ed5-4cce-9519-bb5b819ef138",
+      "memo": "[신한카드] (주)천안대로셀프 / 상태 신용 / 카드 신용 / 승인번호 24856014",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-29T08:53:51.379Z",
+      "updatedAt": "2026-07-29T08:55:35.379Z"
+    },
+    {
+      "id": "tx_f3e92f5d-7c26-4958-b442-dfc74eeb684e",
+      "date": "2026-07-26",
+      "type": "expense",
+      "amount": 1500,
+      "categoryId": "expense-food",
+      "memo": "[신한카드] 무인지오24시 무인편의점 / 상태 신용 / 카드 신용 / 승인번호 25751605",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-29T08:53:51.379Z",
+      "updatedAt": "2026-07-29T08:55:28.218Z"
+    },
+    {
+      "id": "tx_419e8ffc-07ad-4fad-ab41-f439c79c79a9",
+      "date": "2026-07-27",
+      "type": "expense",
+      "amount": 49000,
+      "categoryId": "cat_0ba2a7f7-580b-45e7-be29-86b408c9e53f",
+      "memo": "[신한카드] 쿠팡이츠 / 상태 신용 / 카드 신용 / 승인번호 33948901",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-29T08:53:51.379Z",
+      "updatedAt": "2026-07-29T08:54:27.772Z"
+    },
+    {
+      "id": "tx_4e0f053d-cd6b-4fe6-9f0b-765aa9ad1ad9",
+      "date": "2026-07-27",
+      "type": "expense",
+      "amount": 31600,
+      "categoryId": "expense-cafe",
+      "memo": "[신한카드] 뚜쥬루개발 (주) / 상태 신용 / 카드 신용 / 승인번호 36732891",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-29T08:53:51.379Z",
+      "updatedAt": "2026-07-29T08:55:15.208Z"
+    },
+    {
+      "id": "tx_6e5c6b72-99a2-4dbc-b6d8-e4cedfe16f2d",
+      "date": "2026-07-27",
+      "type": "expense",
+      "amount": 377040,
+      "categoryId": "expense-housing",
+      "memo": "[신한카드] 아파트관리비 / 상태 신용 / 카드 신용 / 승인번호 39931690",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-29T08:53:51.379Z",
+      "updatedAt": "2026-07-29T08:55:24.088Z"
+    },
+    {
+      "id": "tx_7fdc66df-7fbf-4fc1-9bed-b9487bb6e236",
+      "date": "2026-07-27",
+      "type": "expense",
+      "amount": 5000,
+      "categoryId": "expense-medical",
+      "memo": "[현대카드] 이튼약국 / 상태 본인 / 카드 본인 / 승인번호 00241023",
+      "source": "hyundai-card-file",
+      "createdAt": "2026-07-29T08:53:56.366Z",
+      "updatedAt": "2026-07-29T08:55:09.117Z"
+    },
+    {
+      "id": "tx_9707bd44-70d8-495b-a5aa-d1152356cc00",
+      "date": "2026-07-27",
+      "type": "expense",
+      "amount": 8500,
+      "categoryId": "expense-medical",
+      "memo": "[현대카드] 서울성모이비인후과의원 / 상태 본인 / 카드 본인 / 승인번호 00181242",
+      "source": "hyundai-card-file",
+      "createdAt": "2026-07-29T08:53:56.366Z",
+      "updatedAt": "2026-07-29T08:55:45.351Z"
+    },
+    {
+      "id": "tx_bd18b1f7-6601-40c6-a916-b927e8cc5aa2",
+      "date": "2026-07-27",
+      "type": "expense",
+      "amount": 23170,
+      "categoryId": "expense-housing",
+      "memo": "[신한카드] 제이비(가스) / 상태 신용 / 카드 신용 / 승인번호 35732461",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-29T08:53:51.379Z",
+      "updatedAt": "2026-07-29T08:55:22.004Z"
+    },
+    {
+      "id": "tx_d8ff0e68-ae3a-43d1-b6d0-de066e8320c1",
+      "date": "2026-07-27",
+      "type": "expense",
+      "amount": 81500,
+      "categoryId": "cat_0ba2a7f7-580b-45e7-be29-86b408c9e53f",
+      "memo": "[신한카드] 쿠팡이츠 / 상태 신용 / 카드 신용 / 승인번호 41836937",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-29T08:53:51.379Z",
+      "updatedAt": "2026-07-29T08:54:27.772Z"
+    },
+    {
+      "id": "tx_da35df35-9192-4a9b-aa75-316dafc090cd",
+      "date": "2026-07-27",
+      "type": "expense",
+      "amount": 260810,
+      "categoryId": "expense-insurance",
+      "memo": "[신한카드] 현대해상화재보험(주) / 상태 신용 / 카드 신용 / 승인번호 36486428",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-29T08:53:51.379Z",
+      "updatedAt": "2026-07-29T08:55:19.341Z"
+    },
+    {
+      "id": "tx_eb457bee-3a7e-411c-8cb8-06b801809f4f",
+      "date": "2026-07-27",
+      "type": "expense",
+      "amount": 900,
+      "categoryId": "expense-subscription",
+      "memo": "[현대카드] 나이스_마이홈 / 상태 본인 / 카드 본인 / 승인번호 94523214",
+      "source": "hyundai-card-file",
+      "createdAt": "2026-07-29T08:53:56.366Z",
+      "updatedAt": "2026-07-29T08:55:02.459Z"
+    },
+    {
+      "id": "tx_f5f507e6-dc3f-468e-bcb8-53630218b823",
+      "date": "2026-07-27",
+      "type": "expense",
+      "amount": 16000,
+      "categoryId": "expense-cafe",
+      "memo": "[신한카드] 뚜쥬루개발 (주) / 상태 신용 / 카드 신용 / 승인번호 37978410",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-29T08:53:51.379Z",
+      "updatedAt": "2026-07-29T08:55:15.208Z"
+    },
+    {
+      "id": "tx_293a67b5-0b5d-41f4-9a41-3a245291ab41",
+      "date": "2026-07-28",
+      "type": "expense",
+      "amount": 40000,
+      "categoryId": "cat_ed2e80f5-df90-4a47-93b2-190f44e490c8",
+      "memo": "[신한카드] 뚜쥬루제과(주) / 상태 신용 / 카드 신용 / 승인번호 03759616",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-29T08:53:51.379Z",
+      "updatedAt": "2026-07-29T08:54:57.432Z"
+    },
+    {
+      "id": "tx_43dd6fc9-7873-47ba-b76e-71919ea8fd1a",
+      "date": "2026-07-28",
+      "type": "expense",
+      "amount": 57600,
+      "categoryId": "cat_0ba2a7f7-580b-45e7-be29-86b408c9e53f",
+      "memo": "[신한카드] 쿠팡이츠 / 상태 신용 / 카드 신용 / 승인번호 49840936",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-29T08:53:51.379Z",
+      "updatedAt": "2026-07-29T08:54:27.772Z"
+    },
+    {
+      "id": "tx_7029820f-8564-43f1-862a-44ab837aeff0",
+      "date": "2026-07-28",
+      "type": "expense",
+      "amount": 24252,
+      "categoryId": "expense-insurance",
+      "memo": "[현대카드] 에이아이지손해보험 / 상태 본인 / 카드 본인 / 승인번호 92105468",
+      "source": "hyundai-card-file",
+      "createdAt": "2026-07-29T08:53:56.366Z",
+      "updatedAt": "2026-07-29T08:55:52.287Z"
+    },
+    {
+      "id": "tx_c8f65c62-4dbd-4b67-b998-5ce74999fd29",
+      "date": "2026-07-28",
+      "type": "expense",
+      "amount": 16400,
+      "categoryId": "cat_0ba2a7f7-580b-45e7-be29-86b408c9e53f",
+      "memo": "[신한카드] 쿠팡이츠 / 상태 신용 / 카드 신용 / 승인번호 04948794",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-29T08:53:51.379Z",
+      "updatedAt": "2026-07-29T08:54:27.772Z"
+    },
+    {
+      "id": "tx_6b1c4c7b-7469-4d72-8ff1-2c9835ed0e52",
+      "date": "2026-07-29",
+      "type": "expense",
+      "amount": 27000,
+      "categoryId": "cat_0ba2a7f7-580b-45e7-be29-86b408c9e53f",
+      "memo": "[신한카드] 쿠팡이츠 / 상태 신용 / 카드 신용 / 승인번호 18888807",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-29T08:53:51.379Z",
+      "updatedAt": "2026-07-29T08:54:27.772Z"
+    },
+    {
+      "id": "tx_7a30b583-a92f-4b77-8e20-fd9c1e084bef",
+      "date": "2026-07-29",
+      "type": "income",
+      "amount": 140966,
+      "categoryId": "income-other",
+      "memo": "[신한카드] MASSIVELABS.IO / 상태 신용 / 카드 신용 / 승인번호 618975",
+      "source": "shinhan-file",
+      "createdAt": "2026-07-29T08:53:51.379Z",
+      "updatedAt": "2026-07-29T08:53:51.379Z"
+    },
+    {
+      "id": "tx_ae63d823-527b-4d07-8289-a90915559181",
+      "date": "2026-07-29",
+      "type": "expense",
+      "amount": 1000,
+      "categoryId": "expense-shopping",
+      "memo": "[현대카드] 에이앤에이이엔티고양점 / 상태 본인 / 카드 본인 / 승인번호 00030610",
+      "source": "hyundai-card-file",
+      "createdAt": "2026-07-29T08:53:56.366Z",
+      "updatedAt": "2026-07-29T08:56:22.493Z"
+    },
+    {
+      "id": "tx_f6be457e-4ed3-4622-bafd-54aeaa89863e",
+      "date": "2026-07-29",
+      "type": "expense",
+      "amount": 19000,
+      "categoryId": "expense-cafe",
+      "memo": "[현대카드] 공차스타필드고양점 / 상태 본인 / 카드 본인 / 승인번호 00590609",
+      "source": "hyundai-card-file",
+      "createdAt": "2026-07-29T08:53:56.366Z",
+      "updatedAt": "2026-07-29T08:54:09.185Z"
     }
   ]
 }
