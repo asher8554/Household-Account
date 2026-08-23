@@ -95,7 +95,10 @@ function toCandidate(
     institution.kind === "bank"
       ? getFirstOptionalAmount(row, [mapping.withdrawalAmount, mapping.depositAmount, ...mapping.amountCandidates])
       : directAmount;
-  const merchant = normalizeLooseText(row[mapping.merchant]);
+  const merchant =
+    institution.kind === "bank"
+      ? getOptionalCell(row, mapping.merchant + 1) || getOptionalCell(row, mapping.merchant)
+      : getOptionalCell(row, mapping.merchant);
   const statusText = getOptionalCell(row, mapping.status);
   const approvalNo = getOptionalCell(row, mapping.approvalNo);
   const cardName = getOptionalCell(row, mapping.cardName);
