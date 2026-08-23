@@ -10,9 +10,20 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          charts: ["recharts"],
-          storage: ["dexie", "zod", "date-fns"],
+        manualChunks(id) {
+          const normalizedId = id.replace(/\\/g, "/");
+
+          if (normalizedId.includes("/node_modules/recharts/")) {
+            return "charts";
+          }
+
+          if (
+            normalizedId.includes("/node_modules/dexie/") ||
+            normalizedId.includes("/node_modules/zod/") ||
+            normalizedId.includes("/node_modules/date-fns/")
+          ) {
+            return "storage";
+          }
         },
       },
     },
