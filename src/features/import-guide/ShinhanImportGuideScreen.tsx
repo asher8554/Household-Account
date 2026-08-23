@@ -149,7 +149,7 @@ export function ShinhanImportGuideScreen() {
 
     try {
       const count = await importReadyShinhanItems(filePreview);
-      setFilePreview(buildShinhanPreview(filePreview, await listTransactions()));
+      setFilePreview(emptyPreview);
       if (count === 0) {
         setStatusMessage("저장할 새 파일 거래가 없습니다.");
         return;
@@ -166,7 +166,7 @@ export function ShinhanImportGuideScreen() {
 
     try {
       const count = await importReadyShinhanItems(notificationPreview);
-      setNotificationPreview(buildShinhanPreview(notificationPreview, await listTransactions()));
+      setNotificationPreview(emptyPreview);
       setStatusMessage(`신한카드 알림 거래 ${count}건을 저장했습니다.`);
     } finally {
       setIsImportingNotification(false);
