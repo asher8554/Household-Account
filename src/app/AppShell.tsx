@@ -54,7 +54,7 @@ export function AppShell({
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-surface text-ink">
-      <header className="border-b border-line bg-surface/95 backdrop-blur">
+      <header className="sticky top-0 z-30 border-b border-line bg-panel shadow-panel">
         <div className="mx-auto grid w-full max-w-[1500px] gap-4 px-3 py-4 sm:px-4 md:px-6">
           <div className="flex items-center justify-between gap-4">
             <div className="flex min-w-0 items-center gap-3">

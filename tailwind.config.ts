@@ -5,6 +5,23 @@ export default {
   content: ["./index.html", "./src/**/*.{ts,tsx}"],
   theme: {
     extend: {
+      fontFamily: {
+        sans: [
+          "Pretendard Variable",
+          "Pretendard",
+          "ui-sans-serif",
+          "system-ui",
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "Segoe UI",
+          "sans-serif"
+        ]
+      },
+      borderRadius: {
+        md: "0.75rem",
+        lg: "1rem",
+        xl: "1.25rem"
+      },
       colors: {
         surface: "rgb(var(--color-surface) / <alpha-value>)",
         panel: "rgb(var(--color-panel) / <alpha-value>)",

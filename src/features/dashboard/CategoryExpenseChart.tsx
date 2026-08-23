@@ -116,11 +116,13 @@ export function CategoryExpenseChart({
                   <Tooltip
                     formatter={(value) => formatKrw(Number(value))}
                     contentStyle={{
-                      backgroundColor: "rgb(var(--color-panel))",
-                      border: "1px solid rgb(var(--color-line))",
-                      borderRadius: 8,
+                      backgroundColor: "rgb(var(--color-panel) / 0.82)",
+                      backdropFilter: "blur(16px) saturate(165%)",
+                      WebkitBackdropFilter: "blur(16px) saturate(165%)",
+                      border: "1px solid rgb(var(--hairline-rgb) / 0.25)",
+                      borderRadius: 12,
                       color: "rgb(var(--color-ink))",
-                      boxShadow: "0 10px 24px rgba(32,35,31,0.08)",
+                      boxShadow: "0 18px 36px -12px rgba(24, 54, 39, 0.28)",
                     }}
                     labelStyle={{ color: "rgb(var(--color-muted))" }}
                   />

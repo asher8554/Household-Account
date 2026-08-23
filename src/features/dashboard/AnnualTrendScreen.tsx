@@ -144,7 +144,7 @@ export function AnnualTrendScreen() {
               initialDimension={{ width: 720, height: 360 }}
             >
               <BarChart data={monthlyTrends} margin={{ top: 12, right: 12, bottom: 0, left: 0 }}>
-                <CartesianGrid stroke="rgb(var(--color-line))" strokeDasharray="4 4" vertical={false} />
+                <CartesianGrid stroke="rgb(var(--color-muted) / 0.45)" strokeDasharray="4 4" vertical={false} />
                 <XAxis
                   dataKey="label"
                   tickLine={false}
@@ -165,11 +165,13 @@ export function AnnualTrendScreen() {
                   ]}
                   labelFormatter={(label) => `${year}년 ${label}`}
                   contentStyle={{
-                    backgroundColor: "rgb(var(--color-panel))",
-                    border: "1px solid rgb(var(--color-line))",
-                    borderRadius: 8,
+                    backgroundColor: "rgb(var(--color-panel) / 0.82)",
+                    backdropFilter: "blur(16px) saturate(165%)",
+                    WebkitBackdropFilter: "blur(16px) saturate(165%)",
+                    border: "1px solid rgb(var(--hairline-rgb) / 0.25)",
+                    borderRadius: 12,
                     color: "rgb(var(--color-ink))",
-                    boxShadow: "0 10px 24px rgba(32,35,31,0.08)",
+                    boxShadow: "0 18px 36px -12px rgba(24, 54, 39, 0.28)",
                   }}
                   labelStyle={{ color: "rgb(var(--color-muted))" }}
                 />
@@ -315,7 +317,7 @@ function CategoryTrendSection({
               initialDimension={{ width: 720, height: 360 }}
             >
               <BarChart data={trend.months} margin={{ top: 12, right: 12, bottom: 16, left: 0 }}>
-                <CartesianGrid stroke="rgb(var(--color-line))" strokeDasharray="4 4" vertical={false} />
+                <CartesianGrid stroke="rgb(var(--color-muted) / 0.45)" strokeDasharray="4 4" vertical={false} />
                 <XAxis
                   dataKey="label"
                   tickMargin={8}
@@ -337,11 +339,13 @@ function CategoryTrendSection({
                   ]}
                   labelFormatter={(label) => `${year}년 ${label}`}
                   contentStyle={{
-                    backgroundColor: "rgb(var(--color-panel))",
-                    border: "1px solid rgb(var(--color-line))",
-                    borderRadius: 8,
+                    backgroundColor: "rgb(var(--color-panel) / 0.82)",
+                    backdropFilter: "blur(16px) saturate(165%)",
+                    WebkitBackdropFilter: "blur(16px) saturate(165%)",
+                    border: "1px solid rgb(var(--hairline-rgb) / 0.25)",
+                    borderRadius: 12,
                     color: "rgb(var(--color-ink))",
-                    boxShadow: "0 10px 24px rgba(32,35,31,0.08)",
+                    boxShadow: "0 18px 36px -12px rgba(24, 54, 39, 0.28)",
                   }}
                   labelStyle={{ color: "rgb(var(--color-muted))" }}
                 />

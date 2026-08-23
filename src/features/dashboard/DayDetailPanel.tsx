@@ -31,11 +31,11 @@ export function DayDetailPanel({
   return (
     <SectionPanel title="날짜 상세" eyebrow={formatDateLabel(dateKey)}>
       <div className="grid grid-cols-2 gap-2 text-sm">
-        <div className="rounded-lg bg-mint-soft px-3 py-2">
+        <div className="rounded-lg bg-mint-soft/70 px-3 py-2">
           <p className="text-muted">수입</p>
           <p className="font-semibold text-mint">{formatKrw(income)}</p>
         </div>
-        <div className="rounded-lg bg-coral-soft px-3 py-2">
+        <div className="rounded-lg bg-coral-soft/70 px-3 py-2">
           <p className="text-muted">지출</p>
           <p className="font-semibold text-coral">{formatKrw(expense)}</p>
         </div>
