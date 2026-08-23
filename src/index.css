@@ -1,15 +1,17 @@
 /* 앱 전체의 Tailwind 레이어와 기본 화면 스타일을 정의합니다. */
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --color-surface: 247 248 244;
+  --color-surface: 226 235 229;
   --color-panel: 255 255 255;
-  --color-field: 255 255 255;
+  --color-field: 247 251 248;
   --color-ink: 32 35 31;
   --color-muted: 109 116 106;
-  --color-line: 223 228 215;
+  --color-line: 255 255 255;
   --color-moss: 71 107 83;
   --color-moss-hover: 62 94 73;
   --color-moss-soft: 231 239 229;
@@ -25,11 +27,12 @@
   --color-expense-2: 247 222 217;
   --color-expense-3: 237 184 174;
   --color-expense-4: 220 142 129;
-  --shadow-panel: 0 14px 40px rgba(32, 35, 31, 0.08);
+  --shadow-panel: 0 18px 42px rgba(32, 66, 49, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.62);
   color-scheme: light;
   color: rgb(var(--color-ink));
   background: rgb(var(--color-surface));
   font-family:
+    Pretendard,
     ui-sans-serif,
     system-ui,
     -apple-system,
@@ -43,12 +46,12 @@
 }
 
 :root.dark {
-  --color-surface: 20 24 22;
-  --color-panel: 30 36 32;
-  --color-field: 25 31 27;
+  --color-surface: 19 31 26;
+  --color-panel: 37 54 44;
+  --color-field: 27 43 34;
   --color-ink: 238 242 234;
   --color-muted: 166 176 160;
-  --color-line: 58 68 60;
+  --color-line: 255 255 255;
   --color-moss: 112 161 128;
   --color-moss-hover: 131 181 147;
   --color-moss-soft: 39 55 45;
@@ -64,7 +67,7 @@
   --color-expense-2: 72 45 40;
   --color-expense-3: 104 58 50;
   --color-expense-4: 138 71 60;
-  --shadow-panel: 0 18px 46px rgba(0, 0, 0, 0.28);
+  --shadow-panel: 0 20px 48px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.12);
   color-scheme: dark;
 }
 
@@ -77,6 +80,45 @@ body {
   min-width: 320px;
   min-height: 100vh;
   background: rgb(var(--color-surface));
+}
+
+.bg-surface {
+  background-color: rgb(var(--color-surface));
+  background-image:
+    radial-gradient(circle at 8% 0%, rgb(var(--color-mint) / 0.16), transparent 28rem),
+    radial-gradient(circle at 92% 12%, rgb(var(--color-honey) / 0.14), transparent 24rem);
+}
+
+.bg-panel,
+.bg-field {
+  border-color: rgb(var(--color-line) / 0.42);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.bg-panel {
+  background-color: rgb(var(--color-panel) / 0.62);
+}
+
+.bg-field {
+  background-color: rgb(var(--color-field) / 0.58);
+}
+
+.border-line {
+  border-color: rgb(var(--color-line) / 0.42);
+}
+
+.shadow-panel {
+  box-shadow: var(--shadow-panel);
+}
+
+button,
+input,
+select,
+textarea {
+  transition-property: color, background-color, border-color, box-shadow, transform;
+  transition-duration: 180ms;
+  transition-timing-function: ease-out;
 }
 
 button,
