@@ -11,7 +11,7 @@ type ShinhanImportPreviewProps = {
 };
 
 const statusLabels: Record<ShinhanPreviewStatus, string> = {
-  ready: "저장 가능",
+  ready: "새로 저장 가능",
   duplicate: "중복 제외",
   invalid: "오류",
 };
@@ -38,11 +38,11 @@ export function ShinhanImportPreview({ items, isImporting, onImport }: ShinhanIm
   return (
     <div className="grid gap-3">
       <div className="grid gap-2 md:grid-cols-4">
-        <SummaryBadge icon={CheckCircle2} label="저장 가능" value={readyCount} />
+        <SummaryBadge icon={CheckCircle2} label="새로 저장 가능" value={readyCount} />
         <SummaryBadge icon={CopyCheck} label="중복 제외" value={duplicateCount} />
         <SummaryBadge icon={CircleAlert} label="오류" value={invalidCount} />
         <Button variant="primary" onClick={onImport} disabled={readyCount === 0 || isImporting}>
-          {isImporting ? "저장 중" : `${readyCount}건 저장`}
+          {isImporting ? "저장 중" : `${readyCount}건 새로 저장`}
         </Button>
       </div>
       <div className="overflow-x-auto rounded-lg border border-line">
