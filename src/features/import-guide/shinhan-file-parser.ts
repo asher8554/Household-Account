@@ -91,7 +91,10 @@ function toCandidate(
   const withdrawalAmount = getOptionalAmount(row, mapping.withdrawalAmount);
   const depositAmount = getOptionalAmount(row, mapping.depositAmount);
   const directAmount = getFirstOptionalAmount(row, mapping.amountCandidates);
-  const amount = institution.kind === "bank" ? withdrawalAmount ?? depositAmount ?? directAmount : directAmount;
+  const amount =
+    institution.kind === "bank"
+      ? getFirstOptionalAmount(row, [mapping.withdrawalAmount, mapping.depositAmount, ...mapping.amountCandidates])
+      : directAmount;
   const merchant = normalizeLooseText(row[mapping.merchant]);
   const statusText = getOptionalCell(row, mapping.status);
   const approvalNo = getOptionalCell(row, mapping.approvalNo);
@@ -138,6 +141,8 @@ function toCandidate(
 }
 
 function isSummaryRow(rawText: string, date: string | null) {
+  if (!date) return /^(합계|총계|총합계|소계)(?:\s|$)/.test(rawText);
+
   return (
     !date &&
     (/^(총합계|합계|총)\s*[\d,]+\s*건(?:\s|$)/.test(rawText) ||
