@@ -4,6 +4,7 @@ import { createDefaultCategories, getFallbackCategoryId } from "../categories/ca
 import { ensureDefaultCategories, ensureFallbackCategory } from "../categories/category-service";
 import type { Category } from "../categories/category-types";
 import type { Transaction } from "../transactions/transaction-types";
+import { clearDeletedTransactionIds, loadDeletedTransactionIds } from "../transactions/transaction-service";
 import { backupFileSchema, type ParsedBackupFile } from "./backup-schema";
 import type { BackupFile, ImportSummary, ReplaceSummary } from "./backup-types";
 
@@ -167,7 +168,8 @@ export async function importBackupData(raw: unknown): Promise<ImportSummary> {
   };
   const allCategories = await db.categories.toArray();
   const categoryIds = new Set(allCategories.map((category) => category.id));
-  const incomingTransactions = parsed.transactions.map(normalizeTransaction).map((transaction) => {
+  const deletedTransactionIds = new Set(loadDeletedTransactionIds());
+  const incomingTransactions = filterDeletedTransactions(parsed.transactions.map(normalizeTransaction), deletedTransactionIds).map((transaction) => {
     if (categoryIds.has(transaction.categoryId)) return transaction;
 
     return {
@@ -176,7 +178,6 @@ export async function importBackupData(raw: unknown): Promise<ImportSummary> {
       updatedAt: new Date().toISOString(),
     };
   });
-
   const existingTransactions = await db.transactions.toArray();
   const existingTransactionMap = new Map(
     existingTransactions.map((transaction) => [transaction.id, transaction]),
@@ -234,6 +235,8 @@ export async function replaceWithBackupData(raw: unknown): Promise<ReplaceSummar
     }
   });
 
+  clearDeletedTransactionIds();
+
   return {
     exportedAt: snapshot.exportedAt,
     categoriesReplaced: snapshot.categories.length,
@@ -250,6 +253,11 @@ export async function resetAllData() {
     await db.categories.clear();
     await db.categories.bulkPut(createDefaultCategories(now));
   });
+  clearDeletedTransactionIds();
+}
+
+export function filterDeletedTransactions(transactions: Transaction[], deletedIds: Set<string>) {
+  return transactions.filter((transaction) => !deletedIds.has(transaction.id));
 }
 
 export function fallbackCategoryIdForType(type: "income" | "expense") {

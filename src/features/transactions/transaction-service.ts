@@ -4,6 +4,8 @@ import { createId } from "../../lib/id";
 import { createTransactionDuplicateKey, normalizeTransactionMerchantKey } from "./merchant-key";
 import type { Transaction, TransactionDraft } from "./transaction-types";
 
+const deletedTransactionIdsKey = "household-account-deleted-transaction-ids";
+
 export async function listTransactions() {
   return db.transactions.orderBy("date").toArray();
 }
@@ -33,6 +35,22 @@ export async function addTransactions(drafts: TransactionDraft[]) {
 
 export async function deleteTransaction(id: string) {
   await db.transactions.delete(id);
+  const deletedIds = new Set(loadDeletedTransactionIds());
+  deletedIds.add(id);
+  window.localStorage.setItem(deletedTransactionIdsKey, JSON.stringify([...deletedIds]));
+}
+
+export function loadDeletedTransactionIds() {
+  try {
+    const parsed = JSON.parse(window.localStorage.getItem(deletedTransactionIdsKey) ?? "[]");
+    return Array.isArray(parsed) ? parsed.filter((id): id is string => typeof id === "string") : [];
+  } catch {
+    return [];
+  }
+}
+
+export function clearDeletedTransactionIds() {
+  window.localStorage.removeItem(deletedTransactionIdsKey);
 }
 
 export async function updateTransactionCategory(transactionId: string, categoryId: string) {
