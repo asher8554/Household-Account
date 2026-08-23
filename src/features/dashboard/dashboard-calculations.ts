@@ -20,7 +20,7 @@ export type MonthSummary = {
   cardExpenses: CardExpenseStat[];
 };
 
-export type CardCompanyId = "shinhan-card" | "hyundai-card";
+export type CardCompanyId = "shinhan-card" | "hyundai-card" | "kb-bank";
 
 export type CardExpenseStat = {
   id: CardCompanyId;
@@ -44,6 +44,8 @@ export const cardCompanyOptions: Array<{
   { id: "shinhan-card", label: "신한카드", sources: ["shinhan-file", "shinhan-notification"] },
   { id: "hyundai-card", label: "현대카드", sources: ["hyundai-card-file"] },
 ];
+
+cardCompanyOptions.push({ id: "kb-bank", label: "국민은행", sources: ["bank-file"] });
 
 export function getTransactionsForMonth(transactions: Transaction[], monthDate: Date) {
   return transactions.filter((transaction) => isDateKeyInMonth(transaction.date, monthDate));

@@ -6,6 +6,7 @@ import type { CardImportSource, CardImportStatus } from "./import-status-types";
 export const staleImportThresholdDays = 15;
 
 export const cardImportSources: Array<{ source: CardImportSource; label: string }> = [
+  { source: "bank-file", label: "국민은행" },
   { source: "shinhan-file", label: "신한카드" },
   { source: "hyundai-card-file", label: "현대카드" },
 ];
