@@ -161,7 +161,7 @@ export function AnnualTrendScreen() {
                 <Tooltip
                   formatter={(value, name) => [
                     formatKrw(Number(value)),
-                    name === "expense" ? "지출" : "수입",
+                    "지출",
                   ]}
                   labelFormatter={(label) => `${year}년 ${label}`}
                   contentStyle={{
