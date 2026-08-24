@@ -110,13 +110,13 @@ export function CategoryExpenseChart({
         </p>
       ) : (
         <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-4">
-          <div className="grid min-h-0 min-w-0 flex-1 gap-4 lg:grid-cols-[minmax(13rem,0.85fr)_minmax(0,1fr)]">
-            <div className="relative h-full min-h-[220px] min-w-0">
+          <div className="grid shrink-0 min-w-0 gap-4 lg:grid-cols-[minmax(13rem,0.85fr)_minmax(0,1fr)]">
+            <div className="relative h-[220px] min-w-0 sm:h-[280px]">
               <ResponsiveContainer
                 width="100%"
                 height="100%"
                 minWidth={0}
-                minHeight={200}
+                minHeight={220}
                 initialDimension={{ width: 260, height: 220 }}
               >
                 <PieChart margin={{ top: 8, right: 8, bottom: 8, left: 8 }}>
@@ -173,7 +173,7 @@ export function CategoryExpenseChart({
                 </div>
                 <p className="text-xs text-muted">{chartData.length}개 카테고리</p>
               </div>
-              <div className="grid min-h-0 min-w-0 max-xl:max-h-72 flex-1 gap-1 overflow-auto pr-1">
+              <div className="grid max-h-72 min-w-0 gap-1 overflow-auto pr-1">
                 {chartData.map((entry) => {
                   const isSelected = selectedCategoryId === entry.categoryId;
 
@@ -205,8 +205,8 @@ export function CategoryExpenseChart({
           </div>
 
           {selectedCategory ? (
-            <div className="border-t border-line pt-3">
-              <div className="mb-2 flex items-center justify-between gap-3 text-sm">
+            <div className="flex flex-1 flex-col border-t border-line pt-3">
+              <div className="mb-2 flex shrink-0 items-center justify-between gap-3 text-sm">
                 <div className="flex min-w-0 items-center gap-2">
                   <span
                     className="h-2.5 w-2.5 shrink-0 rounded-full"
@@ -216,18 +216,24 @@ export function CategoryExpenseChart({
                 </div>
                 <span className="shrink-0 font-semibold text-coral">{formatKrw(selectedCategory.amount)}</span>
               </div>
-              <TransactionList
-                transactions={selectedTransactions}
-                categories={categories}
-                emptyMessage="거래 없음."
-                showDate
-                onDeleteTransaction={onDeleteTransaction}
-                onChangeTransactionCategory={onChangeTransactionCategory}
-                onChangeSingleTransactionCategory={onChangeSingleTransactionCategory}
-                onChangeTransactionAnnualTrendExclusion={onChangeTransactionAnnualTrendExclusion}
-              />
+              <div className="min-h-0 flex-1 overflow-y-auto pr-1">
+                <TransactionList
+                  transactions={selectedTransactions}
+                  categories={categories}
+                  emptyMessage="거래 없음."
+                  showDate
+                  onDeleteTransaction={onDeleteTransaction}
+                  onChangeTransactionCategory={onChangeTransactionCategory}
+                  onChangeSingleTransactionCategory={onChangeSingleTransactionCategory}
+                  onChangeTransactionAnnualTrendExclusion={onChangeTransactionAnnualTrendExclusion}
+                />
+              </div>
             </div>
-          ) : null}
+          ) : (
+            <p className="m-auto rounded-lg border border-dashed border-line px-3 py-6 text-center text-sm text-muted">
+              차트나 목록에서 카테고리를 선택하세요.
+            </p>
+          )}
         </div>
       )}
     </SectionPanel>
