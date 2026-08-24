@@ -1,6 +1,10 @@
 // 연간 소비 추세 집계 로직을 검증합니다.
 import { expect, test } from "@playwright/test";
-import { buildAnnualCategoryTrends } from "../src/features/dashboard/annual-trend-calculations";
+import {
+  buildAnnualCategoryTrends,
+  buildAnnualMonthTrends,
+  getAnnualTrendSummary,
+} from "../src/features/dashboard/annual-trend-calculations";
 import type { Category } from "../src/features/categories/category-types";
 import type { Transaction } from "../src/features/transactions/transaction-types";
 
@@ -82,4 +86,25 @@ test("buildAnnualCategoryTrends groups lower-ranked categories and compares rece
   expect(transport?.recentDelta).toBe(-200);
   expect(other?.totalExpense).toBe(420);
   expect(other?.recentDelta).toBe(-280);
+});
+
+test("annual consumption trend excludes loan repayments but reports them separately", () => {
+  const transactions = [
+    transaction("food", "2026-01-03", "expense", 100, "expense-food"),
+    transaction("loan", "2026-01-03", "expense", 3000000, "expense-loan-repayment"),
+    {
+      ...transaction("excluded", "2026-01-03", "expense", 200, "expense-shopping"),
+      excludeFromAnnualTrend: true,
+    },
+  ];
+
+  const months = buildAnnualMonthTrends(transactions, 2026);
+  const summary = getAnnualTrendSummary(months);
+
+  expect(months[0].expense).toBe(100);
+  expect(months[0].loanRepayment).toBe(3000000);
+  expect(summary.totalExpense).toBe(100);
+  expect(summary.totalLoanRepayment).toBe(3000000);
+  expect(summary.net).toBe(-100);
+  expect(summary.transactionCount).toBe(1);
 });

@@ -11,10 +11,10 @@ type TransactionListProps = {
   categories: Category[];
   emptyMessage: string;
   showDate?: boolean;
-  showSingleItemCategoryChange?: boolean;
   onDeleteTransaction: (id: string) => void;
   onChangeTransactionCategory: (id: string, categoryId: string) => void;
-  onChangeSingleTransactionCategory?: (id: string, categoryId: string) => void;
+  onChangeSingleTransactionCategory: (id: string, categoryId: string) => void;
+  onChangeTransactionAnnualTrendExclusion: (id: string, excludeFromAnnualTrend: boolean) => void;
 };
 
 const sourceLabels: Record<Transaction["source"], string> = {
@@ -32,10 +32,10 @@ export function TransactionList({
   categories,
   emptyMessage,
   showDate = false,
-  showSingleItemCategoryChange = false,
   onDeleteTransaction,
   onChangeTransactionCategory,
   onChangeSingleTransactionCategory,
+  onChangeTransactionAnnualTrendExclusion,
 }: TransactionListProps) {
   const [expandedTransactionIds, setExpandedTransactionIds] = useState<Set<string>>(() => new Set());
   const [singleItemCategoryChangeIds, setSingleItemCategoryChangeIds] = useState<Set<string>>(() => new Set());
@@ -87,8 +87,8 @@ export function TransactionList({
   }
 
   function handleCategoryChange(transactionId: string, categoryId: string) {
-    if (showSingleItemCategoryChange && singleItemCategoryChangeIds.has(transactionId)) {
-      onChangeSingleTransactionCategory?.(transactionId, categoryId);
+    if (singleItemCategoryChangeIds.has(transactionId)) {
+      onChangeSingleTransactionCategory(transactionId, categoryId);
       return;
     }
 
@@ -153,17 +153,15 @@ export function TransactionList({
                 ) : (
                   <span className="truncate text-sm font-medium">{category?.name ?? "기타"}</span>
                 )}
-                {showSingleItemCategoryChange && onChangeSingleTransactionCategory ? (
-                  <label className="flex shrink-0 items-center gap-1 text-xs text-muted">
-                    <input
-                      type="checkbox"
-                      className="h-4 w-4 rounded border-line accent-moss"
-                      checked={isSingleItemCategoryChange}
-                      onChange={() => toggleSingleItemCategoryChange(transaction.id)}
-                    />
-                    <span>한 항목만 변경</span>
-                  </label>
-                ) : null}
+                <label className="flex shrink-0 items-center gap-1 text-xs text-muted">
+                  <input
+                    type="checkbox"
+                    className="h-4 w-4 rounded border-line accent-moss"
+                    checked={isSingleItemCategoryChange}
+                    onChange={() => toggleSingleItemCategoryChange(transaction.id)}
+                  />
+                  <span>한 항목만 변경</span>
+                </label>
                 {showDate ? <span className="shrink-0 text-xs text-muted">{transaction.date}</span> : null}
               </div>
               <button
@@ -175,6 +173,17 @@ export function TransactionList({
                   {transaction.memo || "메모 없음."}
                 </span>
               </button>
+              {transaction.type === "expense" ? (
+                <label className="mt-2 flex w-fit items-center gap-1.5 text-xs text-muted">
+                  <input
+                    type="checkbox"
+                    className="h-4 w-4 rounded border-line accent-moss"
+                    checked={transaction.excludeFromAnnualTrend ?? false}
+                    onChange={(event) => onChangeTransactionAnnualTrendExclusion(transaction.id, event.target.checked)}
+                  />
+                  <span>연간 소비 추세 미포함</span>
+                </label>
+              ) : null}
             </div>
             <div className="flex items-center gap-2">
               <span

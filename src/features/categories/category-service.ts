@@ -6,9 +6,18 @@ import type { Category, CategoryDraft, CategoryType } from "./category-types";
 
 export async function ensureDefaultCategories() {
   const count = await db.categories.count();
-  if (count > 0) return;
+  if (count === 0) {
+    await db.categories.bulkPut(createDefaultCategories(new Date().toISOString()));
+    return;
+  }
 
-  await db.categories.bulkPut(createDefaultCategories(new Date().toISOString()));
+  const loanRepaymentCategory = createDefaultCategories(new Date().toISOString()).find(
+    (category) => category.id === "expense-loan-repayment",
+  );
+  if (loanRepaymentCategory && !(await db.categories.get(loanRepaymentCategory.id))) {
+    loanRepaymentCategory.sortOrder = count;
+    await db.categories.put(loanRepaymentCategory);
+  }
 }
 
 export async function listCategories() {

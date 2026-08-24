@@ -12,6 +12,8 @@ type DayDetailPanelProps = {
   categories: Category[];
   onDeleteTransaction: (id: string) => void;
   onChangeTransactionCategory: (id: string, categoryId: string) => void;
+  onChangeSingleTransactionCategory: (id: string, categoryId: string) => void;
+  onChangeTransactionAnnualTrendExclusion: (id: string, excludeFromAnnualTrend: boolean) => void;
 };
 
 export function DayDetailPanel({
@@ -20,6 +22,8 @@ export function DayDetailPanel({
   categories,
   onDeleteTransaction,
   onChangeTransactionCategory,
+  onChangeSingleTransactionCategory,
+  onChangeTransactionAnnualTrendExclusion,
 }: DayDetailPanelProps) {
   const income = transactions
     .filter((transaction) => transaction.type === "income")
@@ -48,6 +52,8 @@ export function DayDetailPanel({
           emptyMessage="거래 없음."
           onDeleteTransaction={onDeleteTransaction}
           onChangeTransactionCategory={onChangeTransactionCategory}
+          onChangeSingleTransactionCategory={onChangeSingleTransactionCategory}
+          onChangeTransactionAnnualTrendExclusion={onChangeTransactionAnnualTrendExclusion}
         />
       </div>
     </SectionPanel>

@@ -22,6 +22,7 @@ const presets: Preset[] = [
   { id: "expense-leisure", type: "expense", name: "문화/여가", color: "#61734d" },
   { id: "expense-subscription", type: "expense", name: "구독", color: "#8b6f47" },
   { id: "expense-other", type: "expense", name: "기타", color: "#6d746a" },
+  { id: "expense-loan-repayment", type: "expense", name: "대출상환", color: "#8b5e83" },
   { id: "income-salary", type: "income", name: "급여", color: "#2f8f7a" },
   { id: "income-side", type: "income", name: "부수입", color: "#476b53" },
   { id: "income-refund", type: "income", name: "환급", color: "#4b7a9f" },

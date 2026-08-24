@@ -37,6 +37,7 @@ function normalizeTransaction(transaction: ParsedBackupFile["transactions"][numb
     type: transaction.type,
     amount: transaction.amount,
     categoryId: transaction.categoryId,
+    excludeFromAnnualTrend: transaction.excludeFromAnnualTrend,
     memo: transaction.memo.trim(),
     source: transaction.source,
     createdAt: transaction.createdAt ?? now,

@@ -32,6 +32,7 @@ import {
   buildAnnualCategoryTrends,
   buildAnnualMonthTrends,
   getAnnualTrendSummary,
+  LOAN_REPAYMENT_CATEGORY_ID,
   type AnnualCategoryTrendResult,
   type AnnualTrendSummary,
 } from "./annual-trend-calculations";
@@ -236,6 +237,11 @@ export function AnnualTrendScreen() {
                   {formatSignedKrw(month.net)}
                 </span>
               </p>
+              {month.loanRepayment > 0 ? (
+                <p className="text-sm text-muted md:col-start-2">
+                  대출상환 <span className="font-semibold text-violet-700">{formatKrw(month.loanRepayment)}</span>
+                </p>
+              ) : null}
             </article>
           ))}
         </div>
@@ -428,7 +434,13 @@ function CategoryTrendLegend({ categories }: { categories: AnnualCategoryTrendRe
 function getAnnualExpenseCategoryCount(transactions: Transaction[], year: number) {
   return new Set(
     transactions
-      .filter((transaction) => transaction.type === "expense" && transaction.date.startsWith(`${year}-`))
+      .filter(
+        (transaction) =>
+          transaction.type === "expense" &&
+          !transaction.excludeFromAnnualTrend &&
+          transaction.categoryId !== LOAN_REPAYMENT_CATEGORY_ID &&
+          transaction.date.startsWith(`${year}-`),
+      )
       .map((transaction) => transaction.categoryId),
   ).size;
 }
@@ -440,6 +452,12 @@ function AnnualTrendSummaryCards({ summary }: { summary: AnnualTrendSummary }) {
       value: formatKrw(summary.totalExpense),
       icon: ArrowDownRight,
       tone: "text-coral",
+    },
+    {
+      label: "대출상환",
+      value: formatKrw(summary.totalLoanRepayment),
+      icon: ReceiptText,
+      tone: "text-violet-700",
     },
     {
       label: "소비 월평균",
@@ -462,7 +480,7 @@ function AnnualTrendSummaryCards({ summary }: { summary: AnnualTrendSummary }) {
   ];
 
   return (
-    <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+    <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
       {items.map((item) => {
         const Icon = item.icon;
 

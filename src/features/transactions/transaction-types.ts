@@ -16,6 +16,7 @@ export type Transaction = {
   type: CategoryType;
   amount: number;
   categoryId: string;
+  excludeFromAnnualTrend?: boolean;
   memo: string;
   source: TransactionSource;
   createdAt: string;
@@ -27,6 +28,7 @@ export type TransactionDraft = {
   type: CategoryType;
   amount: number;
   categoryId: string;
+  excludeFromAnnualTrend?: boolean;
   memo: string;
   source?: TransactionSource;
 };

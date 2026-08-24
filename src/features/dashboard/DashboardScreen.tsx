@@ -11,6 +11,7 @@ import {
   listTransactions,
   removeDuplicateTransactions,
   updateSameMerchantCategory,
+  updateTransactionAnnualTrendExclusion,
   updateTransactionCategory,
 } from "../transactions/transaction-service";
 import { SectionPanel } from "../../shared/ui/SectionPanel";
@@ -166,6 +167,9 @@ export function DashboardScreen() {
             onDeleteTransaction={(id) => void deleteTransaction(id)}
             onChangeTransactionCategory={(id, categoryId) => void updateSameMerchantCategory(id, categoryId)}
             onChangeSingleTransactionCategory={(id, categoryId) => void updateTransactionCategory(id, categoryId)}
+            onChangeTransactionAnnualTrendExclusion={(id, excluded) =>
+              void updateTransactionAnnualTrendExclusion(id, excluded)
+            }
           />
         </div>
 
@@ -179,6 +183,10 @@ export function DashboardScreen() {
             categories={data.categories}
             onDeleteTransaction={(id) => void deleteTransaction(id)}
             onChangeTransactionCategory={(id, categoryId) => void updateSameMerchantCategory(id, categoryId)}
+            onChangeSingleTransactionCategory={(id, categoryId) => void updateTransactionCategory(id, categoryId)}
+            onChangeTransactionAnnualTrendExclusion={(id, excluded) =>
+              void updateTransactionAnnualTrendExclusion(id, excluded)
+            }
           />
           <CategoryManager categories={data.categories} />
         </aside>

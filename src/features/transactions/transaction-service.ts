@@ -23,6 +23,7 @@ export async function addTransactions(drafts: TransactionDraft[]) {
     type: draft.type,
     amount: draft.amount,
     categoryId: draft.categoryId,
+    excludeFromAnnualTrend: draft.excludeFromAnnualTrend ?? false,
     memo: draft.memo.trim(),
     source: draft.source ?? "manual",
     createdAt: now,
@@ -56,6 +57,13 @@ export function clearDeletedTransactionIds() {
 export async function updateTransactionCategory(transactionId: string, categoryId: string) {
   return db.transactions.update(transactionId, {
     categoryId,
+    updatedAt: new Date().toISOString(),
+  });
+}
+
+export async function updateTransactionAnnualTrendExclusion(transactionId: string, excludeFromAnnualTrend: boolean) {
+  return db.transactions.update(transactionId, {
+    excludeFromAnnualTrend,
     updatedAt: new Date().toISOString(),
   });
 }

@@ -3,6 +3,7 @@ import type { Category } from "../categories/category-types";
 import type { Transaction } from "../transactions/transaction-types";
 
 export const ANNUAL_OTHER_CATEGORY_ID = "annual-other";
+export const LOAN_REPAYMENT_CATEGORY_ID = "expense-loan-repayment";
 
 const ANNUAL_OTHER_CATEGORY_NAME = "기타 묶음";
 const ANNUAL_OTHER_CATEGORY_COLOR = "#6d746a";
@@ -12,6 +13,7 @@ export type AnnualTrendMonth = {
   label: string;
   income: number;
   expense: number;
+  loanRepayment: number;
   net: number;
   transactionCount: number;
   expenseDelta: number | null;
@@ -21,6 +23,7 @@ export type AnnualTrendMonth = {
 export type AnnualTrendSummary = {
   totalIncome: number;
   totalExpense: number;
+  totalLoanRepayment: number;
   net: number;
   monthlyAverageExpense: number;
   expenseMonths: number;
@@ -61,6 +64,7 @@ export function buildAnnualMonthTrends(transactions: Transaction[], year: number
     label: `${index + 1}월`,
     income: 0,
     expense: 0,
+    loanRepayment: 0,
     net: 0,
     transactionCount: 0,
     expenseDelta: null,
@@ -74,11 +78,15 @@ export function buildAnnualMonthTrends(transactions: Transaction[], year: number
     const month = months[monthIndex];
     if (!month) continue;
 
-    month.transactionCount += 1;
-
     if (transaction.type === "income") {
+      month.transactionCount += 1;
       month.income += transaction.amount;
+    } else if (transaction.excludeFromAnnualTrend) {
+      continue;
+    } else if (transaction.categoryId === LOAN_REPAYMENT_CATEGORY_ID) {
+      month.loanRepayment += transaction.amount;
     } else {
+      month.transactionCount += 1;
       month.expense += transaction.amount;
     }
   }
@@ -101,6 +109,7 @@ export function buildAnnualMonthTrends(transactions: Transaction[], year: number
 export function getAnnualTrendSummary(months: AnnualTrendMonth[]): AnnualTrendSummary {
   const totalIncome = months.reduce((sum, month) => sum + month.income, 0);
   const totalExpense = months.reduce((sum, month) => sum + month.expense, 0);
+  const totalLoanRepayment = months.reduce((sum, month) => sum + month.loanRepayment, 0);
   const expenseMonths = months.filter((month) => month.expense > 0).length;
   const peakMonth = months.reduce<AnnualTrendMonth | null>(
     (currentPeak, month) => (month.expense > (currentPeak?.expense ?? 0) ? month : currentPeak),
@@ -110,6 +119,7 @@ export function getAnnualTrendSummary(months: AnnualTrendMonth[]): AnnualTrendSu
   return {
     totalIncome,
     totalExpense,
+    totalLoanRepayment,
     net: totalIncome - totalExpense,
     monthlyAverageExpense: expenseMonths > 0 ? Math.round(totalExpense / expenseMonths) : 0,
     expenseMonths,
@@ -125,7 +135,11 @@ export function buildAnnualCategoryTrends(
   topCategoryLimit = 8,
 ): AnnualCategoryTrendResult {
   const yearlyExpenses = transactions.filter(
-    (transaction) => transaction.type === "expense" && transaction.date.startsWith(`${year}-`),
+    (transaction) =>
+      transaction.type === "expense" &&
+      !transaction.excludeFromAnnualTrend &&
+      transaction.categoryId !== LOAN_REPAYMENT_CATEGORY_ID &&
+      transaction.date.startsWith(`${year}-`),
   );
   const categoryMap = new Map(categories.map((category) => [category.id, category]));
   const totalsByCategory = new Map<string, number>();
