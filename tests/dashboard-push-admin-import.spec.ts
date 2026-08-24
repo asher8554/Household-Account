@@ -85,6 +85,17 @@ test("calendar month title opens a year-month picker", () => {
   expect(dashboardSource).toContain("onSelectMonth={(date) => moveMonth(startOfMonth(date))}");
 });
 
+test("category expense layout stays stable when navigating months", () => {
+  const chartSource = readSource("src/features/dashboard/CategoryExpenseChart.tsx");
+  const summaryCardsSource = readSource("src/features/dashboard/MonthSummaryCards.tsx");
+
+  expect(chartSource).toContain("grid h-72 min-w-0 gap-1 overflow-auto pr-1");
+  expect(chartSource).not.toContain('setSelectedCategoryId("")');
+  expect(chartSource).toContain("amount: 0");
+  expect(summaryCardsSource).toContain("sm:h-[7.75rem]");
+  expect(summaryCardsSource).toContain("xl:h-14");
+});
+
 function readSource(path: string) {
   return readFileSync(resolve(projectRoot, path), "utf8");
 }

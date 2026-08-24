@@ -76,9 +76,10 @@ export function MonthSummaryCards({
           <CreditCard className="text-coral" size={22} aria-hidden="true" />
         </div>
 
-        {cardExpenseItems.length > 0 ? (
-          <div className="mt-3 grid min-w-0 gap-2 sm:grid-cols-2 xl:grid-cols-3">
-            {cardExpenseItems.map((item) => {
+        {/* 칩 개수와 무관하게 높이를 고정해 월 이동 시 위치가 밀리지 않게 유지합니다. */}
+        <div className="mt-3 grid min-w-0 content-start gap-2 overflow-hidden sm:h-[7.75rem] sm:grid-cols-2 xl:h-14 xl:grid-cols-3">
+          {cardExpenseItems.length > 0 ? (
+            cardExpenseItems.map((item) => {
               const isSelected = selectedCardCompanyIdSet.has(item.id);
 
               return (
@@ -103,13 +104,13 @@ export function MonthSummaryCards({
                   </span>
                 </Button>
               );
-            })}
-          </div>
-        ) : (
-          <p className="mt-3 rounded-md border border-dashed border-line px-3 py-4 text-center text-sm text-muted">
-            카드 지출 데이터 없음.
-          </p>
-        )}
+            })
+          ) : (
+            <p className="rounded-md border border-dashed border-line px-3 py-3 text-center text-sm text-muted sm:col-span-2 xl:col-span-3">
+              카드 지출 데이터 없음.
+            </p>
+          )}
+        </div>
       </article>
     </section>
   );

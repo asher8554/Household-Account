@@ -1,5 +1,5 @@
 // 월간 카테고리별 지출 차트를 표시합니다.
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { ChevronLeft, ChevronRight, RotateCcw } from "lucide-react";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import { formatMonthTitle } from "../../lib/date";
@@ -48,7 +48,15 @@ export function CategoryExpenseChart({
     () => chartData.reduce((sum, stat) => sum + stat.amount, 0),
     [chartData],
   );
-  const selectedCategory = chartData.find((stat) => stat.categoryId === selectedCategoryId);
+  const selectedCategory = useMemo(() => {
+    const stat = chartData.find((item) => item.categoryId === selectedCategoryId);
+
+    if (stat || !selectedCategoryId) return stat;
+
+    // 월이 바뀌어 거래가 없어도 상세 영역 높이가 유지되도록 카테고리 정보로 대체합니다.
+    const meta = categories.find((category) => category.id === selectedCategoryId);
+    return meta ? { categoryId: meta.id, name: meta.name, color: meta.color, amount: 0 } : undefined;
+  }, [chartData, categories, selectedCategoryId]);
   const selectedTransactions = useMemo(
     () =>
       transactions
@@ -61,12 +69,6 @@ export function CategoryExpenseChart({
         ),
     [transactions, selectedCategoryId],
   );
-
-  useEffect(() => {
-    if (!selectedCategoryId) return;
-    if (chartData.some((stat) => stat.categoryId === selectedCategoryId)) return;
-    setSelectedCategoryId("");
-  }, [chartData, selectedCategoryId]);
 
   function handleChartClick(data: ChartClickPayload) {
     if (!data.payload?.categoryId) return;
@@ -165,7 +167,7 @@ export function CategoryExpenseChart({
                 </div>
                 <p className="text-xs text-muted">{chartData.length}개 카테고리</p>
               </div>
-              <div className="grid max-h-72 min-w-0 gap-1 overflow-auto pr-1">
+              <div className="grid h-72 min-w-0 gap-1 overflow-auto pr-1">
                 {chartData.map((entry) => {
                   const isSelected = selectedCategoryId === entry.categoryId;
 
