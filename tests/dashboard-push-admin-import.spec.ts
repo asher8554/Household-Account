@@ -74,6 +74,17 @@ test("header copy uses household calendar wording", () => {
   expect(appShellSource).not.toContain("로컬 저장 가게부 달력");
 });
 
+test("calendar month title opens a year-month picker", () => {
+  const calendarSource = readSource("src/features/dashboard/CalendarGrid.tsx");
+  const dashboardSource = readSource("src/features/dashboard/DashboardScreen.tsx");
+
+  expect(calendarSource).toContain('aria-label={`${formatMonthTitle(monthDate)} 연도·월 선택`}');
+  expect(calendarSource).toContain("{pickerYear}년");
+  expect(calendarSource).toContain("{month + 1}월");
+  expect(calendarSource).toContain("onSelectMonth(new Date(pickerYear, month, 1))");
+  expect(dashboardSource).toContain("onSelectMonth={(date) => moveMonth(startOfMonth(date))}");
+});
+
 function readSource(path: string) {
   return readFileSync(resolve(projectRoot, path), "utf8");
 }

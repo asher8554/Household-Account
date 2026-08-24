@@ -155,6 +155,7 @@ export function DashboardScreen() {
             onPreviousMonth={moveToPreviousMonth}
             onNextMonth={moveToNextMonth}
             onCurrentMonth={moveToCurrentMonth}
+            onSelectMonth={(date) => moveMonth(startOfMonth(date))}
           />
           <CategoryExpenseChart
             monthDate={currentMonth}
