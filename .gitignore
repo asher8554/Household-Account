@@ -13,3 +13,6 @@ dashboard-screenshot.png
 test-results/
 .dev.vars
 .gstack/
+
+# 암호화된 공유 데이터라도 로컬에서 평문으로 관리하지 않도록 추적에서 제외
+public/shared-data.json

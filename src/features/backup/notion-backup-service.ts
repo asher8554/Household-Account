@@ -1,10 +1,13 @@
 // Notion 백업 Worker 호출과 브라우저 저장 키를 관리합니다.
 import type { BackupFile } from "./backup-types";
 import { createBackupData } from "./backup-service";
+import {
+  loadNotionWriteKeyFromSession,
+  saveNotionWriteKeyToSession,
+} from "../shared-data/sync-session-store";
 
 const NOTION_BACKUP_KEY_STORAGE_KEY = "household-account:notion-backup-write-key";
 const MAX_NOTION_BACKUP_BATCHES = 250;
-
 export type NotionBackupResult = {
   version: 1;
   syncedAt: string;
@@ -31,18 +34,34 @@ export type NotionBackupOptions = {
 };
 
 export function loadNotionBackupWriteKey() {
+  // 키는 브라우저를 닫으면 사라지는 sessionStorage에 보관합니다. 과거 localStorage 값은 옮긴 뒤 지웁니다.
+  const sessionKey = loadNotionWriteKeyFromSession();
+
+  if (sessionKey) return sessionKey;
+
   try {
-    return localStorage.getItem(NOTION_BACKUP_KEY_STORAGE_KEY) ?? "";
+    const legacy = localStorage.getItem(NOTION_BACKUP_KEY_STORAGE_KEY) ?? "";
+
+    if (legacy.trim()) {
+      saveNotionWriteKeyToSession(legacy);
+      localStorage.removeItem(NOTION_BACKUP_KEY_STORAGE_KEY);
+    }
+
+    return legacy.trim();
   } catch {
     return "";
   }
 }
 
 export function saveNotionBackupWriteKey(value: string) {
+  const trimmed = value.trim();
+
+  saveNotionWriteKeyToSession(trimmed);
+
   try {
-    localStorage.setItem(NOTION_BACKUP_KEY_STORAGE_KEY, value.trim());
+    localStorage.removeItem(NOTION_BACKUP_KEY_STORAGE_KEY);
   } catch {
-    // localStorage가 막혀도 현재 입력값으로는 push를 계속 시도할 수 있습니다.
+    // localStorage가 막혀도 sessionStorage 저장에는 지장이 없습니다.
   }
 }
 

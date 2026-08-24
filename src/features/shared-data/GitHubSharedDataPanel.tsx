@@ -8,10 +8,12 @@ import {
   clearGitHubSharedDataSettings,
   defaultGitHubSharedDataSettings,
   hasGitHubSharedDataToken,
+  hasSyncPassphrase,
   loadGitHubSharedDataSettings,
   saveGitHubSharedDataSettings,
   type GitHubSharedDataSettings,
 } from "./github-shared-data-service";
+import { loadPublishedSharedData } from "./shared-data-service";
 import {
   formatCurrentPcRecordPushProgress,
   formatCurrentPcRecordPushResult,
@@ -22,7 +24,7 @@ export function GitHubSharedDataPanel() {
   const [settings, setSettings] = useState<GitHubSharedDataSettings>(() => loadGitHubSharedDataSettings());
   const [message, setMessage] = useState("");
   const [isPushing, setIsPushing] = useState(false);
-  const hasToken = hasGitHubSharedDataToken(settings);
+  const isReadyToPush = hasGitHubSharedDataToken(settings) && hasSyncPassphrase(settings);
 
   function updateField(field: keyof GitHubSharedDataSettings, value: string) {
     setSettings((previous) => ({ ...previous, [field]: value }));
@@ -32,7 +34,8 @@ export function GitHubSharedDataPanel() {
     event.preventDefault();
     saveGitHubSharedDataSettings(settings);
     setSettings(loadGitHubSharedDataSettings());
-    setMessage("GitHub 공유 설정을 저장했습니다.");
+    setMessage("GitHub 공유 설정을 저장했습니다. 공유 파일 동기화를 다시 시도합니다.");
+    void loadPublishedSharedData();
   }
 
   function handleReset() {
@@ -42,7 +45,7 @@ export function GitHubSharedDataPanel() {
   }
 
   async function handlePushCurrentData() {
-    if (!hasToken || isPushing) return;
+    if (!isReadyToPush || isPushing) return;
 
     setIsPushing(true);
     setMessage("현재 기록을 업데이트 중입니다.");
@@ -76,7 +79,7 @@ export function GitHubSharedDataPanel() {
   return (
     <SectionPanel
       title="GitHub 공유 설정"
-      eyebrow={hasToken ? "수동 업데이트 준비됨" : "토큰 필요"}
+      eyebrow={isReadyToPush ? "수동 업데이트 준비됨" : "토큰·암호 필요"}
       action={
         <Button size="sm" variant="ghost" onClick={handleReset}>
           <RotateCcw size={15} aria-hidden="true" />
@@ -125,6 +128,16 @@ export function GitHubSharedDataPanel() {
             autoComplete="off"
           />
         </FormField>
+        <FormField label="공유 데이터 암호">
+          <input
+            className="h-10 w-full rounded-lg border border-line bg-field px-3 text-sm"
+            type="password"
+            value={settings.passphrase}
+            onChange={(event) => updateField("passphrase", event.target.value)}
+            placeholder="공유 파일을 잠그는 암호 (기기마다 동일하게)"
+            autoComplete="new-password"
+          />
+        </FormField>
         <div className="flex flex-wrap items-center gap-2">
           <Button variant="primary" type="submit">
             <Save size={16} aria-hidden="true" />
@@ -133,7 +146,7 @@ export function GitHubSharedDataPanel() {
           <Button
             variant="secondary"
             type="button"
-            disabled={!hasToken || isPushing}
+            disabled={!isReadyToPush || isPushing}
             onClick={handlePushCurrentData}
           >
             <Upload size={16} aria-hidden="true" />
@@ -147,8 +160,10 @@ export function GitHubSharedDataPanel() {
       </form>
       {message ? <p className="mt-3 text-sm text-muted">{message}</p> : null}
       <p className="mt-3 text-sm leading-6 text-muted">
-        GitHub Pages 공유는 public/shared-data.json을 이 repo에 공개 커밋합니다. 토큰은 이 브라우저
-        localStorage에만 저장되고 Contents read/write 권한만 필요합니다.
+        공유 파일은 입력한 암호로 암호화되어 커밋되므로 GitHub 저장소에는 평문 내역이 남지 않습니다. 토큰과
+        공유 데이터 암호는 브라우저를 닫으면 지워지는 세션 저장소에만 보관되므로, 새 브라우저에서는 다시
+        입력해야 합니다. 암호를 잃으면 다른 기기의 공유 파일을 열 수 없지만 이 기기의 데이터는 그대로
+        유지됩니다.
       </p>
     </SectionPanel>
   );
