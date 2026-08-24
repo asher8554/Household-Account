@@ -77,7 +77,7 @@ export function MonthSummaryCards({
         </div>
 
         {/* 칩 개수와 무관하게 높이를 고정해 월 이동 시 위치가 밀리지 않게 유지합니다. */}
-        <div className="mt-3 grid min-w-0 content-start gap-2 overflow-hidden sm:h-[7.75rem] sm:grid-cols-2 xl:h-14 xl:grid-cols-3">
+        <div className="mt-3 grid min-w-0 grid-cols-2 content-start gap-2 overflow-hidden sm:h-[7.75rem] sm:grid-cols-2 xl:h-14 xl:grid-cols-3">
           {cardExpenseItems.length > 0 ? (
             cardExpenseItems.map((item) => {
               const isSelected = selectedCardCompanyIdSet.has(item.id);
@@ -106,7 +106,7 @@ export function MonthSummaryCards({
               );
             })
           ) : (
-            <p className="rounded-md border border-dashed border-line px-3 py-3 text-center text-sm text-muted sm:col-span-2 xl:col-span-3">
+            <p className="col-span-2 rounded-md border border-dashed border-line px-3 py-3 text-center text-sm text-muted sm:col-span-2 xl:col-span-3">
               카드 지출 데이터 없음.
             </p>
           )}

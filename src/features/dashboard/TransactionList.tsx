@@ -121,7 +121,7 @@ export function TransactionList({
                 <Button
                   size="sm"
                   variant="ghost"
-                  className="h-8 w-8 shrink-0 px-0"
+                  className="h-9 w-9 shrink-0 px-0 sm:h-8 sm:w-8"
                   onClick={() => toggleTransaction(transaction.id)}
                   aria-expanded={isExpanded}
                   aria-label={isExpanded ? "거래 상세 접기" : "거래 상세 펼치기"}
@@ -153,10 +153,10 @@ export function TransactionList({
                 ) : (
                   <span className="truncate text-sm font-medium">{category?.name ?? "기타"}</span>
                 )}
-                <label className="flex shrink-0 items-center gap-1 text-xs text-muted">
+                <label className="flex shrink-0 items-center gap-1.5 text-xs text-muted">
                   <input
                     type="checkbox"
-                    className="h-4 w-4 rounded border-line accent-moss"
+                    className="h-5 w-5 rounded border-line accent-moss sm:h-4 sm:w-4"
                     checked={isSingleItemCategoryChange}
                     onChange={() => toggleSingleItemCategoryChange(transaction.id)}
                   />
@@ -177,7 +177,7 @@ export function TransactionList({
                 <label className="mt-2 flex w-fit items-center gap-1.5 text-xs text-muted">
                   <input
                     type="checkbox"
-                    className="h-4 w-4 rounded border-line accent-moss"
+                    className="h-5 w-5 rounded border-line accent-moss sm:h-4 sm:w-4"
                     checked={transaction.excludeFromAnnualTrend ?? false}
                     onChange={(event) => onChangeTransactionAnnualTrendExclusion(transaction.id, event.target.checked)}
                   />

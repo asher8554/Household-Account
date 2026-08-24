@@ -185,6 +185,19 @@ textarea {
   color: rgb(var(--color-muted) / 0.72);
 }
 
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* iOS 사파리는 16px 미만 입력 필드 포커스 시 화면을 자동 확대하므로 모바일에서는 16px로 유지합니다. */
+@media (max-width: 639px) {
+  input,
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
 button:focus-visible,
 a:focus-visible,
 input:focus-visible,
