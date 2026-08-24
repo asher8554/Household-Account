@@ -165,7 +165,7 @@ export function CategoryExpenseChart({
               </div>
             </div>
 
-            <div className="flex min-w-0 flex-col justify-center gap-2">
+            <div className="flex min-w-0 flex-col gap-2">
               <div className="flex shrink-0 items-end justify-between gap-3 border-b border-line pb-2">
                 <div className="min-w-0">
                   <p className="text-xs text-muted">이번 달 사용한 총금액</p>
@@ -173,7 +173,7 @@ export function CategoryExpenseChart({
                 </div>
                 <p className="text-xs text-muted">{chartData.length}개 카테고리</p>
               </div>
-              <div className="grid min-h-0 min-w-0 max-h-72 gap-1 overflow-auto pr-1">
+              <div className="grid min-h-0 min-w-0 max-xl:max-h-72 flex-1 gap-1 overflow-auto pr-1">
                 {chartData.map((entry) => {
                   const isSelected = selectedCategoryId === entry.categoryId;
 
