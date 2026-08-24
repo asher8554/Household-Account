@@ -3,6 +3,7 @@ import { expect, test } from "@playwright/test";
 import {
   buildAnnualCategoryTrends,
   buildAnnualMonthTrends,
+  getLoanRepaymentCategoryIds,
   getAnnualTrendSummary,
 } from "../src/features/dashboard/annual-trend-calculations";
 import type { Category } from "../src/features/categories/category-types";
@@ -107,4 +108,17 @@ test("annual consumption trend excludes loan repayments but reports them separat
   expect(summary.totalLoanRepayment).toBe(3000000);
   expect(summary.net).toBe(-100);
   expect(summary.transactionCount).toBe(1);
+});
+
+test("annual trends recognize an existing category named loan repayment", () => {
+  const categories = [category("custom-loan", "대출상환")];
+  const transactions = [transaction("loan", "2026-01-03", "expense", 3000000, "custom-loan")];
+  const loanRepaymentCategoryIds = getLoanRepaymentCategoryIds(categories);
+
+  const months = buildAnnualMonthTrends(transactions, 2026, loanRepaymentCategoryIds);
+  const categoryTrends = buildAnnualCategoryTrends(transactions, categories, 2026);
+
+  expect(months[0].loanRepayment).toBe(3000000);
+  expect(months[0].expense).toBe(0);
+  expect(categoryTrends.totalExpense).toBe(0);
 });

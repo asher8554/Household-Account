@@ -31,8 +31,8 @@ import type { Transaction } from "../transactions/transaction-types";
 import {
   buildAnnualCategoryTrends,
   buildAnnualMonthTrends,
+  getLoanRepaymentCategoryIds,
   getAnnualTrendSummary,
-  LOAN_REPAYMENT_CATEGORY_ID,
   type AnnualCategoryTrendResult,
   type AnnualTrendSummary,
 } from "./annual-trend-calculations";
@@ -57,14 +57,15 @@ export function AnnualTrendScreen() {
     [],
     initialData,
   );
+  const loanRepaymentCategoryIds = useMemo(() => getLoanRepaymentCategoryIds(data.categories), [data.categories]);
   const monthlyTrends = useMemo(
-    () => buildAnnualMonthTrends(data.transactions, year),
-    [data.transactions, year],
+    () => buildAnnualMonthTrends(data.transactions, year, loanRepaymentCategoryIds),
+    [data.transactions, year, loanRepaymentCategoryIds],
   );
   const summary = useMemo(() => getAnnualTrendSummary(monthlyTrends), [monthlyTrends]);
   const maxCategoryTrendLimit = useMemo(
-    () => getAnnualExpenseCategoryCount(data.transactions, year),
-    [data.transactions, year],
+    () => getAnnualExpenseCategoryCount(data.transactions, year, loanRepaymentCategoryIds),
+    [data.transactions, year, loanRepaymentCategoryIds],
   );
   const effectiveCategoryTrendLimit = Math.min(
     Math.max(MIN_CATEGORY_TREND_LIMIT, categoryTrendLimit),
@@ -431,14 +432,18 @@ function CategoryTrendLegend({ categories }: { categories: AnnualCategoryTrendRe
   );
 }
 
-function getAnnualExpenseCategoryCount(transactions: Transaction[], year: number) {
+function getAnnualExpenseCategoryCount(
+  transactions: Transaction[],
+  year: number,
+  loanRepaymentCategoryIds: Set<string>,
+) {
   return new Set(
     transactions
       .filter(
         (transaction) =>
           transaction.type === "expense" &&
           !transaction.excludeFromAnnualTrend &&
-          transaction.categoryId !== LOAN_REPAYMENT_CATEGORY_ID &&
+          !loanRepaymentCategoryIds.has(transaction.categoryId) &&
           transaction.date.startsWith(`${year}-`),
       )
       .map((transaction) => transaction.categoryId),

@@ -58,7 +58,20 @@ export type AnnualCategoryTrendResult = {
   previousWindowLabel: string;
 };
 
-export function buildAnnualMonthTrends(transactions: Transaction[], year: number): AnnualTrendMonth[] {
+export function getLoanRepaymentCategoryIds(categories: Category[]) {
+  return new Set([
+    LOAN_REPAYMENT_CATEGORY_ID,
+    ...categories
+      .filter((category) => category.type === "expense" && category.name.replaceAll(" ", "") === "대출상환")
+      .map((category) => category.id),
+  ]);
+}
+
+export function buildAnnualMonthTrends(
+  transactions: Transaction[],
+  year: number,
+  loanRepaymentCategoryIds = new Set([LOAN_REPAYMENT_CATEGORY_ID]),
+): AnnualTrendMonth[] {
   const months: AnnualTrendMonth[] = Array.from({ length: 12 }, (_, index) => ({
     month: index + 1,
     label: `${index + 1}월`,
@@ -83,7 +96,7 @@ export function buildAnnualMonthTrends(transactions: Transaction[], year: number
       month.income += transaction.amount;
     } else if (transaction.excludeFromAnnualTrend) {
       continue;
-    } else if (transaction.categoryId === LOAN_REPAYMENT_CATEGORY_ID) {
+    } else if (loanRepaymentCategoryIds.has(transaction.categoryId)) {
       month.loanRepayment += transaction.amount;
     } else {
       month.transactionCount += 1;
@@ -134,14 +147,15 @@ export function buildAnnualCategoryTrends(
   year: number,
   topCategoryLimit = 8,
 ): AnnualCategoryTrendResult {
+  const categoryMap = new Map(categories.map((category) => [category.id, category]));
+  const loanRepaymentCategoryIds = getLoanRepaymentCategoryIds(categories);
   const yearlyExpenses = transactions.filter(
     (transaction) =>
       transaction.type === "expense" &&
       !transaction.excludeFromAnnualTrend &&
-      transaction.categoryId !== LOAN_REPAYMENT_CATEGORY_ID &&
+      !loanRepaymentCategoryIds.has(transaction.categoryId) &&
       transaction.date.startsWith(`${year}-`),
   );
-  const categoryMap = new Map(categories.map((category) => [category.id, category]));
   const totalsByCategory = new Map<string, number>();
 
   for (const transaction of yearlyExpenses) {
