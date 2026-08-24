@@ -1,5 +1,5 @@
 // 단일 화면 대시보드를 조립하고 각 기능 모듈을 연결합니다.
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { addMonths, startOfMonth, subMonths } from "date-fns";
 import { getTodayKey, isDateKeyInMonth, toDateKey } from "../../lib/date";
 import { useLiveQuery } from "../../db/use-live-query";
@@ -83,8 +83,24 @@ export function DashboardScreen() {
         .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)),
     [filteredMonthlyTransactions, selectedDateKey],
   );
+  const viewportYBeforeMonthChangeRef = useRef<number | null>(null);
+
+  // 월 이동 후 렌더링이 끝나면 저장해둔 화면 위치를 복원해 흔들림을 없앱니다.
+  useLayoutEffect(() => {
+    const savedViewportY = viewportYBeforeMonthChangeRef.current;
+
+    if (savedViewportY === null) return;
+
+    viewportYBeforeMonthChangeRef.current = null;
+    window.scrollTo(0, savedViewportY);
+  });
+
+  function beginMonthTransition() {
+    viewportYBeforeMonthChangeRef.current = window.scrollY;
+  }
 
   function moveMonth(nextMonth: Date) {
+    beginMonthTransition();
     setCurrentMonth(nextMonth);
 
     if (!isDateKeyInMonth(selectedDateKey, nextMonth)) {
@@ -101,6 +117,7 @@ export function DashboardScreen() {
   }
 
   function moveToCurrentMonth() {
+    beginMonthTransition();
     const today = new Date();
     setCurrentMonth(startOfMonth(today));
     setSelectedDateKey(toDateKey(today));

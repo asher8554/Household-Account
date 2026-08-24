@@ -137,6 +137,7 @@ export function CategoryExpenseChart({
                     paddingAngle={2}
                     stroke="rgb(var(--color-panel))"
                     strokeWidth={2}
+                    isAnimationActive={false}
                     onClick={(data) => handleChartClick(data as ChartClickPayload)}
                   >
                     {chartData.map((entry) => (

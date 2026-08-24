@@ -175,7 +175,13 @@ export function getCategoryExpenseStats(
         amount,
       };
     })
-    .sort((a, b) => b.amount - a.amount);
+    .sort(
+      (a, b) =>
+        (categoryMap.get(a.categoryId)?.sortOrder ?? Number.MAX_SAFE_INTEGER) -
+          (categoryMap.get(b.categoryId)?.sortOrder ?? Number.MAX_SAFE_INTEGER) ||
+        a.name.localeCompare(b.name, "ko-KR") ||
+        b.amount - a.amount,
+    );
 }
 
 function getCardCompanyForSource(source: Transaction["source"]) {

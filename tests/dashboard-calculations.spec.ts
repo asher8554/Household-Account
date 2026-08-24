@@ -2,9 +2,11 @@
 import { expect, test } from "@playwright/test";
 import {
   filterTransactionsByCardCompanies,
+  getCategoryExpenseStats,
   getMonthSummary,
   getTransactionsForMonth,
 } from "../src/features/dashboard/dashboard-calculations";
+import type { Category } from "../src/features/categories/category-types";
 import type { Transaction } from "../src/features/transactions/transaction-types";
 
 function transaction(
@@ -89,4 +91,74 @@ test("filterTransactionsByCardCompanies keeps only selected card company transac
     "hyundai-file",
   ]);
   expect(filterTransactionsByCardCompanies(transactions, []).map((item) => item.id)).toEqual([]);
+});
+
+test("getCategoryExpenseStats keeps categories in stable sort order regardless of amounts", () => {
+  const categories: Category[] = [
+    {
+      id: "expense-food",
+      type: "expense",
+      name: "식비",
+      color: "#c85645",
+      isDefault: true,
+      isActive: true,
+      sortOrder: 0,
+      createdAt: "2026-06-01T00:00:00.000Z",
+      updatedAt: "2026-06-01T00:00:00.000Z",
+    },
+    {
+      id: "expense-cafe",
+      type: "expense",
+      name: "카페",
+      color: "#d49a2d",
+      isDefault: true,
+      isActive: true,
+      sortOrder: 1,
+      createdAt: "2026-06-01T00:00:00.000Z",
+      updatedAt: "2026-06-01T00:00:00.000Z",
+    },
+  ];
+  const transactions: Transaction[] = [
+    {
+      id: "cafe-big",
+      date: "2026-06-01",
+      type: "expense",
+      amount: 50000,
+      categoryId: "expense-cafe",
+      memo: "카페",
+      source: "manual",
+      createdAt: "2026-06-01T00:00:00.000Z",
+      updatedAt: "2026-06-01T00:00:00.000Z",
+    },
+    {
+      id: "food-small",
+      date: "2026-06-02",
+      type: "expense",
+      amount: 1000,
+      categoryId: "expense-food",
+      memo: "식비",
+      source: "manual",
+      createdAt: "2026-06-01T00:00:00.000Z",
+      updatedAt: "2026-06-01T00:00:00.000Z",
+    },
+    {
+      id: "unknown",
+      date: "2026-06-03",
+      type: "expense",
+      amount: 999999,
+      categoryId: "deleted-category",
+      memo: "삭제된 카테고리",
+      source: "manual",
+      createdAt: "2026-06-01T00:00:00.000Z",
+      updatedAt: "2026-06-01T00:00:00.000Z",
+    },
+  ];
+
+  const stats = getCategoryExpenseStats(transactions, categories);
+
+  expect(stats.map((stat) => stat.categoryId)).toEqual([
+    "expense-food",
+    "expense-cafe",
+    "deleted-category",
+  ]);
 });
