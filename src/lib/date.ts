@@ -1,8 +1,6 @@
 // 달력 화면에 필요한 날짜 계산과 문자열 변환을 제공합니다.
 import {
   addDays,
-  endOfMonth,
-  endOfWeek,
   format,
   isSameMonth,
   isToday,
@@ -45,9 +43,9 @@ export function formatDateLabel(dateKey: string) {
 
 export function getMonthGridDays(monthDate: Date): MonthGridDay[] {
   const monthStart = startOfMonth(monthDate);
-  const monthEnd = endOfMonth(monthDate);
   const gridStart = startOfWeek(monthStart, { weekStartsOn: 1 });
-  const gridEnd = endOfWeek(monthEnd, { weekStartsOn: 1 });
+  // 항상 6주(42칸)를 렌더링해 월 이동 시 달력 높이가 변하지 않게 유지합니다.
+  const gridEnd = addDays(gridStart, 42 - 1);
   const days: MonthGridDay[] = [];
 
   for (let cursor = gridStart; cursor <= gridEnd; cursor = addDays(cursor, 1)) {
