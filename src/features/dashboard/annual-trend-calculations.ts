@@ -94,10 +94,10 @@ export function buildAnnualMonthTrends(
     if (transaction.type === "income") {
       month.transactionCount += 1;
       month.income += transaction.amount;
-    } else if (transaction.excludeFromAnnualTrend) {
-      continue;
     } else if (loanRepaymentCategoryIds.has(transaction.categoryId)) {
       month.loanRepayment += transaction.amount;
+    } else if (transaction.excludeFromAnnualTrend) {
+      continue;
     } else {
       month.transactionCount += 1;
       month.expense += transaction.amount;

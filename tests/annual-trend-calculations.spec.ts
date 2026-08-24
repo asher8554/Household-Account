@@ -122,3 +122,21 @@ test("annual trends recognize an existing category named loan repayment", () => 
   expect(months[0].expense).toBe(0);
   expect(categoryTrends.totalExpense).toBe(0);
 });
+
+test("loan repayment counts even when marked excluded from the annual trend", () => {
+  const categories = [category("custom-loan", "대출상환")];
+  const transactions = [
+    {
+      ...transaction("excluded-loan", "2026-01-03", "expense", 3000000, "custom-loan"),
+      excludeFromAnnualTrend: true,
+    },
+    transaction("food", "2026-01-03", "expense", 100, "expense-food"),
+  ];
+
+  const months = buildAnnualMonthTrends(transactions, 2026, getLoanRepaymentCategoryIds(categories));
+  const summary = getAnnualTrendSummary(months);
+
+  expect(months[0].loanRepayment).toBe(3000000);
+  expect(months[0].expense).toBe(100);
+  expect(summary.totalLoanRepayment).toBe(3000000);
+});
