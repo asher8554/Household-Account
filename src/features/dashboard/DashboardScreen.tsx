@@ -155,7 +155,7 @@ export function DashboardScreen() {
       />
 
       <div className="grid min-w-0 gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(20rem,24rem)] xl:gap-5">
-        <div className="grid min-w-0 gap-4 md:gap-5">
+        <div className="flex min-w-0 flex-col gap-4 md:gap-5">
           <CalendarGrid
             monthDate={currentMonth}
             selectedDateKey={selectedDateKey}
@@ -175,6 +175,7 @@ export function DashboardScreen() {
             onSelectMonth={(date) => moveMonth(startOfMonth(date))}
           />
           <CategoryExpenseChart
+            className="min-h-0 flex-1"
             monthDate={currentMonth}
             stats={categoryStats}
             transactions={filteredMonthlyTransactions}

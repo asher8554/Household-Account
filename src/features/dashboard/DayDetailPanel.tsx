@@ -45,7 +45,7 @@ export function DayDetailPanel({
         </div>
       </div>
 
-      <div className="mt-4 max-h-[20rem] min-h-[9rem] overflow-y-auto pr-1">
+      <div className="mt-4 h-80 overflow-y-auto pr-1">
         <TransactionList
           transactions={transactions}
           categories={categories}

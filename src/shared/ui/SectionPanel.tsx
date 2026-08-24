@@ -8,9 +8,10 @@ type SectionPanelProps = {
   action?: ReactNode;
   children: ReactNode;
   className?: string;
+  bodyClassName?: string;
 };
 
-export function SectionPanel({ title, eyebrow, action, children, className }: SectionPanelProps) {
+export function SectionPanel({ title, eyebrow, action, children, className, bodyClassName }: SectionPanelProps) {
   return (
     <section className={cx("min-w-0 overflow-hidden rounded-lg border border-line bg-panel shadow-panel", className)}>
       <div className="flex flex-col gap-3 border-b border-line px-3 py-3 sm:flex-row sm:items-start sm:justify-between sm:px-4">
@@ -20,7 +21,7 @@ export function SectionPanel({ title, eyebrow, action, children, className }: Se
         </div>
         {action ? <div className="shrink-0">{action}</div> : null}
       </div>
-      <div className="p-3 sm:p-4">{children}</div>
+      <div className={cx("p-3 sm:p-4", bodyClassName)}>{children}</div>
     </section>
   );
 }

@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, RotateCcw } from "lucide-react";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 import { formatMonthTitle } from "../../lib/date";
 import { formatKrw } from "../../lib/money";
+import { cx } from "../../lib/cx";
 import { Button } from "../../shared/ui/Button";
 import { SectionPanel } from "../../shared/ui/SectionPanel";
 import type { Category } from "../categories/category-types";
@@ -16,6 +17,7 @@ type CategoryExpenseChartProps = {
   stats: CategoryExpenseStat[];
   transactions: Transaction[];
   categories: Category[];
+  className?: string;
   onPreviousMonth: () => void;
   onCurrentMonth: () => void;
   onNextMonth: () => void;
@@ -34,6 +36,7 @@ export function CategoryExpenseChart({
   stats,
   transactions,
   categories,
+  className,
   onPreviousMonth,
   onCurrentMonth,
   onNextMonth,
@@ -84,6 +87,8 @@ export function CategoryExpenseChart({
     <SectionPanel
       title="카테고리별 지출"
       eyebrow={formatMonthTitle(monthDate)}
+      className={cx("flex flex-col", className)}
+      bodyClassName="flex min-h-0 flex-1 flex-col"
       action={
         <div className="flex flex-wrap items-center gap-2">
           <Button size="sm" variant="secondary" onClick={onPreviousMonth} aria-label="이전 달" title="이전 달">
@@ -100,18 +105,18 @@ export function CategoryExpenseChart({
       }
     >
       {chartData.length === 0 ? (
-        <p className="rounded-lg border border-dashed border-line px-3 py-8 text-center text-sm text-muted">
+        <p className="m-auto rounded-lg border border-dashed border-line px-3 py-8 text-center text-sm text-muted">
           지출 데이터 없음.
         </p>
       ) : (
-        <div className="grid min-w-0 gap-4">
-          <div className="grid min-w-0 gap-4 lg:grid-cols-[minmax(13rem,0.85fr)_minmax(0,1fr)]">
-            <div className="relative h-[220px] min-w-0 sm:h-[280px]">
+        <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-4">
+          <div className="grid min-h-0 min-w-0 flex-1 gap-4 lg:grid-cols-[minmax(13rem,0.85fr)_minmax(0,1fr)]">
+            <div className="relative h-full min-h-[220px] min-w-0">
               <ResponsiveContainer
                 width="100%"
                 height="100%"
                 minWidth={0}
-                minHeight={240}
+                minHeight={200}
                 initialDimension={{ width: 260, height: 220 }}
               >
                 <PieChart margin={{ top: 8, right: 8, bottom: 8, left: 8 }}>
@@ -160,15 +165,15 @@ export function CategoryExpenseChart({
               </div>
             </div>
 
-            <div className="grid min-w-0 content-center gap-2">
-              <div className="flex items-end justify-between gap-3 border-b border-line pb-2">
+            <div className="flex min-w-0 flex-col justify-center gap-2">
+              <div className="flex shrink-0 items-end justify-between gap-3 border-b border-line pb-2">
                 <div className="min-w-0">
                   <p className="text-xs text-muted">이번 달 사용한 총금액</p>
                   <p className="break-words text-base font-bold text-coral sm:text-lg">{formatKrw(totalExpense)}</p>
                 </div>
                 <p className="text-xs text-muted">{chartData.length}개 카테고리</p>
               </div>
-              <div className="grid h-72 min-w-0 gap-1 overflow-auto pr-1">
+              <div className="grid min-h-0 min-w-0 max-h-72 gap-1 overflow-auto pr-1">
                 {chartData.map((entry) => {
                   const isSelected = selectedCategoryId === entry.categoryId;
 
