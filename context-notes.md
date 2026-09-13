@@ -1109,3 +1109,15 @@
 - 2026-06-16. `usePublishedSharedDataSync`를 추가해 시작 시, window focus, document visibility 복귀, 60초 interval에서 공유 데이터를 다시 확인하도록 했다. 같은 탭에서 너무 잦은 요청은 5초 최소 간격으로 막는다.
 - 2026-06-16. `npx playwright test tests/public-shared-data-security.spec.ts`, `npx playwright test`, `npm run build`, 로컬 Chromium smoke가 통과했다. Chromium smoke는 focus 이벤트 후 `shared-data.json` 요청이 다시 발생했고 console/page error가 없음을 확인했다.
 - 2026-06-16. commit `888972b`를 main에 push했고 GitHub Pages run `27590969316` build와 deploy가 성공했다. live index는 `assets/index-tlAiMKFy.js`를 반환하고 bundle에 `visibilitychange`와 `setInterval` 기반 공유 데이터 재동기화 코드가 포함되어 있다.
+
+## 2026-09-14 라이선스 고지 변경 기록
+
+- 계획은 `docs/license-change-plan.md`에 기록했다. 작업 날짜는 로컬 Asia/Seoul 기준 2026-09-14이다.
+- 시작 시 main과 origin/main은 6095733으로 일치하고 작업 트리는 깨끗했다. GitHub 공개 여부는 PUBLIC이다.
+- 루트 LICENSE는 없고 README는 제목 한 줄이며 package.json 및 잠금 파일의 루트 패키지에는 license 필드가 없다. 전체 로컬 refs의 LICENSE·COPYING·NOTICE 파일 이력 및 README·package.json 변경 이력에서도 기존 라이선스 고지를 찾지 못했다.
+- 전체 작성자 이력은 asher8554와 우상훈이며 이메일은 동일하다. 공동 작성자 trailer는 없고 GitHub contributors API도 asher8554 한 명을 반환했다. GitHub 커미터는 웹 커밋 기록이며 별도 저작권자를 의미하지 않는다. 이력은 법적 소유권의 증명이 아니므로 고지는 asher8554가 권리를 가진 부분에 한정한다.
+- Pretendard v1.3.9는 CDN에서 불러온다. 외부 npm 패키지, 아이콘, 폰트, 인용·연결된 자료와 소유권이 없는 기여분은 새 제한에서 제외한다. 추적 파일 목록에는 별도 이미지·폰트·학습 자료 파일이 없다.
+- GitHub 약관 D절과 npm package.json 공식 문서를 확인했다. 기존 허락은 소급 철회하지 않고 GitHub 서비스상 권리와 법률상 허용 권리를 보존한다. 루트 패키지만 UNLICENSED로 표시하고 private: true는 유지한다.
+- 잠금 파일에서 sharp/libvips의 LGPL과 caniuse-lite의 CC-BY-4.0을 확인했다. `npm explain sharp`로 wrangler → miniflare → sharp 개발 의존성 경로를 확인했으며 해당 라이선스는 변경하지 않았다. 발견된 제3자 부분은 모두 고지의 제한 대상에서 제외했다.
+- Node assert로 두 JSON에서 새 루트 license 필드를 제외한 모든 값이 HEAD와 동일함을 확인했다. 앱 소스·스타일·테스트·배포 설정 diff는 없다. `git diff --check`와 `npm run build`가 통과했으며 빌드는 500 kB 초과 청크 경고를 표시했다. 실행 코드 변경이 없어 별도 테스트는 추가하지 않았다.
+- 확인한 공식 근거는 https://docs.github.com/en/site-policy/github-terms/github-terms-of-service 및 https://docs.npmjs.com/cli/v11/configuring-npm/package-json/#license 이다. Pretendard 고지는 https://github.com/orioncactus/pretendard/blob/v1.3.9/LICENSE 에서 확인했다.
