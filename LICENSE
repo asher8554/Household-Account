@@ -1,5 +1,7 @@
 Copyright (c) 2026 asher8554. All rights reserved.
 
+[한국어]
+
 적용 시작일: 2026-09-14 (Asia/Seoul)
 
 1. 적용 범위
@@ -46,3 +48,60 @@ asher8554가 권리를 갖지 않은 기여분에는 해당 권리자의 라이�
 사용 허락을 부여하지 않는다.
 
 GitHub 약관: https://docs.github.com/en/site-policy/github-terms/github-terms-of-service
+
+[English]
+
+Effective date: 2026-09-14 (Asia/Seoul)
+
+1. Scope
+
+This notice applies only to the code, documentation, and other materials in
+the Household-Account repository for which asher8554 owns the copyright or
+has the authority to impose the restrictions below. It does not claim
+ownership of, or the right to relicense, materials owned by third parties.
+
+2. No use without prior written permission
+
+Except as provided below, you may not use, run, copy, modify, distribute,
+sell, relicense (sublicense), or create derivative works of all or any part
+of the covered materials without prior written permission from asher8554.
+This restriction includes personal, learning, research, educational,
+non-commercial, and commercial purposes. This notice itself grants no
+permission to use the covered materials. Public availability or access
+alone does not grant permission beyond the exceptions below. If separate
+written permission is granted, its scope and conditions apply.
+
+3. Preservation of previously granted lawful rights
+
+Rights already lawfully granted under a previous license or separate
+permission before the effective date are not retroactively revoked or
+reduced. Existing copies and versions covered by those rights may continue
+to be used under the applicable license or permission, including any rights
+to subsequent copying, modification, distribution, or other acts allowed
+by its terms. This notice does not alter past versions or prior permissions.
+
+4. Preservation of third-party rights and licenses
+
+Third-party code, dependencies, fonts, images, icons, learning materials,
+quoted materials, and contributions in which asher8554 does not hold the
+rights remain subject to their respective rights holders' licenses and
+permissions. Existing copyright, attribution, and license notices, and
+the obligations arising from them, are preserved. This notice neither
+relicenses those materials nor imposes additional restrictions on their
+use. To the extent that this notice conflicts with rights granted or
+conditions required by a third-party license, that third-party license
+prevails.
+
+5. Rights permitted by GitHub's terms and applicable law
+
+This notice does not restrict rights granted to GitHub and its users under
+the applicable GitHub Terms of Service. These include viewing the public
+repository on GitHub, forking it using GitHub's functionality, and other
+uses within the service permitted by those terms. Nor does this notice
+restrict rights or exceptions permitted by applicable law or rights that
+cannot lawfully be restricted. Fair use, lawful quotation, and similar
+exceptions are preserved to the extent permitted by applicable law. This
+section grants no separate permission beyond what those terms or the law
+permit.
+
+GitHub Terms of Service: https://docs.github.com/en/site-policy/github-terms/github-terms-of-service
