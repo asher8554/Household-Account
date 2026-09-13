@@ -1121,3 +1121,4 @@
 - 잠금 파일에서 sharp/libvips의 LGPL과 caniuse-lite의 CC-BY-4.0을 확인했다. `npm explain sharp`로 wrangler → miniflare → sharp 개발 의존성 경로를 확인했으며 해당 라이선스는 변경하지 않았다. 발견된 제3자 부분은 모두 고지의 제한 대상에서 제외했다.
 - Node assert로 두 JSON에서 새 루트 license 필드를 제외한 모든 값이 HEAD와 동일함을 확인했다. 앱 소스·스타일·테스트·배포 설정 diff는 없다. `git diff --check`와 `npm run build`가 통과했으며 빌드는 500 kB 초과 청크 경고를 표시했다. 실행 코드 변경이 없어 별도 테스트는 추가하지 않았다.
 - 확인한 공식 근거는 https://docs.github.com/en/site-policy/github-terms/github-terms-of-service 및 https://docs.npmjs.com/cli/v11/configuring-npm/package-json/#license 이다. Pretendard 고지는 https://github.com/orioncactus/pretendard/blob/v1.3.9/LICENSE 에서 확인했다.
+- 라이선스 변경 커밋 `e0fa393`을 main에 fast-forward 후 푸시했다. GitHub API의 main SHA와 로컬 HEAD가 일치하고, 변경한 7개 파일의 원격 blob SHA가 로컬 커밋과 모두 일치함을 확인했다. 저장소는 PUBLIC이며 앱 기능·디자인·배포 설정을 수정하지 않았다.
