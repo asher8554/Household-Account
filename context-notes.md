@@ -1122,3 +1122,21 @@
 - Node assert로 두 JSON에서 새 루트 license 필드를 제외한 모든 값이 HEAD와 동일함을 확인했다. 앱 소스·스타일·테스트·배포 설정 diff는 없다. `git diff --check`와 `npm run build`가 통과했으며 빌드는 500 kB 초과 청크 경고를 표시했다. 실행 코드 변경이 없어 별도 테스트는 추가하지 않았다.
 - 확인한 공식 근거는 https://docs.github.com/en/site-policy/github-terms/github-terms-of-service 및 https://docs.npmjs.com/cli/v11/configuring-npm/package-json/#license 이다. Pretendard 고지는 https://github.com/orioncactus/pretendard/blob/v1.3.9/LICENSE 에서 확인했다.
 - 라이선스 변경 커밋 `e0fa393`을 main에 fast-forward 후 푸시했다. GitHub API의 main SHA와 로컬 HEAD가 일치하고, 변경한 7개 파일의 원격 blob SHA가 로컬 커밋과 모두 일치함을 확인했다. 저장소는 PUBLIC이며 앱 기능·디자인·배포 설정을 수정하지 않았다.
+
+## 2026-10-18 가계부 기록 복구
+
+- 현재 브라우저 JSON 내보내기 파일은 C:/Users/asher/Downloads/household-account-2026-10-18.json이며 거래 226건, 카테고리 18개다. 거래 기간은 2026-07~10이다.
+- 대시보드는 2024-12를 보고 있었으며 최근 가져오기 상태는 2026-10-18이다. 과거 데이터 유실 여부는 별도 확인이 필요하다.
+- GitHub Contents API에서 public/shared-data.json은 404다. 공개 평문 복구는 하지 않는다.
+- 기존 context-notes가 가리키는 Notion data source 3783d76f-8874-8055-af3a-000befc853fc를 복구 후보로 조회한다.
+
+### 복구 파일 준비 및 검증 결과
+
+- Notion SQL/rows 조회 한도에 도달하여 기존 table view의 cursor pagination으로 전환했다. active 거래 2,350건을 전체 수집했고 recordId 2,350개가 고유함을 검증했다.
+- 원본은 Downloads/household-notion-raw-recovery-2026-10-18.json에 보존했다. 금융 데이터 파일은 저장소 밖에 둔다.
+- 기존 merchant-key helper 기준 현재 PC와 겹치는 과거 거래 36건을 복구 대상에서 제외했다. 현재 PC 거래 226건은 객체 전체가 동일하게 보존되는지 assert로 확인했다.
+- 복구 파일은 Downloads/household-account-recovered-2026-10-18.json이다. 기존 226건과 과거 추가 2,314건, 총 2,540건이며 기간은 2021-08-25~2026-10-18이다.
+- 앱의 backupFileSchema로 전체 파일을 검증했다. 모든 거래 ID의 고유성, categoryId 참조 무결성, 기존 226건 보존 assert를 통과했다.
+- Notion 백업에는 category 이름 및 excludeFromAnnualTrend 필드가 없다. 사용자 categoryId 22개는 ID를 보존하여 복구 분류 1~22로 임시 생성했다. 원래 이름과 과거 연간 집계 제외 설정은 복원하지 못했다.
+- 실제 사이트의 기존 JSON 가져오기 버튼까지 실행했지만 Edge ChatGPT 확장의 파일 URL 접근 권한 부족으로 setFiles가 거부됐다. 브라우저 DB 병합과 최종 화면은 미검증이며 완료로 보고하지 않는다.
+- 원인 확정은 보류한다. 현재 데이터의 createdAt은 오늘이며 공유 파일은 404다. 브라우저 데이터 삭제가 실제 발생했는지는 이 증거만으로 단정할 수 없다.
