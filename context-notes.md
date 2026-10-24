@@ -1150,3 +1150,4 @@
 - npm run build 및 wrangler deploy --dry-run이 통과했다. 앱 빌드에는 기존 500 kB 청크 경고가 있다. UI 코드는 변경하지 않았으므로 화면 시각 검사는 수행하지 않았다.
 - 사용자 Cloudflare OAuth 로그인 완료 뒤 Worker를 배포했다. 버전은 31cc7aa9-99e0-4d9e-9f56-18405fcb0f5d다. /institutions HTTP 200, 인증 없는 /backups HTTP 401을 확인했다.
 - 실사용 브라우저의 거래·백업 키를 읽거나 실제 금융 행 백업을 실행하지 않았다. 사용자가 기존 금융 파일 가져오기 화면에서 Notion 기록을 누르면 categoryName 열과 카테고리 정의가 함께 갱신된다. 캘린더에는 날짜가 있는 거래만 표시된다.
+- Worker는 @cloudflare/workers-types를 지정한 독립 TypeScript 검사도 통과했다. 변경 커밋 bfd7298을 만들고 기존 원격 공유 데이터 커밋 2개를 cf27a20으로 병합하여 main에 push했다. 공유 데이터 파일은 원격 버전을 그대로 보존했다.
