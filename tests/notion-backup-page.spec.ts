@@ -213,6 +213,29 @@ test("parseBackupPayload accepts only backup JSON shape", () => {
   expect(parseBackupPayload({ version: 2, exportedAt: "now", categories: [], transactions: [] })).toBeNull();
 });
 
+test("category formula matches exact IDs even when names repeat and updates renamed categories", () => {
+  const categories = [{ id: "expense-grocery", name: "장보기" }, { id: "cat_custom", name: "장보기" }];
+  const patch = buildNotionBackupSchemaPatch({}, categories);
+  expect(patch.properties["카테고리"]).toEqual({ formula: { expression:
+    'ifs(prop("categoryId") == "expense-grocery", "장보기", prop("categoryId") == "cat_custom", "장보기", prop("categoryId"))',
+  } });
+  const expression = (patch.properties["카테고리"] as { formula: { expression: string } }).formula.expression;
+  expect(buildNotionBackupSchemaPatch({ "카테고리": { type: "formula", formula: { expression } } }, categories)
+    .properties).not.toHaveProperty("카테고리");
+  const renamed = buildNotionBackupSchemaPatch({}, [{ id: "cat_custom", name: "식료품" }]);
+  expect(JSON.stringify(renamed.properties["카테고리"])).toContain("식료품");
+});
+
+test("category formula escapes labels and preserves unknown IDs", () => {
+  const name = '해외 "직구" \\ 택배';
+  const patch = buildNotionBackupSchemaPatch({}, [{ id: "cat_1", name }]);
+  expect(patch.properties["카테고리"]).toEqual({ formula: {
+    expression: `ifs(prop("categoryId") == "cat_1", ${JSON.stringify(name)}, prop("categoryId"))`,
+  } });
+  expect(buildNotionBackupSchemaPatch({}, []).properties["카테고리"])
+    .toEqual({ formula: { expression: 'prop("categoryId")' } });
+});
+
 test("backup endpoint requires the Worker write key", async () => {
   const response = await worker.fetch(
     new Request("https://worker.test/backups", {
@@ -491,6 +514,10 @@ test("backup endpoint chunks upserts to stay under the Worker subrequest limit",
     const url = String(input);
     const method = init?.method ?? "GET";
 
+    if (method === "PATCH" && url.includes("/v1/data_sources/")) {
+      return Response.json({ properties: {} });
+    }
+
     if (method === "GET" && url.includes("/v1/data_sources/")) {
       return new Response(JSON.stringify({ properties: completeBackupSchema() }), {
         status: 200,
@@ -566,6 +593,10 @@ test("backup endpoint skips already migrated rows and continues pending title up
   globalThis.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
     const url = String(input);
     const method = init?.method ?? "GET";
+
+    if (method === "PATCH" && url.includes("/v1/data_sources/")) {
+      return Response.json({ properties: {} });
+    }
 
     if (method === "GET" && url.includes("/v1/data_sources/")) {
       return new Response(JSON.stringify({ properties: completeBackupSchema() }), {
@@ -660,6 +691,10 @@ test("backup endpoint chunks legacy cleanup before upserting rows", async () => 
   globalThis.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
     const url = String(input);
     const method = init?.method ?? "GET";
+
+    if (method === "PATCH" && url.includes("/v1/data_sources/")) {
+      return Response.json({ properties: {} });
+    }
 
     if (method === "GET" && url.includes("/v1/data_sources/")) {
       return new Response(JSON.stringify({ properties: completeBackupSchema() }), {
@@ -936,6 +971,9 @@ test("backup endpoint completes category batches and updates renamed or reassign
   globalThis.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
     const url = String(input);
     const method = init?.method ?? "GET";
+    if (method === "PATCH" && url.includes("/v1/data_sources/")) {
+      return Response.json({ properties: {} });
+    }
     if (method === "GET" && url.includes("/v1/data_sources/")) {
       return Response.json({ properties: completeBackupSchema() });
     }

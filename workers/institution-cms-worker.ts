@@ -139,7 +139,7 @@ async function handleBackupRequest(request: Request, env: WorkerEnv): Promise<Re
   try {
     const dataSource = await retrieveNotionDataSource(notionEnv);
     const titlePropertyName = getTitlePropertyName(dataSource.properties);
-    const schemaPatch = buildNotionBackupSchemaPatch(dataSource.properties);
+    const schemaPatch = buildNotionBackupSchemaPatch(dataSource.properties, backup.categories);
 
     if (Object.keys(schemaPatch.properties).length > 0) {
       workerStage = "schema_update";

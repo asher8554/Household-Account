@@ -32,6 +32,7 @@ export type BackupPayload = {
 
 export type NotionPropertySchema = {
   type?: string;
+  formula?: { expression?: string };
   select?: {
     options?: NotionSelectOption[];
   };
@@ -170,7 +171,10 @@ export function buildNotionBackupRows(
   ];
 }
 
-export function buildNotionBackupSchemaPatch(schema: Record<string, NotionPropertySchema>): NotionSchemaPatch {
+export function buildNotionBackupSchemaPatch(
+  schema: Record<string, NotionPropertySchema>,
+  categories?: Pick<BackupCategoryPayload, "id" | "name">[],
+): NotionSchemaPatch {
   const properties: Record<string, unknown> = {};
 
   for (const [name, propertySchema] of Object.entries(requiredBackupSchema)) {
@@ -197,6 +201,18 @@ export function buildNotionBackupSchemaPatch(schema: Record<string, NotionProper
       if (mergedOptions.length > existingOptions.length) {
         properties[name] = { multi_select: { options: mergedOptions } };
       }
+    }
+  }
+
+  if (categories) {
+    const conditions = categories.flatMap((category) => [
+      `prop("categoryId") == ${JSON.stringify(category.id)}`,
+      JSON.stringify(category.name),
+    ]);
+    const expression = conditions.length ? `ifs(${conditions.join(", ")}, prop("categoryId"))` : 'prop("categoryId")';
+
+    if (schema["카테고리"]?.formula?.expression !== expression) {
+      properties["카테고리"] = { formula: { expression } };
     }
   }
 

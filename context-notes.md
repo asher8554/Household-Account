@@ -1163,3 +1163,16 @@
 - 배포된 사용자 탭을 새로고침해 암호 입력 없음, 토큰만으로 현재 기록 업데이트 활성화, 설정 저장 버튼 키보드 포커스와 화면을 확인했다. dark=true, Pretendard Variable 실제 로드, 패널 rgba(37,54,44,0.42), backdrop-filter blur(22px) saturate(1.65)와 실제 유리 배경·가독성을 확인했다.
 - 운영 Notion 재백업 뒤 category 행 40개를 SQL count로 확인하고 view 조회로 해외직구·택배·통신요금·문화/학습·배달 이름과 색상을 다시 읽었다. SQL 추가 조회는 Notion 연결 사용량 한도로 제한됐으며 view 모드로 확인을 이어갔다.
 - 마지막 확인 시 운영 브라우저는 batch 3, 생성 41건, 업데이트 19건으로 계속 동작 중이다. 거래 2506건의 전체 완료는 아직 확인하지 않았다. 이번 작업에서 GitHub 금융 데이터의 공개 평문 업데이트 버튼은 누르지 않았고 기존 암호화 원격본은 유지했다.
+## 2026-10-25 사용자 정정에 따른 카테고리 매핑 복구
+
+- 이전 작업은 카테고리 정의 행 생성·일부 이름 쓰기를 완료로 설명했지만 사용자 의도는 거래별 categoryId와 현재 카테고리 이름의 일치다. 사용자 제공 표는 참조 행까지 보여 혼란을 키웠다.
+- 현재 사이트와 Notion 전체를 대조했다. 사이트 40개 카테고리·2506건 거래, Notion 41개 참조 행·2350건 거래다. 공통 거래 2284건 중 categoryId 불일치 107건, 이름 누락/불일치 1973건, 사이트에 없는 기존 거래 66건이다.
+- 원본 금액·메모·날짜는 보존하고 공통 ID 107건의 분류만 사이트 기준으로 정정한다. 기존 categoryName은 보존하고 Notion 수식 카테고리를 현재 ID에 연결한다. 표는 거래만 표시한다. 계획은 docs/notion-category-mapping-repair-plan.md다.
+- 107건의 정정은 Notion update_properties로 categoryId·categoryName만 갱신했으며 107건 모두 성공했다. source snapshot과 공통 ID가 없는 기존 66건의 분류는 그대로 두었다.
+- 수정 후 거래 표를 100건씩 전체 재조회했다. 거래 2350건 유지, 참조 행 표시 0건, 공통 거래 ID 분류 불일치 0건이다. amount·date·memo·name·type·source·createdAt·updatedAt·날짜 속성을 변경 전 snapshot과 비교해 다른 속성 변경 0건을 확인했다.
+- Notion 카테고리 수식을 40개 현재 ID→이름으로 생성했다. 원래 categoryName 텍스트 속성은 삭제하지 않고 표/캘린더에서는 수식 카테고리를 표시한다. Worker도 백업 category 정의로 이 수식을 갱신한다. 모르는 ID는 이름을 추측하지 않고 ID를 그대로 표시한다.
+- Notion 브라우저 화면에서 categoryId expense-food→식비, expense-grocery→장보기, cat_9b78150f-8ac9-492a-8ac9-21fe7ebc4ea1→당근, cat_89481648-aedb-4b33-97cb-f1cbd30b8191→통신요금을 실제 확인했다.
+- 관련 17개 테스트와 앱 빌드 및 Worker 독립 타입 검사가 통과했다. 전체 63개 중 60개 통과, 기존 월 이동 레이아웃·공유 .gitignore 기대·병합 코드 문자열 검사 3개 실패는 유지했다.
+- Worker 버전 f21138eb-7121-49f9-b22a-499dadfa7086을 배포했다. 사용자 표 view://3783d76f-8874-803c-addb-000c0756a1a4는 recordType=transaction 필터와 카테고리/categoryId 인접 표시를 적용했다.
+- 감사 파일 category-id-repair-audit.json, 재검증 category-id-repair-verification.json 및 화면 notion-category-id-matched.png는 C:/Users/asher/.codex/visualizations/2026/10/24/01a17003-c83a-72b0-9c59-5bc6552ca1bf에 보존했다. 금융 원자료를 이번 코드 커밋에 포함하지 않는다.
+- 이번 정정은 기존 Notion 거래의 카테고리 연결을 맞추는 작업이다. 사이트에만 존재하는 거래 222건을 새로 가져오거나 기존에만 남은 66건을 삭제하지 않았다. 전체 거래 백업의 Failed to fetch 문제를 해결했다고 주장하지 않는다.
