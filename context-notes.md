@@ -1151,3 +1151,8 @@
 - 사용자 Cloudflare OAuth 로그인 완료 뒤 Worker를 배포했다. 버전은 31cc7aa9-99e0-4d9e-9f56-18405fcb0f5d다. /institutions HTTP 200, 인증 없는 /backups HTTP 401을 확인했다.
 - 실사용 브라우저의 거래·백업 키를 읽거나 실제 금융 행 백업을 실행하지 않았다. 사용자가 기존 금융 파일 가져오기 화면에서 Notion 기록을 누르면 categoryName 열과 카테고리 정의가 함께 갱신된다. 캘린더에는 날짜가 있는 거래만 표시된다.
 - Worker는 @cloudflare/workers-types를 지정한 독립 TypeScript 검사도 통과했다. 변경 커밋 bfd7298을 만들고 기존 원격 공유 데이터 커밋 2개를 cf27a20으로 병합하여 main에 push했다. 공유 데이터 파일은 원격 버전을 그대로 보존했다.
+## 2026-10-25 공유 데이터 암호 제거와 운영 검증
+
+- 사용자는 공유 데이터 암호 제거 및 카테고리 Notion 미반영 확인을 요청했다. 운영 브라우저에 GitHub 토큰·공유 암호·Notion 백업 키가 입력되어 있으며 값을 출력하지 않았다.
+- 운영 shared-data.json은 현재 encrypted envelope다. 신규 쓰기 암호화만 제거하고 기존 읽기 복호화 및 실패 시 덮어쓰기 방지를 보존한다. 공개 평문 전환 안내를 UI에 표시한다.
+- Notion 가계부 schema에 categoryName이 아직 없었으나 직접 Notion 기록을 실행한 후 첫 batch에서 거래 2506건 중 20건 업데이트 응답을 확인했다. GitHub 실패 시 Notion이 실행되지 않는 기존 순차 구조가 있다. 미반영의 과거 원인까지 이 사실만으로 확정하지 않는다.

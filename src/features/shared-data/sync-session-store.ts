@@ -1,4 +1,4 @@
-// 토큰·암호 같은 민감 값은 브라우저를 닫으면 사라지는 sessionStorage에만 보관합니다.
+// 토큰과 이전 암호화 공유 파일의 읽기 호환 값을 세션 동안 보관합니다.
 const tokenSessionKey = "household-account-github-shared-data-settings:token";
 const passphraseSessionKey = "household-account-github-shared-data-settings:passphrase";
 const notionKeySessionKey = "household-account:notion-backup-write-key:session";
@@ -57,10 +57,6 @@ export function saveSessionPassphrase(value: string) {
   } else {
     removeSessionValue(passphraseSessionKey);
   }
-}
-
-export function clearSessionPassphrase() {
-  removeSessionValue(passphraseSessionKey);
 }
 
 export function loadNotionWriteKeyFromSession() {

@@ -1,16 +1,14 @@
-// GitHub Contents API로 공유 데이터 파일을 암호화해 커밋합니다.
+// GitHub Contents API로 공유 JSON을 커밋하고 기존 암호화 파일을 병합합니다.
 import { createBackupData, importBackupData } from "../backup/backup-service";
 import { backupFileSchema, type ParsedBackupFile } from "../backup/backup-schema";
 import {
   decodeBase64Utf8,
   decryptEnvelopeWithPassphrase,
   encodeBase64Utf8,
-  encryptTextWithPassphrase,
   isEncryptedPayloadEnvelope,
 } from "../../lib/web-crypto";
 import { formatKrw } from "../../lib/money";
 import {
-  clearSessionPassphrase,
   clearSessionToken,
   loadSessionPassphrase,
   loadSessionToken,
@@ -24,7 +22,6 @@ export type GitHubSharedDataSettings = {
   branch: string;
   path: string;
   token: string;
-  passphrase: string;
 };
 
 export type GitHubSharedDataPushResult = {
@@ -62,7 +59,6 @@ export const defaultGitHubSharedDataSettings: GitHubSharedDataSettings = {
   branch: "main",
   path: "public/shared-data.json",
   token: "",
-  passphrase: "",
 };
 
 export function loadGitHubSharedDataSettings(): GitHubSharedDataSettings {
@@ -93,7 +89,6 @@ export function loadGitHubSharedDataSettings(): GitHubSharedDataSettings {
   return {
     ...persisted,
     token: loadSessionToken() || legacyToken,
-    passphrase: loadSessionPassphrase() || legacyPassphrase,
   };
 }
 
@@ -108,21 +103,15 @@ export function saveGitHubSharedDataSettings(settings: GitHubSharedDataSettings)
 
   window.localStorage.setItem(settingsKey, JSON.stringify(persisted));
   saveSessionToken(normalizedSettings.token);
-  saveSessionPassphrase(normalizedSettings.passphrase);
 }
 
 export function clearGitHubSharedDataSettings() {
   window.localStorage.removeItem(settingsKey);
   clearSessionToken();
-  clearSessionPassphrase();
 }
 
 export function hasGitHubSharedDataToken(settings: GitHubSharedDataSettings) {
   return settings.token.trim().length > 0;
-}
-
-export function hasSyncPassphrase(settings: GitHubSharedDataSettings) {
-  return settings.passphrase.trim().length > 0;
 }
 
 export async function pushCurrentSharedDataToGitHub(
@@ -132,10 +121,6 @@ export async function pushCurrentSharedDataToGitHub(
 
   if (!hasGitHubSharedDataToken(normalizedSettings)) {
     throw new Error("GitHub 토큰을 먼저 저장하세요.");
-  }
-
-  if (!hasSyncPassphrase(normalizedSettings)) {
-    throw new Error("공유 데이터 암호를 먼저 저장하세요.");
   }
 
   const apiUrl = getContentApiUrl(normalizedSettings);
@@ -150,7 +135,7 @@ export async function pushCurrentSharedDataToGitHub(
 
     if (existingContent.undecryptable) {
       throw new Error(
-        "원격 공유 파일이 다른 암호로 잠겨 있습니다. 공유 데이터 암호를 확인한 뒤 다시 시도하세요.",
+        "기존 암호화 공유 파일을 열 수 없어 덮어쓰지 않았습니다. 이전에 암호를 저장한 브라우저에서 다시 시도하세요.",
       );
     }
 
@@ -161,16 +146,12 @@ export async function pushCurrentSharedDataToGitHub(
     const backup = await createBackupData();
     assertRemoteDeltaIsIntentional(existingContent.backup?.transactions, backup.transactions);
 
-    const envelope = await encryptTextWithPassphrase(
-      normalizedSettings.passphrase,
-      JSON.stringify(backup, null, 2),
-    );
     const response = await fetch(apiUrl, {
       method: "PUT",
       headers,
       body: JSON.stringify({
         message: `data: shared-data ${backup.exportedAt.slice(0, 10)}`,
-        content: encodeBase64Utf8(JSON.stringify(envelope, null, 2)),
+        content: encodeBase64Utf8(JSON.stringify(backup, null, 2)),
         branch: normalizedSettings.branch,
         sha: existingContent.sha,
       }),
@@ -204,7 +185,6 @@ function normalizeSettings(settings: GitHubSharedDataSettings): GitHubSharedData
     branch: settings.branch.trim() || defaultGitHubSharedDataSettings.branch,
     path: settings.path.trim() || defaultGitHubSharedDataSettings.path,
     token: settings.token.trim(),
-    passphrase: settings.passphrase.trim(),
   };
 }
 
@@ -257,7 +237,7 @@ async function fetchExistingContent(
     return { sha: content.sha };
   }
 
-  const parsed = await parseSharedDataPayload(decoded, settings.passphrase);
+  const parsed = await parseSharedDataPayload(decoded, loadSessionPassphrase());
 
   if (parsed.undecryptable) {
     return { sha: content.sha, undecryptable: true };

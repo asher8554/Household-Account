@@ -8,7 +8,6 @@ import {
   clearGitHubSharedDataSettings,
   defaultGitHubSharedDataSettings,
   hasGitHubSharedDataToken,
-  hasSyncPassphrase,
   loadGitHubSharedDataSettings,
   saveGitHubSharedDataSettings,
   type GitHubSharedDataSettings,
@@ -24,7 +23,7 @@ export function GitHubSharedDataPanel() {
   const [settings, setSettings] = useState<GitHubSharedDataSettings>(() => loadGitHubSharedDataSettings());
   const [message, setMessage] = useState("");
   const [isPushing, setIsPushing] = useState(false);
-  const isReadyToPush = hasGitHubSharedDataToken(settings) && hasSyncPassphrase(settings);
+  const isReadyToPush = hasGitHubSharedDataToken(settings);
 
   function updateField(field: keyof GitHubSharedDataSettings, value: string) {
     setSettings((previous) => ({ ...previous, [field]: value }));
@@ -79,7 +78,7 @@ export function GitHubSharedDataPanel() {
   return (
     <SectionPanel
       title="GitHub 공유 설정"
-      eyebrow={isReadyToPush ? "수동 업데이트 준비됨" : "토큰·암호 필요"}
+      eyebrow={isReadyToPush ? "수동 업데이트 준비됨" : "토큰 필요"}
       action={
         <Button size="sm" variant="ghost" onClick={handleReset}>
           <RotateCcw size={15} aria-hidden="true" />
@@ -128,16 +127,6 @@ export function GitHubSharedDataPanel() {
             autoComplete="off"
           />
         </FormField>
-        <FormField label="공유 데이터 암호">
-          <input
-            className="h-10 w-full rounded-lg border border-line bg-field px-3 text-sm"
-            type="password"
-            value={settings.passphrase}
-            onChange={(event) => updateField("passphrase", event.target.value)}
-            placeholder="공유 파일을 잠그는 암호 (기기마다 동일하게)"
-            autoComplete="new-password"
-          />
-        </FormField>
         <div className="flex flex-wrap items-center gap-2">
           <Button variant="primary" type="submit">
             <Save size={16} aria-hidden="true" />
@@ -160,10 +149,8 @@ export function GitHubSharedDataPanel() {
       </form>
       {message ? <p className="mt-3 text-sm text-muted">{message}</p> : null}
       <p className="mt-3 text-sm leading-6 text-muted">
-        공유 파일은 입력한 암호로 암호화되어 커밋되므로 GitHub 저장소에는 평문 내역이 남지 않습니다. 토큰과
-        공유 데이터 암호는 브라우저를 닫으면 지워지는 세션 저장소에만 보관되므로, 새 브라우저에서는 다시
-        입력해야 합니다. 암호를 잃으면 다른 기기의 공유 파일을 열 수 없지만 이 기기의 데이터는 그대로
-        유지됩니다.
+        GitHub Pages 공유는 public/shared-data.json을 이 repo에 공개 커밋합니다. 거래 내역과 카테고리는
+        암호 없이 공유됩니다. GitHub 토큰은 브라우저를 닫으면 지워지는 세션 저장소에만 보관합니다.
       </p>
     </SectionPanel>
   );

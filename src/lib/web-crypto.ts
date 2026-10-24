@@ -1,9 +1,8 @@
-// 공유 데이터 암호화에 쓰는 WebCrypto 헬퍼를 모읍니다.
+// 공유 JSON의 Base64 변환과 기존 암호화 파일의 복호화를 제공합니다.
 const textEncoder = new TextEncoder();
 const textDecoder = new TextDecoder();
 
 export const encryptedBackupFormat = "household-account-encrypted-backup";
-export const pbkdf2Iterations = 310_000;
 
 type AesGcmAlgorithm = "AES-GCM";
 type Pbkdf2Hash = "PBKDF2-SHA-256";
@@ -88,27 +87,6 @@ async function deriveAesKey(
     false,
     ["encrypt", "decrypt"],
   );
-}
-
-export async function encryptTextWithPassphrase(
-  passphrase: string,
-  plaintext: string,
-): Promise<EncryptedPayloadEnvelope> {
-  const salt = crypto.getRandomValues(new Uint8Array(16));
-  const iv = crypto.getRandomValues(new Uint8Array(12));
-  const key = await deriveAesKey(passphrase, salt, pbkdf2Iterations);
-  const ciphertext = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, key, textEncoder.encode(plaintext));
-
-  return {
-    format: encryptedBackupFormat,
-    version: 1,
-    kdf: "PBKDF2-SHA-256",
-    iterations: pbkdf2Iterations,
-    salt: encodeBase64Bytes(salt),
-    cipher: "AES-GCM",
-    iv: encodeBase64Bytes(iv),
-    ciphertext: encodeBase64Bytes(new Uint8Array(ciphertext)),
-  };
 }
 
 export async function decryptEnvelopeWithPassphrase(
