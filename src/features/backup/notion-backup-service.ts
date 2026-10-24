@@ -160,22 +160,33 @@ async function pushBackupBatchToNotion(
   cursor: NotionBackupCursor | null,
 ): Promise<NotionBackupResult> {
   const body = cursor ? { backup, cursor } : { backup };
-  const response = await fetch(endpoint, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "X-Household-Backup-Key": writeKey,
-    },
-    body: JSON.stringify(body),
-  });
+  for (let attempt = 0; ; attempt += 1) {
+    const response = await fetch(endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Household-Backup-Key": writeKey,
+      },
+      body: JSON.stringify(body),
+    });
 
-  const payload = await safeJson(response);
+    const payload = await safeJson(response);
 
-  if (!response.ok) {
-    throw new Error(getNotionBackupErrorMessage(payload, response.status));
+    if (response.status === 429 && attempt < 5) {
+      const retryAfter = response.headers.get("Retry-After");
+      const seconds = retryAfter === null ? NaN : Number(retryAfter);
+      const delay = Number.isFinite(seconds) && seconds >= 0 ? seconds * 1000 : 1000 * 2 ** attempt;
+      // 실패 전 반영된 행은 Worker가 재조회해 건너뛰므로 같은 batch를 재시도한다.
+      await new Promise((resolve) => setTimeout(resolve, delay + Math.random() * 250));
+      continue;
+    }
+
+    if (!response.ok) {
+      throw new Error(getNotionBackupErrorMessage(payload, response.status));
+    }
+
+    return parseNotionBackupResult(payload);
   }
-
-  return parseNotionBackupResult(payload);
 }
 
 function mergeNotionBackupResults(

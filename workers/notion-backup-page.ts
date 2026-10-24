@@ -148,8 +148,6 @@ export function buildNotionBackupRows(
   const categories = new Map(backup.categories.map((category) => [category.id, category]));
 
   return [
-    ...backup.transactions.map((transaction) =>
-      buildTransactionRow(transaction, titlePropertyName, schema, categories.get(transaction.categoryId)?.name ?? "")),
     ...backup.categories.map((category): NotionBackupRow => ({
       id: category.id,
       recordType: "category",
@@ -167,6 +165,8 @@ export function buildNotionBackupRows(
         updatedAt: richTextValue(category.updatedAt),
       },
     })),
+    ...backup.transactions.map((transaction) =>
+      buildTransactionRow(transaction, titlePropertyName, schema, categories.get(transaction.categoryId)?.name ?? "")),
   ];
 }
 

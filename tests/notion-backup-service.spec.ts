@@ -113,6 +113,62 @@ test("pushBackupToNotion rejects hasMore responses without a cursor", async () =
   }
 });
 
+test("Notion backup respects Retry-After and retries the same batch", async () => {
+  const originalFetch = globalThis.fetch;
+  const originalSetTimeout = globalThis.setTimeout;
+  const delays: number[] = [];
+  const requests: string[] = [];
+  globalThis.setTimeout = ((callback: () => void, delay: number) => {
+    delays.push(delay);
+    callback();
+    return 0;
+  }) as typeof setTimeout;
+  globalThis.fetch = async (_url, init) => {
+    requests.push(String(init?.body));
+    if (requests.length === 1) {
+      return Response.json({ error: "notion_rate_limited" }, { status: 429, headers: { "Retry-After": "12" } });
+    }
+    return Response.json({ version: 1, syncedAt: "now", created: 0, updated: 1, legacyRemoved: 0,
+      categories: 1, transactions: 1, processed: 1, hasMore: false, nextCursor: null });
+  };
+  try {
+    expect(await pushBackupToNotion(backupWithTransactions(1), "test-key", "https://worker.test/institutions"))
+      .toMatchObject({ categories: 1, transactions: 1, updated: 1 });
+    expect(requests).toHaveLength(2);
+    expect(requests[1]).toBe(requests[0]);
+    expect(delays[0]).toBeGreaterThanOrEqual(12_000);
+    expect(delays[0]).toBeLessThan(12_250);
+  } finally {
+    globalThis.fetch = originalFetch;
+    globalThis.setTimeout = originalSetTimeout;
+  }
+});
+
+test("Notion backup stops after five rate-limit retries and never retries authentication errors", async () => {
+  const originalFetch = globalThis.fetch;
+  const originalSetTimeout = globalThis.setTimeout;
+  globalThis.setTimeout = ((callback: () => void) => { callback(); return 0; }) as typeof setTimeout;
+  let calls = 0;
+  let status = 429;
+  globalThis.fetch = async () => {
+    calls += 1;
+    return Response.json({ error: status === 429 ? "notion_rate_limited" : "unauthorized" }, { status });
+  };
+  try {
+    await expect(pushBackupToNotion(backupWithTransactions(1), "test-key", "https://worker.test/institutions"))
+      .rejects.toThrow("요청 제한");
+    expect(calls).toBe(6);
+    status = 401;
+    calls = 0;
+    await expect(pushBackupToNotion(backupWithTransactions(1), "test-key", "https://worker.test/institutions"))
+      .rejects.toThrow("백업 키가 맞지 않습니다");
+    expect(calls).toBe(1);
+  } finally {
+    globalThis.fetch = originalFetch;
+    globalThis.setTimeout = originalSetTimeout;
+  }
+});
+
 function backupWithTransactions(count: number): BackupFile {
   return {
     version: 1,

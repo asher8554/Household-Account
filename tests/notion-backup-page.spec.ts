@@ -42,20 +42,20 @@ test("buildNotionBackupRows maps transactions and complete category definitions 
   const rows = buildNotionBackupRows(backup, "id");
 
   expect(rows).toHaveLength(2);
-  expect(rows[0]).toMatchObject({
+  expect(rows[1]).toMatchObject({
     id: "tx-1",
     recordType: "transaction",
   });
-  expect(rows[0].properties.id.title[0]?.text.content).toBe("스타벅스");
-  expect(rows[0].properties.recordId.rich_text[0]?.text.content).toBe("tx-1");
-  expect(rows[0].properties.recordType.select.name).toBe("transaction");
-  expect(rows[0].properties.date.rich_text[0]?.text.content).toBe("2026-06-07");
-  expect(rows[0].properties["날짜"].date.start).toBe("2026-06-07");
-  expect(rows[0].properties.type.select.name).toBe("expense");
-  expect(rows[0].properties.amount.number).toBe(12000);
-  expect(rows[0].properties.categoryId.rich_text[0]?.text.content).toBe("expense-food");
-  expect(rows[0].properties.categoryName).toEqual({ rich_text: [{ type: "text", text: { content: "식비" } }] });
-  expect(rows[1]).toMatchObject({
+  expect(rows[1].properties.id.title[0]?.text.content).toBe("스타벅스");
+  expect(rows[1].properties.recordId.rich_text[0]?.text.content).toBe("tx-1");
+  expect(rows[1].properties.recordType.select.name).toBe("transaction");
+  expect(rows[1].properties.date.rich_text[0]?.text.content).toBe("2026-06-07");
+  expect(rows[1].properties["날짜"].date.start).toBe("2026-06-07");
+  expect(rows[1].properties.type.select.name).toBe("expense");
+  expect(rows[1].properties.amount.number).toBe(12000);
+  expect(rows[1].properties.categoryId.rich_text[0]?.text.content).toBe("expense-food");
+  expect(rows[1].properties.categoryName).toEqual({ rich_text: [{ type: "text", text: { content: "식비" } }] });
+  expect(rows[0]).toMatchObject({
     id: "expense-food",
     recordType: "category",
     properties: {
@@ -71,10 +71,10 @@ test("buildNotionBackupRows maps transactions and complete category definitions 
       updatedAt: { rich_text: [{ type: "text", text: { content: backup.categories[0].updatedAt } }] },
     },
   });
-  expect(rows[1].properties).not.toHaveProperty("날짜");
-  expect(rows[0].properties.name.rich_text[0]?.text.content).toBe("스타벅스");
-  expect(rows[0].properties.memo.rich_text[0]?.text.content).toBe("스타벅스");
-  expect(rows[0].properties.source.select.name).toBe("shinhan-file");
+  expect(rows[0].properties).not.toHaveProperty("날짜");
+  expect(rows[1].properties.name.rich_text[0]?.text.content).toBe("스타벅스");
+  expect(rows[1].properties.memo.rich_text[0]?.text.content).toBe("스타벅스");
+  expect(rows[1].properties.source.select.name).toBe("shinhan-file");
 });
 
 test("buildNotionBackupRows uses multi_select values for existing multi-select Notion fields", () => {
@@ -116,11 +116,11 @@ test("buildNotionBackupRows uses multi_select values for existing multi-select N
   });
 
   expect(rows).toHaveLength(2);
-  expect(rows[0].properties.recordType).toEqual({ multi_select: [{ name: "transaction" }] });
-  expect(rows[0].properties.type).toEqual({ multi_select: [{ name: "expense" }] });
-  expect(rows[0].properties.source).toEqual({ multi_select: [{ name: "shinhan-file" }] });
-  expect(rows[1].properties.recordType).toEqual({ multi_select: [{ name: "category" }] });
+  expect(rows[1].properties.recordType).toEqual({ multi_select: [{ name: "transaction" }] });
   expect(rows[1].properties.type).toEqual({ multi_select: [{ name: "expense" }] });
+  expect(rows[1].properties.source).toEqual({ multi_select: [{ name: "shinhan-file" }] });
+  expect(rows[0].properties.recordType).toEqual({ multi_select: [{ name: "category" }] });
+  expect(rows[0].properties.type).toEqual({ multi_select: [{ name: "expense" }] });
 });
 
 test("buildNotionBackupSchemaPatch adds missing meaningful backup columns", () => {
@@ -548,7 +548,7 @@ test("backup endpoint chunks upserts to stay under the Worker subrequest limit",
       legacyRemoved: 0,
       categories: 1,
       transactions: 25,
-      processed: 20,
+      processed: 19,
       hasMore: true,
       nextCursor: { phase: "upsert", offset: 0 },
     });
@@ -897,22 +897,22 @@ test("backup endpoint preserves category rows while removing duplicate transacti
         body: { in_trash: true },
       },
       {
-        url: "https://api.notion.com/v1/pages/page-duplicate-new",
-        body: expect.objectContaining({
-          properties: expect.objectContaining({
-            id: { title: [{ type: "text", text: { content: "스타벅스" } }] },
-            recordId: { rich_text: [{ type: "text", text: { content: "tx-1" } }] },
-            recordType: { select: { name: "transaction" } },
-          }),
-        }),
-      },
-      {
         url: "https://api.notion.com/v1/pages/page-category",
         body: expect.objectContaining({
           properties: expect.objectContaining({
             recordId: { rich_text: [{ type: "text", text: { content: "expense-food" } }] },
             name: { rich_text: [{ type: "text", text: { content: "식비" } }] },
             color: { rich_text: [{ type: "text", text: { content: "#c85645" } }] },
+          }),
+        }),
+      },
+      {
+        url: "https://api.notion.com/v1/pages/page-duplicate-new",
+        body: expect.objectContaining({
+          properties: expect.objectContaining({
+            id: { title: [{ type: "text", text: { content: "스타벅스" } }] },
+            recordId: { rich_text: [{ type: "text", text: { content: "tx-1" } }] },
+            recordType: { select: { name: "transaction" } },
           }),
         }),
       },
@@ -970,8 +970,8 @@ test("backup endpoint completes category batches and updates renamed or reassign
   };
 
   try {
-    expect(await runBatch()).toMatchObject({ created: 20, categories: 2, processed: 20, hasMore: true });
-    expect(await runBatch()).toMatchObject({ created: 7, categories: 2, processed: 5, hasMore: false });
+    expect(await runBatch()).toMatchObject({ created: 20, categories: 2, processed: 18, hasMore: true });
+    expect(await runBatch()).toMatchObject({ created: 7, categories: 2, processed: 7, hasMore: false });
     expect(await runBatch()).toMatchObject({ created: 0, updated: 0, hasMore: false });
     expect(pages.size).toBe(28);
     const unusedCategory = [...pages.values()].find((page) => JSON.stringify(page.properties.recordId ?? "").includes("cat_unused"));
@@ -984,11 +984,11 @@ test("backup endpoint completes category batches and updates renamed or reassign
     expect(await runBatch()).toMatchObject({ created: 0, updated: 0, hasMore: false });
     expect(pages.size).toBe(28);
     expect(pages.has("historical-category")).toBe(true);
-    expect(pages.get("page-1")?.properties).toMatchObject({
+    expect(pages.get("page-3")?.properties).toMatchObject({
       categoryId: { rich_text: [{ type: "text", text: { content: "cat_unused" } }] },
       categoryName: { rich_text: [{ type: "text", text: { content: "여행" } }] },
     });
-    expect(pages.get("page-2")?.properties).toMatchObject({
+    expect(pages.get("page-4")?.properties).toMatchObject({
       categoryName: { rich_text: [{ type: "text", text: { content: "외식" } }] },
     });
   } finally {

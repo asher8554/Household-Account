@@ -883,6 +883,7 @@ function corsHeaders(env: WorkerEnv): Record<string, string> {
     "Access-Control-Allow-Origin": env.ALLOWED_ORIGIN || DEFAULT_ALLOWED_ORIGIN,
     "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, X-Household-Backup-Key",
+    "Access-Control-Expose-Headers": "Retry-After",
   };
 }
 
