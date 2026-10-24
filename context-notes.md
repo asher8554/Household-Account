@@ -1156,3 +1156,10 @@
 - 사용자는 공유 데이터 암호 제거 및 카테고리 Notion 미반영 확인을 요청했다. 운영 브라우저에 GitHub 토큰·공유 암호·Notion 백업 키가 입력되어 있으며 값을 출력하지 않았다.
 - 운영 shared-data.json은 현재 encrypted envelope다. 신규 쓰기 암호화만 제거하고 기존 읽기 복호화 및 실패 시 덮어쓰기 방지를 보존한다. 공개 평문 전환 안내를 UI에 표시한다.
 - Notion 가계부 schema에 categoryName이 아직 없었으나 직접 Notion 기록을 실행한 후 첫 batch에서 거래 2506건 중 20건 업데이트 응답을 확인했다. GitHub 실패 시 Notion이 실행되지 않는 기존 순차 구조가 있다. 미반영의 과거 원인까지 이 사실만으로 확정하지 않는다.
+- 실사용 브라우저에서 Notion 요청 제한 오류로 기록이 중단되는 것을 재현했다. 공식 https://developers.notion.com/reference/request-limits 에 따라 브라우저가 Retry-After를 기다리고 동일 batch를 최대 5회 재시도하도록 수정했다. Worker는 Retry-After를 CORS로 노출하고 카테고리를 먼저 저장한다. 401 등 인증 오류는 재시도하지 않는다.
+- Notion 캘린더 view://3783d76f-8874-80cb-8afd-000c6b9638ec는 categoryId를 표시하고 있었다. 표시 속성만 id·amount·categoryName으로 변경하고 fetch로 재확인했다. ID 원자료는 보존했다.
+- 관련 테스트 23개, 전체 61개 중 58개 및 앱 빌드와 Worker 독립 타입 검사가 통과했다. 전체에서 남은 기존 실패는 월 이동 레이아웃, .gitignore 기대값, 기존 공유 병합 코드 문자열 검사 3개다. 기존 공개 안내 문구 테스트는 새 안내와 일치해 통과했다.
+- 커밋 d916920(암호 제거)·5618246(Notion 재시도 및 카테고리 우선)이 원격 main에 반영됐다. Pages run 40141622016이 성공했다. Worker 버전은 3324216f-15b9-4e56-ad82-f8a02412a339다.
+- 배포된 사용자 탭을 새로고침해 암호 입력 없음, 토큰만으로 현재 기록 업데이트 활성화, 설정 저장 버튼 키보드 포커스와 화면을 확인했다. dark=true, Pretendard Variable 실제 로드, 패널 rgba(37,54,44,0.42), backdrop-filter blur(22px) saturate(1.65)와 실제 유리 배경·가독성을 확인했다.
+- 운영 Notion 재백업 뒤 category 행 40개를 SQL count로 확인하고 view 조회로 해외직구·택배·통신요금·문화/학습·배달 이름과 색상을 다시 읽었다. SQL 추가 조회는 Notion 연결 사용량 한도로 제한됐으며 view 모드로 확인을 이어갔다.
+- 마지막 확인 시 운영 브라우저는 batch 3, 생성 41건, 업데이트 19건으로 계속 동작 중이다. 거래 2506건의 전체 완료는 아직 확인하지 않았다. 이번 작업에서 GitHub 금융 데이터의 공개 평문 업데이트 버튼은 누르지 않았고 기존 암호화 원격본은 유지했다.
