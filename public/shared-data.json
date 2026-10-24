@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-10-24T23:15:45.872Z",
+  "exportedAt": "2026-10-24T23:39:52.648Z",
   "categories": [
     {
       "id": "expense-food",
@@ -19829,12 +19829,12 @@
       "date": "2026-02-21",
       "type": "expense",
       "amount": 12165,
-      "categoryId": "cat_83444c34-46aa-4dd7-956c-517089172366",
+      "categoryId": "expense-shopping",
       "excludeFromAnnualTrend": false,
       "memo": "[신한카드] AliExpress.com / 카드 신용 / 승인번호 257629",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-10-18T12:31:01.792Z"
+      "updatedAt": "2026-10-24T23:36:39.716Z"
     },
     {
       "id": "tx_7607f4a2-7ac5-4aa5-bbb3-c7223bb783ce",
@@ -19853,12 +19853,12 @@
       "date": "2026-02-21",
       "type": "expense",
       "amount": 7817,
-      "categoryId": "cat_83444c34-46aa-4dd7-956c-517089172366",
+      "categoryId": "expense-shopping",
       "excludeFromAnnualTrend": false,
       "memo": "[신한카드] AliExpress.com / 카드 신용 / 승인번호 171151",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-10-18T12:31:01.792Z"
+      "updatedAt": "2026-10-24T23:36:39.716Z"
     },
     {
       "id": "tx_a8238ef6-483c-4709-a5ca-a62a2ef3b623",
@@ -19889,12 +19889,12 @@
       "date": "2026-02-22",
       "type": "expense",
       "amount": 9506,
-      "categoryId": "cat_83444c34-46aa-4dd7-956c-517089172366",
+      "categoryId": "expense-shopping",
       "excludeFromAnnualTrend": false,
       "memo": "[신한카드] Aliexpress.com / 카드 신용 / 승인번호 49110869",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-10-18T12:31:01.792Z"
+      "updatedAt": "2026-10-24T23:36:39.716Z"
     },
     {
       "id": "tx_a1e56e48-14c3-4525-935d-f8f350bec94c",
@@ -21353,12 +21353,12 @@
       "date": "2026-03-28",
       "type": "expense",
       "amount": 37155,
-      "categoryId": "cat_83444c34-46aa-4dd7-956c-517089172366",
+      "categoryId": "expense-shopping",
       "excludeFromAnnualTrend": false,
       "memo": "[신한카드] AliExpress.com / 카드 신용 / 승인번호 380251",
       "source": "shinhan-file",
       "createdAt": "2026-06-07T06:51:14.265Z",
-      "updatedAt": "2026-10-18T12:31:01.792Z"
+      "updatedAt": "2026-10-24T23:36:39.716Z"
     },
     {
       "id": "tx_edce9650-999c-4627-a81b-6e84316b09ba",
@@ -27769,6 +27769,18 @@
       "updatedAt": "2026-08-18T06:52:04.372Z"
     },
     {
+      "id": "tx_2daa1ce4-328f-4177-bb09-3af9aac641e7",
+      "date": "2026-08-14",
+      "type": "expense",
+      "amount": 2308866,
+      "categoryId": "expense-other",
+      "excludeFromAnnualTrend": false,
+      "memo": "[국민은행] 신한카드",
+      "source": "bank-file",
+      "createdAt": "2026-10-24T23:36:07.391Z",
+      "updatedAt": "2026-10-24T23:36:07.391Z"
+    },
+    {
       "id": "tx_2f12d785-a6f6-4e59-8da2-983999fcede1",
       "date": "2026-08-14",
       "type": "expense",
@@ -28669,6 +28681,18 @@
       "updatedAt": "2026-10-18T12:31:14.893Z"
     },
     {
+      "id": "tx_b2bb094a-d0ff-449c-9775-278126464162",
+      "date": "2026-09-14",
+      "type": "expense",
+      "amount": 2245273,
+      "categoryId": "expense-other",
+      "excludeFromAnnualTrend": false,
+      "memo": "[국민은행] 신한카드",
+      "source": "bank-file",
+      "createdAt": "2026-10-24T23:36:07.391Z",
+      "updatedAt": "2026-10-24T23:36:07.391Z"
+    },
+    {
       "id": "tx_1e7ae62e-9422-481c-8d79-dd372324386d",
       "date": "2026-09-15",
       "type": "expense",
@@ -28679,6 +28703,18 @@
       "source": "bank-file",
       "createdAt": "2026-10-18T11:24:00.043Z",
       "updatedAt": "2026-10-18T12:26:23.930Z"
+    },
+    {
+      "id": "tx_7b411a98-b419-4f51-9a9c-dde55042026c",
+      "date": "2026-09-15",
+      "type": "expense",
+      "amount": 106207,
+      "categoryId": "expense-other",
+      "excludeFromAnnualTrend": false,
+      "memo": "[국민은행] 신한카드",
+      "source": "bank-file",
+      "createdAt": "2026-10-24T23:36:07.391Z",
+      "updatedAt": "2026-10-24T23:36:07.391Z"
     },
     {
       "id": "tx_a8e5a529-6213-42df-8d1d-aba90a38d841",
@@ -28925,12 +28961,12 @@
       "date": "2026-09-21",
       "type": "expense",
       "amount": 32362,
-      "categoryId": "cat_83444c34-46aa-4dd7-956c-517089172366",
+      "categoryId": "expense-shopping",
       "excludeFromAnnualTrend": false,
       "memo": "[신한카드] ALIEXPRESS.COM / 상태 신용 / 카드 신용 / 승인번호 435397",
       "source": "shinhan-file",
       "createdAt": "2026-10-18T11:23:50.511Z",
-      "updatedAt": "2026-10-18T12:31:01.792Z"
+      "updatedAt": "2026-10-24T23:36:39.716Z"
     },
     {
       "id": "tx_1cfadf52-e499-48fa-a5fe-93e5eaa8f1b1",
@@ -29297,12 +29333,12 @@
       "date": "2026-09-27",
       "type": "expense",
       "amount": 55360,
-      "categoryId": "cat_83444c34-46aa-4dd7-956c-517089172366",
+      "categoryId": "expense-shopping",
       "excludeFromAnnualTrend": false,
       "memo": "[신한카드] ALIEXPRESS COM / 상태 신용 / 카드 신용 / 승인번호 144116",
       "source": "shinhan-file",
       "createdAt": "2026-10-18T11:23:50.511Z",
-      "updatedAt": "2026-10-18T12:31:01.792Z"
+      "updatedAt": "2026-10-24T23:36:39.716Z"
     },
     {
       "id": "tx_afd5aec2-f812-46d7-9487-80a052a7a8c0",
@@ -30505,6 +30541,18 @@
       "updatedAt": "2026-10-18T11:42:01.312Z"
     },
     {
+      "id": "tx_a6c3fd30-0133-4cb2-8e37-e86553b7c3fd",
+      "date": "2026-10-18",
+      "type": "expense",
+      "amount": 16190,
+      "categoryId": "expense-shopping",
+      "excludeFromAnnualTrend": false,
+      "memo": "[신한카드] 쿠팡 / 상태 신용 / 카드 신용 / 승인번호 44135951",
+      "source": "shinhan-file",
+      "createdAt": "2026-10-24T23:36:13.654Z",
+      "updatedAt": "2026-10-24T23:36:30.249Z"
+    },
+    {
       "id": "tx_ea22e849-a962-4920-afa6-bd29326783ee",
       "date": "2026-10-18",
       "type": "income",
@@ -30515,6 +30563,342 @@
       "source": "bank-file",
       "createdAt": "2026-10-18T11:24:00.043Z",
       "updatedAt": "2026-10-18T11:24:00.043Z"
+    },
+    {
+      "id": "tx_09973991-2b08-48ea-97f6-0fb1265418c0",
+      "date": "2026-10-19",
+      "type": "expense",
+      "amount": 84500,
+      "categoryId": "cat_9eaf5469-8596-4f8e-9269-6ff8d1fa0ab6",
+      "excludeFromAnnualTrend": false,
+      "memo": "[신한카드] 구성점기아오토큐 주식회사 / 상태 신용 / 카드 신용 / 승인번호 03884393",
+      "source": "shinhan-file",
+      "createdAt": "2026-10-24T23:36:13.654Z",
+      "updatedAt": "2026-10-24T23:38:22.044Z"
+    },
+    {
+      "id": "tx_1d872cfb-f386-4a61-9266-f925e68fde95",
+      "date": "2026-10-19",
+      "type": "expense",
+      "amount": 4600,
+      "categoryId": "expense-medical",
+      "excludeFromAnnualTrend": false,
+      "memo": "[신한카드] 수약국 / 상태 신용 / 카드 신용 / 승인번호 49367940",
+      "source": "shinhan-file",
+      "createdAt": "2026-10-24T23:36:13.654Z",
+      "updatedAt": "2026-10-24T23:38:16.479Z"
+    },
+    {
+      "id": "tx_22957972-a0fe-4651-9e12-05ab9108f6b5",
+      "date": "2026-10-19",
+      "type": "expense",
+      "amount": 2900,
+      "categoryId": "expense-medical",
+      "excludeFromAnnualTrend": false,
+      "memo": "[신한카드] 양수연소아청소년과의원 / 상태 신용 / 카드 신용 / 승인번호 04541590",
+      "source": "shinhan-file",
+      "createdAt": "2026-10-24T23:36:13.654Z",
+      "updatedAt": "2026-10-24T23:38:14.223Z"
+    },
+    {
+      "id": "tx_45b8580c-d3f8-4147-954b-b9d7bc4dcbc5",
+      "date": "2026-10-19",
+      "type": "expense",
+      "amount": 23500,
+      "categoryId": "cat_0ba2a7f7-580b-45e7-be29-86b408c9e53f",
+      "excludeFromAnnualTrend": false,
+      "memo": "[신한카드] 쿠팡이츠 / 상태 신용 / 카드 신용 / 승인번호 05630020",
+      "source": "shinhan-file",
+      "createdAt": "2026-10-24T23:36:13.654Z",
+      "updatedAt": "2026-10-24T23:38:09.446Z"
+    },
+    {
+      "id": "tx_4d9d7fb1-0d89-48c5-9c87-4dbdf1864607",
+      "date": "2026-10-19",
+      "type": "expense",
+      "amount": 36500,
+      "categoryId": "expense-housing",
+      "excludeFromAnnualTrend": false,
+      "memo": "[신한카드] (주)세스코 / 상태 신용 / 카드 신용 / 승인번호 02007813",
+      "source": "shinhan-file",
+      "createdAt": "2026-10-24T23:36:13.654Z",
+      "updatedAt": "2026-10-24T23:37:44.994Z"
+    },
+    {
+      "id": "tx_8209a804-50be-4eb4-bf79-22bf7b01565d",
+      "date": "2026-10-19",
+      "type": "expense",
+      "amount": 29728,
+      "categoryId": "expense-subscription",
+      "excludeFromAnnualTrend": false,
+      "memo": "[신한카드] ANTHROPIC* CLAUDE SUB / 상태 신용 / 카드 신용 / 승인번호 265980",
+      "source": "shinhan-file",
+      "createdAt": "2026-10-24T23:36:13.654Z",
+      "updatedAt": "2026-10-24T23:37:42.670Z"
+    },
+    {
+      "id": "tx_aaa5ccd3-50f1-4ccb-b068-edf04113a6a6",
+      "date": "2026-10-19",
+      "type": "expense",
+      "amount": 11000,
+      "categoryId": "expense-food",
+      "excludeFromAnnualTrend": false,
+      "memo": "[신한카드] 일품양평해장국 / 상태 신용 / 카드 신용 / 승인번호 01416274",
+      "source": "shinhan-file",
+      "createdAt": "2026-10-24T23:36:13.654Z",
+      "updatedAt": "2026-10-24T23:37:39.835Z"
+    },
+    {
+      "id": "tx_ac6a0381-ec98-4c91-894a-38578ab121cc",
+      "date": "2026-10-19",
+      "type": "income",
+      "amount": 350000,
+      "categoryId": "income-other",
+      "excludeFromAnnualTrend": false,
+      "memo": "[국민은행] 김선영",
+      "source": "bank-file",
+      "createdAt": "2026-10-24T23:36:07.391Z",
+      "updatedAt": "2026-10-24T23:36:07.391Z"
+    },
+    {
+      "id": "tx_bf0adc3f-5a49-492d-91d6-23b1015d91eb",
+      "date": "2026-10-19",
+      "type": "expense",
+      "amount": 6900,
+      "categoryId": "expense-medical",
+      "excludeFromAnnualTrend": false,
+      "memo": "[신한카드] 신내이안과 / 상태 신용 / 카드 신용 / 승인번호 49332807",
+      "source": "shinhan-file",
+      "createdAt": "2026-10-24T23:36:13.654Z",
+      "updatedAt": "2026-10-24T23:37:37.622Z"
+    },
+    {
+      "id": "tx_f557500e-116d-4d12-ac9c-1c57e1d975a7",
+      "date": "2026-10-19",
+      "type": "expense",
+      "amount": 7700,
+      "categoryId": "expense-medical",
+      "excludeFromAnnualTrend": false,
+      "memo": "[신한카드] 진약국 / 상태 신용 / 카드 신용 / 승인번호 04590653",
+      "source": "shinhan-file",
+      "createdAt": "2026-10-24T23:36:13.654Z",
+      "updatedAt": "2026-10-24T23:37:35.628Z"
+    },
+    {
+      "id": "tx_0c93a967-78bf-468f-94ee-ff27b6a5f7a1",
+      "date": "2026-10-20",
+      "type": "expense",
+      "amount": 32010,
+      "categoryId": "expense-shopping",
+      "excludeFromAnnualTrend": false,
+      "memo": "[신한카드] 쿠팡 / 상태 신용 / 카드 신용 / 승인번호 23041474",
+      "source": "shinhan-file",
+      "createdAt": "2026-10-24T23:36:13.654Z",
+      "updatedAt": "2026-10-24T23:36:30.249Z"
+    },
+    {
+      "id": "tx_23261bf2-8032-421f-bb4e-bc65e487f2a5",
+      "date": "2026-10-20",
+      "type": "expense",
+      "amount": 7460,
+      "categoryId": "expense-insurance",
+      "excludeFromAnnualTrend": false,
+      "memo": "[신한카드] 신한라이프생명보험 주식회사 / 상태 신용 / 카드 신용 / 승인번호 12420216",
+      "source": "shinhan-file",
+      "createdAt": "2026-10-24T23:36:13.654Z",
+      "updatedAt": "2026-10-24T23:37:21.288Z"
+    },
+    {
+      "id": "tx_34e1dd23-f0a0-4ec3-a0b5-47d2116e6749",
+      "date": "2026-10-20",
+      "type": "expense",
+      "amount": 13447,
+      "categoryId": "expense-subscription",
+      "excludeFromAnnualTrend": false,
+      "memo": "[신한카드] TYPESAFE AI, INC. / 상태 신용 / 카드 신용 / 승인번호 517434",
+      "source": "shinhan-file",
+      "createdAt": "2026-10-24T23:36:13.654Z",
+      "updatedAt": "2026-10-24T23:37:33.362Z"
+    },
+    {
+      "id": "tx_4548b1d8-908d-4dc7-8ea1-4dfee8ef1ef2",
+      "date": "2026-10-20",
+      "type": "expense",
+      "amount": 200000,
+      "categoryId": "expense-shopping",
+      "excludeFromAnnualTrend": false,
+      "memo": "[국민은행] 네이버페이충전",
+      "source": "bank-file",
+      "createdAt": "2026-10-24T23:36:07.391Z",
+      "updatedAt": "2026-10-24T23:37:07.646Z"
+    },
+    {
+      "id": "tx_52da8859-5365-41fe-86e0-fcdd2a92c51f",
+      "date": "2026-10-20",
+      "type": "expense",
+      "amount": 25160,
+      "categoryId": "expense-shopping",
+      "excludeFromAnnualTrend": false,
+      "memo": "[신한카드] 쿠팡 / 상태 신용 / 카드 신용 / 승인번호 20825789",
+      "source": "shinhan-file",
+      "createdAt": "2026-10-24T23:36:13.654Z",
+      "updatedAt": "2026-10-24T23:36:30.249Z"
+    },
+    {
+      "id": "tx_7d704c1e-5deb-41a1-b0c4-61370f480421",
+      "date": "2026-10-20",
+      "type": "expense",
+      "amount": 50130,
+      "categoryId": "expense-insurance",
+      "excludeFromAnnualTrend": false,
+      "memo": "[신한카드] 신한라이프생명보험 주식회사 / 상태 신용 / 카드 신용 / 승인번호 12865853",
+      "source": "shinhan-file",
+      "createdAt": "2026-10-24T23:36:13.654Z",
+      "updatedAt": "2026-10-24T23:37:21.288Z"
+    },
+    {
+      "id": "tx_a6307426-7dab-4ebf-a318-ddf2f5ee2abd",
+      "date": "2026-10-20",
+      "type": "expense",
+      "amount": 51500,
+      "categoryId": "cat_8c294edb-cff3-40d9-aaa1-d931082a49b4",
+      "excludeFromAnnualTrend": false,
+      "memo": "[신한카드] 베베쿡 / 상태 신용 / 카드 신용 / 승인번호 23025604",
+      "source": "shinhan-file",
+      "createdAt": "2026-10-24T23:36:13.654Z",
+      "updatedAt": "2026-10-24T23:37:26.244Z"
+    },
+    {
+      "id": "tx_b2dc9e1c-bdc8-49f0-9606-e8968e1725a5",
+      "date": "2026-10-20",
+      "type": "expense",
+      "amount": 63710,
+      "categoryId": "expense-insurance",
+      "excludeFromAnnualTrend": false,
+      "memo": "[신한카드] 신한라이프생명보험 주식회사 / 상태 신용 / 카드 신용 / 승인번호 12339143",
+      "source": "shinhan-file",
+      "createdAt": "2026-10-24T23:36:13.654Z",
+      "updatedAt": "2026-10-24T23:37:21.288Z"
+    },
+    {
+      "id": "tx_327de660-25dc-49d3-ab75-ca9c89f8c13f",
+      "date": "2026-10-21",
+      "type": "expense",
+      "amount": 35550,
+      "categoryId": "expense-shopping",
+      "excludeFromAnnualTrend": false,
+      "memo": "[신한카드] 쿠팡 / 상태 신용 / 카드 신용 / 승인번호 25666107",
+      "source": "shinhan-file",
+      "createdAt": "2026-10-24T23:36:13.654Z",
+      "updatedAt": "2026-10-24T23:36:30.249Z"
+    },
+    {
+      "id": "tx_3c68cf52-9811-49ca-9586-d1e39bbe97de",
+      "date": "2026-10-21",
+      "type": "expense",
+      "amount": 13300,
+      "categoryId": "expense-medical",
+      "excludeFromAnnualTrend": false,
+      "memo": "[신한카드] 맑은성모이비인후과 / 상태 신용 / 카드 신용 / 승인번호 26874161",
+      "source": "shinhan-file",
+      "createdAt": "2026-10-24T23:36:13.654Z",
+      "updatedAt": "2026-10-24T23:37:18.139Z"
+    },
+    {
+      "id": "tx_beddad69-070f-4d19-a418-1906c1ee3d77",
+      "date": "2026-10-21",
+      "type": "expense",
+      "amount": 7900,
+      "categoryId": "expense-medical",
+      "excludeFromAnnualTrend": false,
+      "memo": "[신한카드] 내내약국 / 상태 신용 / 카드 신용 / 승인번호 26933161",
+      "source": "shinhan-file",
+      "createdAt": "2026-10-24T23:36:13.654Z",
+      "updatedAt": "2026-10-24T23:37:14.994Z"
+    },
+    {
+      "id": "tx_d5467b37-5210-455b-a924-c56bf7691a9a",
+      "date": "2026-10-21",
+      "type": "income",
+      "amount": 1,
+      "categoryId": "income-other",
+      "excludeFromAnnualTrend": false,
+      "memo": "[국민은행] 말린당근",
+      "source": "bank-file",
+      "createdAt": "2026-10-24T23:36:07.391Z",
+      "updatedAt": "2026-10-24T23:36:07.391Z"
+    },
+    {
+      "id": "tx_5e76533b-9706-42ba-8130-487d9843e649",
+      "date": "2026-10-22",
+      "type": "expense",
+      "amount": 20000,
+      "categoryId": "expense-shopping",
+      "excludeFromAnnualTrend": false,
+      "memo": "[국민은행] 네이버페이충전",
+      "source": "bank-file",
+      "createdAt": "2026-10-24T23:36:07.391Z",
+      "updatedAt": "2026-10-24T23:37:07.646Z"
+    },
+    {
+      "id": "tx_692e4096-7e5a-4f6a-9954-22655e9c8025",
+      "date": "2026-10-22",
+      "type": "expense",
+      "amount": 10000,
+      "categoryId": "expense-food",
+      "excludeFromAnnualTrend": false,
+      "memo": "[신한카드] 엄가네본가시골집 / 상태 신용 / 카드 신용 / 승인번호 43336478",
+      "source": "shinhan-file",
+      "createdAt": "2026-10-24T23:36:13.654Z",
+      "updatedAt": "2026-10-24T23:37:03.079Z"
+    },
+    {
+      "id": "tx_bf7cce67-bf1f-4baa-ba4e-0c9258dd4dff",
+      "date": "2026-10-22",
+      "type": "expense",
+      "amount": 40000,
+      "categoryId": "expense-shopping",
+      "excludeFromAnnualTrend": false,
+      "memo": "[국민은행] 네이버페이충전",
+      "source": "bank-file",
+      "createdAt": "2026-10-24T23:36:07.391Z",
+      "updatedAt": "2026-10-24T23:37:07.646Z"
+    },
+    {
+      "id": "tx_589488b9-b663-43f8-9fb1-5920ecd2e57f",
+      "date": "2026-10-23",
+      "type": "expense",
+      "amount": 1400,
+      "categoryId": "cat_ed2e80f5-df90-4a47-93b2-190f44e490c8",
+      "excludeFromAnnualTrend": false,
+      "memo": "[신한카드] 엠앤와이아이스 에듀시티점 / 상태 신용 / 카드 신용 / 승인번호 07885127",
+      "source": "shinhan-file",
+      "createdAt": "2026-10-24T23:36:13.654Z",
+      "updatedAt": "2026-10-24T23:37:01.226Z"
+    },
+    {
+      "id": "tx_67a302b9-58f5-4a75-98a5-d5064a2d81de",
+      "date": "2026-10-23",
+      "type": "expense",
+      "amount": 13000,
+      "categoryId": "expense-food",
+      "excludeFromAnnualTrend": false,
+      "memo": "[신한카드] 한국맥도날드(유)천안터미널점 / 상태 신용 / 카드 신용 / 승인번호 07203061",
+      "source": "shinhan-file",
+      "createdAt": "2026-10-24T23:36:13.654Z",
+      "updatedAt": "2026-10-24T23:36:41.598Z"
+    },
+    {
+      "id": "tx_019f715a-76db-4afa-b7d9-945a610bbeeb",
+      "date": "2026-10-24",
+      "type": "expense",
+      "amount": 32183,
+      "categoryId": "expense-shopping",
+      "excludeFromAnnualTrend": false,
+      "memo": "[신한카드] AliExpress.com / 상태 신용 / 카드 신용 / 승인번호 474125",
+      "source": "shinhan-file",
+      "createdAt": "2026-10-24T23:36:13.654Z",
+      "updatedAt": "2026-10-24T23:36:39.716Z"
     }
   ]
 }
