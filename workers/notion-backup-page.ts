@@ -90,6 +90,11 @@ const requiredBackupSchema: Record<string, unknown> = {
   recordId: { rich_text: {} },
   amount: { number: {} },
   categoryId: { rich_text: {} },
+  categoryName: { rich_text: {} },
+  color: { rich_text: {} },
+  isDefault: { checkbox: {} },
+  isActive: { checkbox: {} },
+  sortOrder: { number: {} },
   memo: { rich_text: {} },
   source: {
     select: {
@@ -140,7 +145,29 @@ export function buildNotionBackupRows(
   titlePropertyName: string,
   schema: Record<string, NotionPropertySchema> = {},
 ): NotionBackupRow[] {
-  return backup.transactions.map((transaction) => buildTransactionRow(transaction, titlePropertyName, schema));
+  const categories = new Map(backup.categories.map((category) => [category.id, category]));
+
+  return [
+    ...backup.transactions.map((transaction) =>
+      buildTransactionRow(transaction, titlePropertyName, schema, categories.get(transaction.categoryId)?.name ?? "")),
+    ...backup.categories.map((category): NotionBackupRow => ({
+      id: category.id,
+      recordType: "category",
+      properties: {
+        [titlePropertyName]: titleValue(category.name),
+        recordId: richTextValue(category.id),
+        recordType: optionValue("recordType", "category", schema),
+        type: optionValue("type", category.type, schema),
+        name: richTextValue(category.name),
+        color: richTextValue(category.color),
+        isDefault: { checkbox: category.isDefault },
+        isActive: { checkbox: category.isActive },
+        sortOrder: { number: category.sortOrder },
+        createdAt: richTextValue(category.createdAt),
+        updatedAt: richTextValue(category.updatedAt),
+      },
+    })),
+  ];
 }
 
 export function buildNotionBackupSchemaPatch(schema: Record<string, NotionPropertySchema>): NotionSchemaPatch {
@@ -184,6 +211,7 @@ function buildTransactionRow(
   transaction: BackupTransactionPayload,
   titlePropertyName: string,
   schema: Record<string, NotionPropertySchema>,
+  categoryName: string,
 ): NotionBackupRow {
   return {
     id: transaction.id,
@@ -197,6 +225,7 @@ function buildTransactionRow(
       type: optionValue("type", transaction.type, schema),
       amount: { number: transaction.amount },
       categoryId: richTextValue(transaction.categoryId),
+      categoryName: richTextValue(categoryName),
       name: richTextValue(transaction.memo),
       memo: richTextValue(transaction.memo),
       source: optionValue("source", transaction.source, schema),

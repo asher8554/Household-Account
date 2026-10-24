@@ -7,7 +7,7 @@ import {
   parseBackupPayload,
 } from "../workers/notion-backup-page";
 
-test("buildNotionBackupRows maps only transactions to data source row properties", () => {
+test("buildNotionBackupRows maps transactions and complete category definitions to data source rows", () => {
   const backup = {
     version: 1,
     exportedAt: "2026-06-07T10:20:30.000Z",
@@ -41,7 +41,7 @@ test("buildNotionBackupRows maps only transactions to data source row properties
 
   const rows = buildNotionBackupRows(backup, "id");
 
-  expect(rows).toHaveLength(1);
+  expect(rows).toHaveLength(2);
   expect(rows[0]).toMatchObject({
     id: "tx-1",
     recordType: "transaction",
@@ -54,6 +54,24 @@ test("buildNotionBackupRows maps only transactions to data source row properties
   expect(rows[0].properties.type.select.name).toBe("expense");
   expect(rows[0].properties.amount.number).toBe(12000);
   expect(rows[0].properties.categoryId.rich_text[0]?.text.content).toBe("expense-food");
+  expect(rows[0].properties.categoryName).toEqual({ rich_text: [{ type: "text", text: { content: "식비" } }] });
+  expect(rows[1]).toMatchObject({
+    id: "expense-food",
+    recordType: "category",
+    properties: {
+      id: { title: [{ type: "text", text: { content: "식비" } }] },
+      recordId: { rich_text: [{ type: "text", text: { content: "expense-food" } }] },
+      name: { rich_text: [{ type: "text", text: { content: "식비" } }] },
+      color: { rich_text: [{ type: "text", text: { content: "#c85645" } }] },
+      type: { select: { name: "expense" } },
+      isDefault: { checkbox: true },
+      isActive: { checkbox: true },
+      sortOrder: { number: 0 },
+      createdAt: { rich_text: [{ type: "text", text: { content: backup.categories[0].createdAt } }] },
+      updatedAt: { rich_text: [{ type: "text", text: { content: backup.categories[0].updatedAt } }] },
+    },
+  });
+  expect(rows[1].properties).not.toHaveProperty("날짜");
   expect(rows[0].properties.name.rich_text[0]?.text.content).toBe("스타벅스");
   expect(rows[0].properties.memo.rich_text[0]?.text.content).toBe("스타벅스");
   expect(rows[0].properties.source.select.name).toBe("shinhan-file");
@@ -97,10 +115,12 @@ test("buildNotionBackupRows uses multi_select values for existing multi-select N
     source: { type: "multi_select" },
   });
 
-  expect(rows).toHaveLength(1);
+  expect(rows).toHaveLength(2);
   expect(rows[0].properties.recordType).toEqual({ multi_select: [{ name: "transaction" }] });
   expect(rows[0].properties.type).toEqual({ multi_select: [{ name: "expense" }] });
   expect(rows[0].properties.source).toEqual({ multi_select: [{ name: "shinhan-file" }] });
+  expect(rows[1].properties.recordType).toEqual({ multi_select: [{ name: "category" }] });
+  expect(rows[1].properties.type).toEqual({ multi_select: [{ name: "expense" }] });
 });
 
 test("buildNotionBackupSchemaPatch adds missing meaningful backup columns", () => {
@@ -115,6 +135,11 @@ test("buildNotionBackupSchemaPatch adds missing meaningful backup columns", () =
       recordType: { select: {} },
       amount: { number: {} },
       categoryId: { rich_text: {} },
+      categoryName: { rich_text: {} },
+      color: { rich_text: {} },
+      isDefault: { checkbox: {} },
+      isActive: { checkbox: {} },
+      sortOrder: { number: {} },
       memo: { rich_text: {} },
       source: { select: {} },
       date: { rich_text: {} },
@@ -521,7 +546,7 @@ test("backup endpoint chunks upserts to stay under the Worker subrequest limit",
       created: 20,
       updated: 0,
       legacyRemoved: 0,
-      categories: 0,
+      categories: 1,
       transactions: 25,
       processed: 20,
       hasMore: true,
@@ -552,11 +577,14 @@ test("backup endpoint skips already migrated rows and continues pending title up
     if (method === "POST" && url.includes("/v1/data_sources/") && url.endsWith("/query")) {
       return new Response(
         JSON.stringify({
-          results: backup.transactions.map((transaction, index) => ({
+          results: [{
+            id: "page-category",
+            properties: buildNotionBackupRows({ ...backup, transactions: [] }, "id")[0].properties,
+          }, ...backup.transactions.map((transaction, index) => ({
             id: `page-${index + 1}`,
             last_edited_time: `2026-06-07T07:${String(index).padStart(2, "0")}:00.000Z`,
             properties: index < 20 ? currentTransactionPageProperties(transaction) : legacyTransactionPageProperties(transaction),
-          })),
+          }))],
           has_more: false,
           next_cursor: null,
         }),
@@ -647,7 +675,7 @@ test("backup endpoint chunks legacy cleanup before upserting rows", async () => 
             id: `page-category-${index}`,
             last_edited_time: "2026-06-07T07:00:00.000Z",
             properties: {
-              id: { title: [{ plain_text: `expense-legacy-${index}` }] },
+              id: { title: [{ plain_text: `Household account backup ${index}` }] },
               recordType: { select: { name: "category" } },
             },
           })),
@@ -695,7 +723,7 @@ test("backup endpoint chunks legacy cleanup before upserting rows", async () => 
       created: 0,
       updated: 0,
       legacyRemoved: 20,
-      categories: 0,
+      categories: 1,
       transactions: 1,
       processed: 0,
       hasMore: true,
@@ -708,7 +736,7 @@ test("backup endpoint chunks legacy cleanup before upserting rows", async () => 
   }
 });
 
-test("backup endpoint removes category rows and duplicate transaction rows before upsert", async () => {
+test("backup endpoint preserves category rows while removing duplicate transaction rows", async () => {
   const originalFetch = globalThis.fetch;
   const patchCalls: Array<{ url: string; body: unknown }> = [];
 
@@ -858,16 +886,12 @@ test("backup endpoint removes category rows and duplicate transaction rows befor
     expect(response.status).toBe(201);
     await expect(response.json()).resolves.toMatchObject({
       created: 0,
-      updated: 1,
-      legacyRemoved: 2,
-      categories: 0,
+      updated: 2,
+      legacyRemoved: 1,
+      categories: 1,
       transactions: 1,
     });
     expect(patchCalls).toEqual([
-      {
-        url: "https://api.notion.com/v1/pages/page-category",
-        body: { in_trash: true },
-      },
       {
         url: "https://api.notion.com/v1/pages/page-duplicate-old",
         body: { in_trash: true },
@@ -882,7 +906,91 @@ test("backup endpoint removes category rows and duplicate transaction rows befor
           }),
         }),
       },
+      {
+        url: "https://api.notion.com/v1/pages/page-category",
+        body: expect.objectContaining({
+          properties: expect.objectContaining({
+            recordId: { rich_text: [{ type: "text", text: { content: "expense-food" } }] },
+            name: { rich_text: [{ type: "text", text: { content: "식비" } }] },
+            color: { rich_text: [{ type: "text", text: { content: "#c85645" } }] },
+          }),
+        }),
+      },
     ]);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("backup endpoint completes category batches and updates renamed or reassigned categories without duplicates", async () => {
+  const originalFetch = globalThis.fetch;
+  const backup = backupWithTransactions(25);
+  backup.categories.push({ ...backup.categories[0], id: "cat_unused", name: "여행", isDefault: false, isActive: false, sortOrder: 9 });
+  const pages = new Map<string, { id: string; properties: Record<string, unknown> }>();
+  // 현재 백업에 없는 과거 카테고리도 삭제하지 않는다.
+  pages.set("historical-category", { id: "historical-category", properties: {
+    id: title("cat_historical"), recordType: { select: { name: "category" } },
+  } });
+  let nextId = 0;
+
+  globalThis.fetch = async (input: RequestInfo | URL, init?: RequestInit) => {
+    const url = String(input);
+    const method = init?.method ?? "GET";
+    if (method === "GET" && url.includes("/v1/data_sources/")) {
+      return Response.json({ properties: completeBackupSchema() });
+    }
+    if (method === "POST" && url.endsWith("/query")) {
+      return Response.json({ results: [...pages.values()], has_more: false, next_cursor: null });
+    }
+    const body = JSON.parse(String(init?.body ?? "{}"));
+    if (method === "POST" && url === "https://api.notion.com/v1/pages") {
+      const id = `page-${++nextId}`;
+      pages.set(id, { id, properties: body.properties });
+      return Response.json({ id });
+    }
+    if (method === "PATCH" && url.includes("/v1/pages/")) {
+      expect(body).not.toHaveProperty("in_trash");
+      const id = url.split("/").pop()!;
+      pages.set(id, { id, properties: body.properties });
+      return Response.json({ id });
+    }
+    throw new Error(`Unexpected fetch: ${method} ${url}`);
+  };
+
+  const runBatch = async () => {
+    const response = await worker.fetch(new Request("https://worker.test/backups", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Household-Backup-Key": "secret" },
+      body: JSON.stringify({ backup }),
+    }), {
+      NOTION_TOKEN: "ntn_test", NOTION_DATA_SOURCE_ID: "test-source", NOTION_BACKUP_WRITE_KEY: "secret",
+    });
+    expect(response.status).toBe(201);
+    return response.json();
+  };
+
+  try {
+    expect(await runBatch()).toMatchObject({ created: 20, categories: 2, processed: 20, hasMore: true });
+    expect(await runBatch()).toMatchObject({ created: 7, categories: 2, processed: 5, hasMore: false });
+    expect(await runBatch()).toMatchObject({ created: 0, updated: 0, hasMore: false });
+    expect(pages.size).toBe(28);
+    const unusedCategory = [...pages.values()].find((page) => JSON.stringify(page.properties.recordId ?? "").includes("cat_unused"));
+    expect(unusedCategory?.properties).toMatchObject({ isActive: { checkbox: false }, sortOrder: { number: 9 } });
+
+    backup.categories[0].name = "외식";
+    backup.transactions[0].categoryId = "cat_unused";
+    expect(await runBatch()).toMatchObject({ created: 0, updated: 20, hasMore: true });
+    expect(await runBatch()).toMatchObject({ created: 0, updated: 6, hasMore: false });
+    expect(await runBatch()).toMatchObject({ created: 0, updated: 0, hasMore: false });
+    expect(pages.size).toBe(28);
+    expect(pages.has("historical-category")).toBe(true);
+    expect(pages.get("page-1")?.properties).toMatchObject({
+      categoryId: { rich_text: [{ type: "text", text: { content: "cat_unused" } }] },
+      categoryName: { rich_text: [{ type: "text", text: { content: "여행" } }] },
+    });
+    expect(pages.get("page-2")?.properties).toMatchObject({
+      categoryName: { rich_text: [{ type: "text", text: { content: "외식" } }] },
+    });
   } finally {
     globalThis.fetch = originalFetch;
   }
@@ -907,6 +1015,11 @@ function completeBackupSchema() {
     recordId: { type: "rich_text" },
     amount: { type: "number" },
     categoryId: { type: "rich_text" },
+    categoryName: { type: "rich_text" },
+    color: { type: "rich_text" },
+    isDefault: { type: "checkbox" },
+    isActive: { type: "checkbox" },
+    sortOrder: { type: "number" },
     memo: { type: "rich_text" },
     source: {
       type: "select",
@@ -966,6 +1079,7 @@ function currentTransactionPageProperties(transaction: ReturnType<typeof backupW
     type: { multi_select: [{ name: transaction.type }] },
     amount: { number: transaction.amount },
     categoryId: richText(transaction.categoryId),
+    categoryName: richText("식비"),
     name: richText(transaction.memo),
     memo: richText(transaction.memo),
     source: { select: { name: transaction.source } },

@@ -1140,3 +1140,13 @@
 - Notion 백업에는 category 이름 및 excludeFromAnnualTrend 필드가 없다. 사용자 categoryId 22개는 ID를 보존하여 복구 분류 1~22로 임시 생성했다. 원래 이름과 과거 연간 집계 제외 설정은 복원하지 못했다.
 - 실제 사이트의 기존 JSON 가져오기 버튼까지 실행했지만 Edge ChatGPT 확장의 파일 URL 접근 권한 부족으로 setFiles가 거부됐다. 브라우저 DB 병합과 최종 화면은 미검증이며 완료로 보고하지 않는다.
 - 원인 확정은 보류한다. 현재 데이터의 createdAt은 오늘이며 공유 파일은 404다. 브라우저 데이터 삭제가 실제 발생했는지는 이 증거만으로 단정할 수 없다.
+## 2026-10-25 Notion 카테고리 백업 보존
+
+- Notion 가계부 https://www.notion.so/3783d76f88748097ab29eb090473dbef 본문에서 categoryId만 존재하고 categoryName은 없는 현재 schema를 확인했다.
+- createBackupData는 카테고리 정의를 이미 보낸다. buildNotionBackupRows가 transactions만 생성하고 backupCleanupPages가 카테고리를 휴지통으로 보내는 것이 누락 원인이다. 변환·정리·응답 및 회귀 테스트만 수정한다.
+- 계획은 docs/notion-category-backup-plan.md에 작성했다. 기존 카테고리 행은 유지하며 현재 요청에 포함된 ID만 갱신한다. 공개 공유 데이터나 사용자 브라우저 DB는 수정하지 않는다.
+- 시작 작업 트리는 깨끗하며 HEAD는 origin/main 대비 복구 문서 커밋 1개 앞, 원격 공유 데이터 커밋 2개 뒤다. 기존 커밋은 보존한다.
+- 관련 테스트 19개가 통과했다. 전체 검사 57개 중 53개 통과, 4개 실패다. 수정 전 HEAD를 임시 디렉터리에 풀어 동일한 화면 구조 1개·공유 데이터 정책 3개 실패를 재현했으며 이 범위는 수정하지 않았다.
+- npm run build 및 wrangler deploy --dry-run이 통과했다. 앱 빌드에는 기존 500 kB 청크 경고가 있다. UI 코드는 변경하지 않았으므로 화면 시각 검사는 수행하지 않았다.
+- 사용자 Cloudflare OAuth 로그인 완료 뒤 Worker를 배포했다. 버전은 31cc7aa9-99e0-4d9e-9f56-18405fcb0f5d다. /institutions HTTP 200, 인증 없는 /backups HTTP 401을 확인했다.
+- 실사용 브라우저의 거래·백업 키를 읽거나 실제 금융 행 백업을 실행하지 않았다. 사용자가 기존 금융 파일 가져오기 화면에서 Notion 기록을 누르면 categoryName 열과 카테고리 정의가 함께 갱신된다. 캘린더에는 날짜가 있는 거래만 표시된다.

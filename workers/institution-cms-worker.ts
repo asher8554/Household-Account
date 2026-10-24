@@ -178,6 +178,7 @@ async function handleBackupRequest(request: Request, env: WorkerEnv): Promise<Re
             updated,
             legacyRemoved,
             processed,
+            categories: backup.categories.length,
             transactions: backup.transactions.length,
             hasMore: true,
             nextCursor: { phase: "cleanup" },
@@ -195,7 +196,7 @@ async function handleBackupRequest(request: Request, env: WorkerEnv): Promise<Re
 
       created = result.created;
       updated = result.updated;
-      processed = rowBatch.length;
+      processed = rowBatch.filter((row) => row.recordType === "transaction").length;
 
       return backupJsonResponse(
         {
@@ -204,6 +205,7 @@ async function handleBackupRequest(request: Request, env: WorkerEnv): Promise<Re
           updated,
           legacyRemoved,
           processed,
+          categories: backup.categories.length,
           transactions: backup.transactions.length,
           hasMore: pendingRows.length > rowBatch.length,
           nextCursor: pendingRows.length > rowBatch.length ? { phase: "upsert", offset: 0 } : null,
@@ -219,6 +221,7 @@ async function handleBackupRequest(request: Request, env: WorkerEnv): Promise<Re
         updated,
         legacyRemoved,
         processed,
+        categories: backup.categories.length,
         transactions: backup.transactions.length,
         hasMore: rows.length > 0,
         nextCursor: rows.length > 0 ? { phase: "upsert", offset: 0 } : null,
@@ -289,6 +292,7 @@ function backupJsonResponse(
     updated: number;
     legacyRemoved: number;
     processed: number;
+    categories: number;
     transactions: number;
     hasMore: boolean;
     nextCursor: BackupCursor | null;
@@ -302,7 +306,7 @@ function backupJsonResponse(
       created: result.created,
       updated: result.updated,
       legacyRemoved: result.legacyRemoved,
-      categories: 0,
+      categories: result.categories,
       transactions: result.transactions,
       processed: result.processed,
       hasMore: result.hasMore,
@@ -671,7 +675,7 @@ function backupCleanupPages(
   for (const page of pages) {
     const id = page.id;
 
-    if (!id || (!isLegacyBackupSummaryPage(page, titlePropertyName) && !isCategoryBackupPage(page, titlePropertyName))) {
+    if (!id || !isLegacyBackupSummaryPage(page, titlePropertyName)) {
       continue;
     }
 
@@ -718,26 +722,6 @@ function pageEditedTime(page: NotionInstitutionPage) {
 
 function isLegacyBackupSummaryPage(page: NotionInstitutionPage, titlePropertyName: string) {
   return textFragmentsValue(page.properties?.[titlePropertyName]?.title).startsWith("Household account backup ");
-}
-
-function isCategoryBackupPage(page: NotionInstitutionPage, titlePropertyName: string) {
-  const recordTypes = optionNamesValue(page.properties?.recordType);
-
-  if (recordTypes.includes("category")) {
-    return true;
-  }
-
-  const rowId = textFragmentsValue(page.properties?.[titlePropertyName]?.title);
-
-  if (!rowId.startsWith("expense-") && !rowId.startsWith("income-") && !rowId.startsWith("cat_")) {
-    return false;
-  }
-
-  return (
-    !textFragmentsValue(page.properties?.date?.rich_text) &&
-    typeof page.properties?.amount?.number !== "number" &&
-    optionNamesValue(page.properties?.source).length === 0
-  );
 }
 
 function optionNamesValue(property: NotionInstitutionPage["properties"][string] | undefined): string[] {
