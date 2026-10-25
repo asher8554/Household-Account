@@ -10,6 +10,7 @@ test("pushBackupToNotion follows cursor responses and aggregates counts", async 
   const progressUpdates: Array<{ processed?: number; hasMore?: boolean }> = [];
 
   globalThis.fetch = async (_input: RequestInfo | URL, init?: RequestInit) => {
+    if (JSON.parse(String(init?.body)).action === "plan") return Response.json({ version: 1, records: [], nextCursor: null });
     requestBodies.push(JSON.parse(String(init?.body ?? "{}")));
 
     if (requestBodies.length === 1) {
@@ -70,10 +71,11 @@ test("pushBackupToNotion follows cursor responses and aggregates counts", async 
       transactions: 25,
     });
     expect(requestBodies).toEqual([
-      { backup },
-      { backup, cursor: { phase: "upsert", offset: 20 } },
+      { backup, recordIds: [...backup.categories, ...backup.transactions].map(row => row.id), cursor: null },
+      { backup, recordIds: [...backup.categories, ...backup.transactions].map(row => row.id), cursor: { phase: "upsert", offset: 20 } },
     ]);
     expect(progressUpdates).toEqual([
+      { processed: 25, hasMore: undefined },
       { processed: 20, hasMore: true },
       { processed: 25, hasMore: false },
     ]);
@@ -86,8 +88,9 @@ test("pushBackupToNotion rejects hasMore responses without a cursor", async () =
   const originalFetch = globalThis.fetch;
   const backup = backupWithTransactions(1);
 
-  globalThis.fetch = async () =>
-    new Response(
+  globalThis.fetch = async (_input, init) => {
+    if (JSON.parse(String(init?.body)).action === "plan") return Response.json({ version: 1, records: [], nextCursor: null });
+    return new Response(
       JSON.stringify({
         version: 1,
         syncedAt: "2026-06-07T10:20:31.000Z",
@@ -105,6 +108,7 @@ test("pushBackupToNotion rejects hasMore responses without a cursor", async () =
         headers: { "Content-Type": "application/json" },
       },
     );
+  };
 
   try {
     await expect(pushBackupToNotion(backup, "secret", "https://worker.test/institutions")).rejects.toThrow(/cursor/);
@@ -124,6 +128,7 @@ test("Notion backup respects Retry-After and retries the same batch", async () =
     return 0;
   }) as typeof setTimeout;
   globalThis.fetch = async (_url, init) => {
+    if (JSON.parse(String(init?.body)).action === "plan") return Response.json({ version: 1, records: [], nextCursor: null });
     requests.push(String(init?.body));
     if (requests.length === 1) {
       return Response.json({ error: "notion_rate_limited" }, { status: 429, headers: { "Retry-After": "12" } });
@@ -141,6 +146,29 @@ test("Notion backup respects Retry-After and retries the same batch", async () =
   } finally {
     globalThis.fetch = originalFetch;
     globalThis.setTimeout = originalSetTimeout;
+  }
+});
+
+test("planning rejects repeated cursors and failures before any save request", async () => {
+  const originalFetch = globalThis.fetch;
+  let calls = 0;
+  globalThis.fetch = async (_url, init) => {
+    expect(JSON.parse(String(init?.body)).action).toBe("plan");
+    calls += 1;
+    return Response.json({ version: 1, records: [], nextCursor: "repeated" });
+  };
+  try {
+    await expect(pushBackupToNotion(backupWithTransactions(1), "secret", "https://worker.test/institutions"))
+      .rejects.toThrow("cursor");
+    expect(calls).toBe(2);
+    globalThis.fetch = async (_url, init) => {
+      expect(JSON.parse(String(init?.body)).action).toBe("plan");
+      return Response.json({ error: "notion_backup_page_query_failed" }, { status: 502 });
+    };
+    await expect(pushBackupToNotion(backupWithTransactions(1), "secret", "https://worker.test/institutions"))
+      .rejects.toThrow("행 조회에 실패");
+  } finally {
+    globalThis.fetch = originalFetch;
   }
 });
 

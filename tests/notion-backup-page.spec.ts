@@ -1,6 +1,7 @@
 // Notion 백업 행 단위 payload 변환을 검증합니다.
 import { expect, test } from "@playwright/test";
 import worker from "../workers/institution-cms-worker";
+import { pushBackupToNotion } from "../src/features/backup/notion-backup-service";
 import {
   buildNotionBackupRows,
   buildNotionBackupSchemaPatch,
@@ -1038,6 +1039,75 @@ test("backup endpoint completes category batches and updates renamed or reassign
     expect(pages.get("page-4")?.properties).toMatchObject({
       categoryName: { rich_text: [{ type: "text", text: { content: "외식" } }] },
     });
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});
+
+test("planning excludes identical records and saves only new or changed rows with full category context", async () => {
+  const originalFetch = globalThis.fetch;
+  const backup = backupWithTransactions(3);
+  const pages = new Map(buildNotionBackupRows(backup, "id", completeBackupSchema()).map(row =>
+    [row.id, { id: `page-${row.id}`, properties: row.properties }]));
+  const saveTargets: string[][] = [];
+  const writes: string[] = [];
+  let planningQueries = 0;
+  globalThis.fetch = async (input, init) => {
+    const url = String(input);
+    const method = init?.method ?? "GET";
+    const body = JSON.parse(String(init?.body ?? "{}"));
+    if (url === "https://worker.test/backups") {
+      if (body.action !== "plan") saveTargets.push(body.recordIds);
+      return worker.fetch(new Request(url, init), {
+        NOTION_TOKEN: "ntn_test", NOTION_DATA_SOURCE_ID: "test-source", NOTION_BACKUP_WRITE_KEY: "secret",
+      });
+    }
+    if (method === "GET" && url.includes("/v1/data_sources/")) return Response.json({ properties: completeBackupSchema() });
+    if (method === "PATCH" && url.includes("/v1/data_sources/")) return Response.json({});
+    if (url.endsWith("/query")) {
+      if (body.filter) {
+        const ids = new Set(body.filter.or.flatMap((f: { rich_text?: { equals: string } }) => f.rich_text ? [f.rich_text.equals] : []));
+        return Response.json({ results: [...pages.entries()].filter(([id]) => ids.has(id)).map(([, page]) => page), has_more: false });
+      }
+      planningQueries += 1;
+      const offset = Number(body.start_cursor ?? 0);
+      const all = [...pages.values()];
+      return Response.json({ results: all.slice(offset, offset + 2), has_more: offset + 2 < all.length,
+        next_cursor: offset + 2 < all.length ? String(offset + 2) : null });
+    }
+    if (url.includes("/v1/pages")) {
+      expect(body).not.toHaveProperty("in_trash");
+      const id = body.properties.recordId.rich_text[0].text.content;
+      writes.push(id);
+      pages.set(id, { id: `page-${id}`, properties: body.properties });
+      return Response.json({ id: `page-${id}` });
+    }
+    throw new Error(`Unexpected fetch: ${method} ${url}`);
+  };
+  const run = () => pushBackupToNotion(backup, "secret", "https://worker.test/institutions");
+  try {
+    expect(await run()).toMatchObject({ transactions: 0, categories: 0, skipped: 4, created: 0, updated: 0 });
+    expect(planningQueries).toBe(2);
+    expect(saveTargets.pop()).toEqual([]);
+    expect(writes).toEqual([]);
+
+    backup.transactions[0].amount += 100;
+    backup.transactions.push({ ...backup.transactions[1], id: "tx-new" });
+    expect(await run()).toMatchObject({ transactions: 2, categories: 0, skipped: 3, created: 1, updated: 1 });
+    expect(saveTargets.pop()).toEqual(["tx-1", "tx-new"]);
+    expect(writes.splice(0)).toEqual(["tx-1", "tx-new"]);
+
+    backup.categories[0].name = "외식";
+    expect(await run()).toMatchObject({ transactions: 4, categories: 1, skipped: 0, updated: 5 });
+    expect(pages.get("tx-2")?.properties.categoryName).toEqual({ rich_text: [{ type: "text", text: { content: "외식" } }] });
+    writes.length = 0;
+    expect(await run()).toMatchObject({ transactions: 0, skipped: 5, updated: 0 });
+    expect(writes).toEqual([]);
+
+    // Notion에서 직접 바꾼 금액도 캐시에 가려지지 않고 다시 갱신한다.
+    pages.get("tx-3")!.properties.amount = { number: 1 };
+    expect(await run()).toMatchObject({ transactions: 1, skipped: 4, updated: 1 });
+    expect(saveTargets.pop()).toEqual(["tx-3"]);
   } finally {
     globalThis.fetch = originalFetch;
   }

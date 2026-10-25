@@ -17,6 +17,8 @@ export type NotionBackupResult = {
   categories: number;
   transactions: number;
   processed?: number;
+  skipped?: number;
+  phase?: "checking" | "saving";
   hasMore?: boolean;
   nextCursor?: NotionBackupCursor | null;
 };
@@ -90,9 +92,44 @@ export async function pushBackupToNotion(
 
   let cursor: NotionBackupCursor | null = null;
   let aggregate: NotionBackupResult | null = null;
+  const checked = new Map<string, boolean>();
+  const transactionIds = new Set(backup.transactions.map(row => row.id));
+  let queryCursor: string | null = null;
+  const seenCursors = new Set<string>();
+
+  for (let page = 0; ; page += 1) {
+    if (page >= MAX_NOTION_BACKUP_BATCHES || (queryCursor && seenCursors.has(queryCursor))) {
+      throw new Error("Notion 백업 사전 확인 cursor가 반복되거나 횟수를 초과했습니다.");
+    }
+    if (queryCursor) seenCursors.add(queryCursor);
+    const result = await requestNotionBackup(endpoint, normalizedKey, { backup, action: "plan", queryCursor });
+    if (!isRecord(result) || result.version !== 1 || !Array.isArray(result.records) ||
+      !(result.nextCursor === null || typeof result.nextCursor === "string" && result.nextCursor.length > 0)) {
+      throw new Error("Notion 백업 사전 확인 응답 형식이 올바르지 않습니다.");
+    }
+    for (const record of result.records) {
+      if (!isRecord(record) || typeof record.id !== "string" || typeof record.current !== "boolean") {
+        throw new Error("Notion 백업 사전 확인 응답 형식이 올바르지 않습니다.");
+      }
+      // 같은 ID의 원격 행이 여러 개면 저장 단계에서 다시 확인한다.
+      checked.set(record.id, !checked.has(record.id) && record.current);
+    }
+    queryCursor = result.nextCursor as string | null;
+    options.onBatchComplete?.({
+      version: 1, syncedAt: new Date().toISOString(), created: 0, updated: 0, legacyRemoved: 0,
+      categories: backup.categories.length, transactions: backup.transactions.length,
+      processed: queryCursor ? [...checked.keys()].filter(id => transactionIds.has(id)).length : backup.transactions.length,
+      skipped: [...checked.values()].filter(Boolean).length, phase: "checking", batchCount: page + 1,
+    });
+    if (!queryCursor) break;
+  }
+  const recordIds = [...backup.categories, ...backup.transactions].map(row => row.id).filter(id => !checked.get(id));
+  const skipped = backup.categories.length + backup.transactions.length - recordIds.length;
 
   for (let batchCount = 0; batchCount < MAX_NOTION_BACKUP_BATCHES; batchCount += 1) {
-    const result = await pushBackupBatchToNotion(endpoint, backup, normalizedKey, cursor);
+    const result = parseNotionBackupResult(await requestNotionBackup(endpoint, normalizedKey, { backup, recordIds, cursor }));
+    result.skipped = skipped;
+    result.phase = "saving";
 
     aggregate = mergeNotionBackupResults(aggregate, result);
     options.onBatchComplete?.({
@@ -153,13 +190,11 @@ async function safeJson(response: Response): Promise<unknown> {
   }
 }
 
-async function pushBackupBatchToNotion(
+async function requestNotionBackup(
   endpoint: string,
-  backup: BackupFile,
   writeKey: string,
-  cursor: NotionBackupCursor | null,
-): Promise<NotionBackupResult> {
-  const body = cursor ? { backup, cursor } : { backup };
+  body: unknown,
+): Promise<unknown> {
   for (let attempt = 0; ; attempt += 1) {
     const response = await fetch(endpoint, {
       method: "POST",
@@ -185,7 +220,7 @@ async function pushBackupBatchToNotion(
       throw new Error(getNotionBackupErrorMessage(payload, response.status));
     }
 
-    return parseNotionBackupResult(payload);
+    return payload;
   }
 }
 
@@ -210,6 +245,8 @@ function mergeNotionBackupResults(
     categories: next.categories,
     transactions: next.transactions,
     processed: (current.processed ?? 0) + (next.processed ?? 0),
+    skipped: next.skipped,
+    phase: next.phase,
     hasMore: false,
     nextCursor: null,
   };

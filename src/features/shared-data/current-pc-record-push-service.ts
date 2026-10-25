@@ -75,7 +75,8 @@ export async function pushCurrentPcRecords(
 
 export function formatCurrentPcRecordPushResult(result: CurrentPcRecordPushResult) {
   if (result.notion.status === "success") {
-    return `현재 기록 ${result.gitHub.transactions}건을 GitHub Pages 공유 파일에 업데이트했고 Notion에도 거래 ${result.notion.result.transactions}건과 카테고리 ${result.notion.result.categories}개를 기록했습니다.`;
+    const skipped = result.notion.result.skipped;
+    return `현재 기록 ${result.gitHub.transactions}건을 GitHub Pages 공유 파일에 업데이트했고 Notion에도 거래 ${result.notion.result.transactions}건과 카테고리 ${result.notion.result.categories}개를 기록했습니다.${skipped === undefined ? "" : ` 동일 기록 ${skipped}건은 작업에서 제외했습니다.`}`;
   }
 
   return `현재 기록 ${result.gitHub.transactions}건을 GitHub Pages 공유 파일에 업데이트했습니다. Notion 기록은 실패했습니다. ${result.notion.message}`;

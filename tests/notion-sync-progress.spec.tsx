@@ -28,6 +28,16 @@ test("waits without inventing a percentage before the first response", () => {
   expect(html).not.toContain("0 / 0건");
 });
 
+test("distinguishes duplicate checking from the reduced save workload", () => {
+  const checking = render({ status: "running", progress: { ...progress, phase: "checking", skipped: 200 } });
+  expect(checking).toContain("동일 기록 확인 중");
+  expect(checking).toContain("동일 기록 200건 작업 제외");
+  const complete = render({ status: "success", progress: { ...progress, phase: "saving", transactions: 0, categories: 0, skipped: 2578 } });
+  expect(complete).toContain("추가·변경된 기록이 없어 저장 작업을 건너뛰었습니다.");
+  expect(complete).toContain("동일 기록 2,578건 작업 제외");
+  expect(complete).toContain('aria-valuenow="100"');
+});
+
 test("only confirmed completion shows 100 percent including an empty backup", () => {
   expect(render({ status: "running", progress: { ...progress, processed: 2538 } })).toContain('aria-valuenow="99"');
   expect(render({ status: "success", progress })).toContain('aria-valuenow="100"');

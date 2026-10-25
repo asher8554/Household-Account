@@ -74,6 +74,10 @@ test("pushCurrentPcRecords pushes GitHub data and then records the same backup t
   expect(formatCurrentPcRecordPushResult(result)).toBe(
     "현재 기록 3건을 GitHub Pages 공유 파일에 업데이트했고 Notion에도 거래 3건과 카테고리 0개를 기록했습니다.",
   );
+  if (result.notion.status === "success") {
+    result.notion.result.skipped = 12;
+    expect(formatCurrentPcRecordPushResult(result)).toContain("동일 기록 12건은 작업에서 제외했습니다.");
+  }
 });
 
 test("pushCurrentPcRecords keeps the GitHub success result when Notion backup fails", async () => {

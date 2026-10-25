@@ -49,6 +49,7 @@ type BackupCursor =
 type ParsedBackupRequest = {
   backup: BackupPayload;
   cursor: BackupCursor | null;
+  recordIds?: string[];
 };
 
 export default {
@@ -139,6 +140,22 @@ async function handleBackupRequest(request: Request, env: WorkerEnv): Promise<Re
   try {
     const dataSource = await retrieveNotionDataSource(notionEnv);
     const titlePropertyName = getTitlePropertyName(dataSource.properties);
+    if (isRecord(rawPayload) && rawPayload.action === "plan") {
+      if (rawPayload.queryCursor != null && (typeof rawPayload.queryCursor !== "string" || !rawPayload.queryCursor)) {
+        return jsonResponse({ error: "invalid_backup_json" }, 400, env);
+      }
+      workerStage = "page_query";
+      const page = await queryInstitutionPages(notionEnv, (rawPayload.queryCursor as string | null) ?? null,
+        "notion_backup_page_query_failed", "Notion backup pages query failed.");
+      if (page.hasMore && !page.nextCursor) throw new Error("Notion pagination cursor missing.");
+      const rows = new Map(buildNotionBackupRows(backup, titlePropertyName, dataSource.properties).map(row => [row.id, row]));
+      const records = page.results.flatMap(existing => {
+        const id = getBackupRowId(existing, titlePropertyName);
+        const row = rows.get(id);
+        return row ? [{ id, current: !needsNotionBackupMutation(row, existing) }] : [];
+      });
+      return jsonResponse({ version: 1, records, nextCursor: page.hasMore ? page.nextCursor : null }, 200, env);
+    }
     const schemaPatch = buildNotionBackupSchemaPatch(dataSource.properties, backup.categories);
 
     if (Object.keys(schemaPatch.properties).length > 0) {
@@ -147,7 +164,11 @@ async function handleBackupRequest(request: Request, env: WorkerEnv): Promise<Re
     }
 
     workerStage = "row_build";
-    const rows = buildNotionBackupRows(backup, titlePropertyName, dataSource.properties);
+    const targetIds = backupRequest.recordIds ? new Set(backupRequest.recordIds) : null;
+    const rows = buildNotionBackupRows(backup, titlePropertyName, dataSource.properties)
+      .filter(row => !targetIds || targetIds.has(row.id));
+    const categories = rows.filter(row => row.recordType === "category").length;
+    const transactions = rows.length - categories;
     const offset = cursor?.phase === "upsert" ? Math.min(cursor.offset, rows.length) : 0;
     const candidateRows = rows.slice(offset, offset + BACKUP_MUTATION_BATCH_SIZE);
     const filters: Record<string, unknown>[] = candidateRows.flatMap((row) => [
@@ -189,8 +210,8 @@ async function handleBackupRequest(request: Request, env: WorkerEnv): Promise<Re
             updated,
             legacyRemoved,
             processed,
-            categories: backup.categories.length,
-            transactions: backup.transactions.length,
+            categories,
+            transactions,
             hasMore: true,
             nextCursor: { phase: "cleanup" },
           },
@@ -220,8 +241,8 @@ async function handleBackupRequest(request: Request, env: WorkerEnv): Promise<Re
           updated,
           legacyRemoved,
           processed,
-          categories: backup.categories.length,
-          transactions: backup.transactions.length,
+          categories,
+          transactions,
           hasMore: nextOffset < rows.length,
           nextCursor: nextOffset < rows.length ? { phase: "upsert", offset: nextOffset } : null,
         },
@@ -236,8 +257,8 @@ async function handleBackupRequest(request: Request, env: WorkerEnv): Promise<Re
         updated,
         legacyRemoved,
         processed,
-        categories: backup.categories.length,
-        transactions: backup.transactions.length,
+        categories,
+        transactions,
         hasMore: rows.length > 0,
         nextCursor: rows.length > 0 ? { phase: "upsert", offset: 0 } : null,
       },
@@ -278,9 +299,17 @@ function parseBackupRequestPayload(raw: unknown): ParsedBackupRequest | null {
     return null;
   }
 
+  if (raw.recordIds !== undefined) {
+    const ids = new Set([...backup.categories, ...backup.transactions].map(row => row.id));
+    if (!Array.isArray(raw.recordIds) || !raw.recordIds.every(id => typeof id === "string" && ids.has(id))) {
+      return null;
+    }
+  }
+
   return {
     backup,
     cursor,
+    recordIds: raw.recordIds as string[] | undefined,
   };
 }
 

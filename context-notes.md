@@ -1194,3 +1194,12 @@
 - UI 커밋 0014884와 원격 공유 데이터 변경 b8615e5를 병합한 da7316d를 push했다. Pages 실행 40155498458이 성공했고 운영 화면에서도 다크 모드, Pretendard 실제 로드, blur(28px) saturate(1.65), 패널 rgba(37,54,44,0.24), 가로 넘침 없음을 확인했다.
 - 운영 Notion 기록을 재실행해 실제 진행률 70%, 77%, 최종 100%를 확인했다. 거래 2538/2538건·카테고리 40개, 생성·업데이트·정리 모두 0건으로 완료했다. 기존 동기화 결과와 일치하며 CPU 오류가 재발하지 않았다.
 - 운영 화면 notion-progress-glass-live.png, notion-progress-glass-complete.png, notion-progress-complete-detail.png를 저장소 밖 visualizations/2026/10/24/01a17003-c83a-72b0-9c59-5bc6552ca1bf에 보존했다. 소스 변경 없이 최종 검증 기록만 추가한다.
+
+## 2026-10-25 동일 기록 작업 제외
+
+- 사용자 요청은 Notion 기록에서 중복된 내용을 작업 대상에서 제외하는 것이다. 기존 코드는 쓰기는 생략하지만 모든 행을 20건 단위 저장 batch로 방문한다. 먼저 실제 Notion을 페이지 단위로 대조한 뒤 동일 행을 작업 목록에서 뺀다.
+- collection://3783d76f-8874-8055-af3a-000befc853fc를 다시 읽어 recordId·categoryId·categoryName·금액·날짜 속성을 확인했다. 기존 속성 비교 함수를 재사용하며 캐시로 Notion 변경을 놓치지 않는다. ID가 다른 정상 반복 결제는 임의로 합치지 않는다.
+- 수정 범위는 Worker, 공통 Notion 클라이언트, 공유 진행률 컴포넌트와 관련 테스트다. 직접 Notion 기록과 현재 기록 업데이트 호출 두 경로 모두 공통 서비스를 사용한다. 계획은 docs/notion-unchanged-skip-plan.md다.
+- action=plan은 한 요청당 원격 한 페이지만 읽어 기존 속성 비교 결과와 다음 cursor를 반환한다. 클라이언트는 페이지 간 중복 ID를 제외 판정에서 보류하고, 단일 행의 모든 속성이 일치한 ID만 저장 recordIds에서 제외한다. 전체 카테고리 목록은 유지해 이름/수식 갱신에 필요한 문맥을 보존한다.
+- 실제 원격 변경을 매번 비교하므로 Notion에서 수정·삭제한 행도 브라우저 캐시에 가려지지 않는다. 사전 확인 오류/반복 cursor는 저장 전에 중단한다. 변경이 없는 경우에도 schema와 기존 요약 정리를 확인하는 빈 대상 요청 하나는 유지한다.
+- 관련 30개 테스트·빌드·Worker 타입 검사가 통과했다. 전체 70개 중 67개 통과, 기존 dashboard layout 및 public-shared-data-security의 3개 실패가 동일하게 남아 있다. Worker 1c77d80a-4aa2-49ad-b31d-22a266de211f를 배포했다.

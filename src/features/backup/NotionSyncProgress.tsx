@@ -15,8 +15,9 @@ export function NotionSyncProgress({ state }: { state: NotionSyncState }) {
   const processed = status === "success" ? total : Math.min(total, Math.max(0, progress?.processed ?? 0));
   const percent = status === "success" ? 100 : total > 0 ? Math.min(99, Math.floor(processed / total * 100)) : 0;
   const waiting = !progress && status === "running";
+  const checking = progress?.phase === "checking";
   const Icon = status === "success" ? CheckCircle2 : status === "error" ? AlertCircle : CloudUpload;
-  const title = status === "success" ? "Notion 기록 완료" : status === "error" ? "Notion 기록 중단" : "Notion에 기록 중";
+  const title = status === "success" ? "Notion 기록 완료" : status === "error" ? "Notion 기록 중단" : checking ? "동일 기록 확인 중" : "Notion에 기록 중";
   const error = state.error === "Failed to fetch"
     ? "서버 연결이 끊겼습니다. 저장된 기록은 유지되며 다시 시도할 수 있습니다."
     : state.error;
@@ -45,10 +46,15 @@ export function NotionSyncProgress({ state }: { state: NotionSyncState }) {
         />
       </div>
       <p className="mt-2 text-sm tabular-nums text-muted" aria-live="polite">
-        {waiting ? "Notion 연결과 저장된 기록을 확인하고 있습니다." : progress
+        {waiting ? "Notion 연결과 저장된 기록을 확인하고 있습니다." : status === "success" && progress?.phase === "saving" && total === 0 && progress.categories === 0
+          ? "추가·변경된 기록이 없어 저장 작업을 건너뛰었습니다."
+          : progress
           ? `${processed.toLocaleString("ko-KR")} / ${total.toLocaleString("ko-KR")}건 확인${status === "success" ? " 완료" : ""} · 카테고리 ${progress.categories.toLocaleString("ko-KR")}개`
           : "저장 요청을 완료하지 못했습니다."}
       </p>
+      {progress?.skipped !== undefined ? (
+        <p className="mt-2 text-sm tabular-nums text-muted">동일 기록 {progress.skipped.toLocaleString("ko-KR")}건 작업 제외{checking ? " · 새 기록과 변경된 기록을 찾고 있습니다." : " · 거래·카테고리 합계"}</p>
+      ) : null}
       {progress ? (
         <dl className="mt-3 grid grid-cols-3 gap-2 border-t border-line pt-3 text-xs text-muted">
           {([["새로 저장", progress.created], ["업데이트", progress.updated], ["정리", progress.legacyRemoved]] as const).map(([label, count]) => (
