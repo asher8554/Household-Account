@@ -1206,3 +1206,10 @@
 - e748b42를 push한 Pages 실행 40156390058이 성공했다. 운영 페이지를 갱신해 Notion 기록을 실행했고 동일 기록 2578건(거래 2538건·카테고리 40개)을 제외해 생성·업데이트·정리 0건, 100%로 완료했다. tail의 모든 관측 요청은 outcome=ok였고 예외가 없었다.
 - 운영 화면에서 추가·변경된 기록이 없어 저장 작업을 건너뛰었다는 안내와 제외 건수를 확인했다. 390px에서도 가로 넘침·패널 잘림이 없고, 실제 Pretendard 로드·다크 모드·blur(28px) saturate(1.65)를 확인했다. 키 저장에서 Tab으로 Notion 기록 버튼에 이동해 2px 포커스를 표시했다. 임시 viewport는 원래대로 복원했다.
 - 최종 화면 notion-identical-skipped-complete.png와 notion-identical-skipped-mobile.png를 기존 저장소 밖 visualizations 폴더에 보존했다. 외형 확인만 위해 테스트 데이터를 만들거나 운영 거래를 변경하지 않았다.
+
+## 2026-10-25 README 업데이트
+
+- 사용자는 저장소에 업데이트된 내용을 README.md에 작성하도록 요청했다. 기존 README에는 라이선스·제3자 고지만 있으므로 현재 기능, 최근 변경, 사용·실행·검증 방법을 앞에 추가한다. 고지 원문은 유지한다.
+- 근거는 이번 작업에서 직접 확인한 소스, package.json, GitHub Pages workflow, Notion 스키마와 운영 검증 결과다. 이전에 읽은 Notion 자료를 재조회하지 않으며 새 Notion 문서는 작성하지 않는다. 계획은 docs/readme-update-plan.md다.
+- README에 주요 기능, 카테고리 ID 연결, 동일 기록 제외 기준과 조회 필요성, 진행률·글래스 UI, 공유 암호 제거와 세션 키 보관, 두 업데이트 버튼의 차이, 로컬/Worker 설정·검증·배포 명령을 추가했다. 로컬 base=/와 Pages base=/Household-Account/도 실제 Vite 설정과 대조했다.
+- 상대 링크가 모두 존재하고 라이선스·제3자 고지 원문이 이전 README와 동일함을 자동 대조했다. git diff --check가 통과했다. 문서만 변경해 앱 테스트·빌드는 재실행하지 않았으며 이전 코드 검증 결과에는 날짜와 기존 실패 3개를 명시했다.
