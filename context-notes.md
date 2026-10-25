@@ -1203,3 +1203,6 @@
 - action=plan은 한 요청당 원격 한 페이지만 읽어 기존 속성 비교 결과와 다음 cursor를 반환한다. 클라이언트는 페이지 간 중복 ID를 제외 판정에서 보류하고, 단일 행의 모든 속성이 일치한 ID만 저장 recordIds에서 제외한다. 전체 카테고리 목록은 유지해 이름/수식 갱신에 필요한 문맥을 보존한다.
 - 실제 원격 변경을 매번 비교하므로 Notion에서 수정·삭제한 행도 브라우저 캐시에 가려지지 않는다. 사전 확인 오류/반복 cursor는 저장 전에 중단한다. 변경이 없는 경우에도 schema와 기존 요약 정리를 확인하는 빈 대상 요청 하나는 유지한다.
 - 관련 30개 테스트·빌드·Worker 타입 검사가 통과했다. 전체 70개 중 67개 통과, 기존 dashboard layout 및 public-shared-data-security의 3개 실패가 동일하게 남아 있다. Worker 1c77d80a-4aa2-49ad-b31d-22a266de211f를 배포했다.
+- e748b42를 push한 Pages 실행 40156390058이 성공했다. 운영 페이지를 갱신해 Notion 기록을 실행했고 동일 기록 2578건(거래 2538건·카테고리 40개)을 제외해 생성·업데이트·정리 0건, 100%로 완료했다. tail의 모든 관측 요청은 outcome=ok였고 예외가 없었다.
+- 운영 화면에서 추가·변경된 기록이 없어 저장 작업을 건너뛰었다는 안내와 제외 건수를 확인했다. 390px에서도 가로 넘침·패널 잘림이 없고, 실제 Pretendard 로드·다크 모드·blur(28px) saturate(1.65)를 확인했다. 키 저장에서 Tab으로 Notion 기록 버튼에 이동해 2px 포커스를 표시했다. 임시 viewport는 원래대로 복원했다.
+- 최종 화면 notion-identical-skipped-complete.png와 notion-identical-skipped-mobile.png를 기존 저장소 밖 visualizations 폴더에 보존했다. 외형 확인만 위해 테스트 데이터를 만들거나 운영 거래를 변경하지 않았다.
