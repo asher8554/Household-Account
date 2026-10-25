@@ -4,6 +4,7 @@ import { Github, RotateCcw, Save, Upload } from "lucide-react";
 import { Button } from "../../shared/ui/Button";
 import { FormField } from "../../shared/ui/FormField";
 import { SectionPanel } from "../../shared/ui/SectionPanel";
+import { NotionSyncProgress, type NotionSyncState } from "../backup/NotionSyncProgress";
 import {
   clearGitHubSharedDataSettings,
   defaultGitHubSharedDataSettings,
@@ -23,6 +24,7 @@ export function GitHubSharedDataPanel() {
   const [settings, setSettings] = useState<GitHubSharedDataSettings>(() => loadGitHubSharedDataSettings());
   const [message, setMessage] = useState("");
   const [isPushing, setIsPushing] = useState(false);
+  const [notionSync, setNotionSync] = useState<NotionSyncState | null>(null);
   const isReadyToPush = hasGitHubSharedDataToken(settings);
 
   function updateField(field: keyof GitHubSharedDataSettings, value: string) {
@@ -31,6 +33,7 @@ export function GitHubSharedDataPanel() {
 
   function handleSave(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (!isPushing) setNotionSync(null);
     saveGitHubSharedDataSettings(settings);
     setSettings(loadGitHubSharedDataSettings());
     setMessage("GitHub 공유 설정을 저장했습니다. 공유 파일 동기화를 다시 시도합니다.");
@@ -38,6 +41,7 @@ export function GitHubSharedDataPanel() {
   }
 
   function handleReset() {
+    if (!isPushing) setNotionSync(null);
     clearGitHubSharedDataSettings();
     setSettings(defaultGitHubSharedDataSettings);
     setMessage("GitHub 공유 설정을 초기화했습니다.");
@@ -47,6 +51,7 @@ export function GitHubSharedDataPanel() {
     if (!isReadyToPush || isPushing) return;
 
     setIsPushing(true);
+    setNotionSync(null);
     setMessage("현재 기록을 업데이트 중입니다.");
     let isActive = true;
     const slowNoticeTimer = window.setTimeout(() => {
@@ -58,6 +63,8 @@ export function GitHubSharedDataPanel() {
     try {
       const result = await pushCurrentPcRecords(settings, {
         onProgress: (progress) => {
+          if (progress.phase === "notion_start") setNotionSync({ status: "running" });
+          if (progress.phase === "notion_batch") setNotionSync({ status: "running", progress: progress.progress });
           if (progress.phase === "github_success") {
             window.clearTimeout(slowNoticeTimer);
           }
@@ -66,6 +73,12 @@ export function GitHubSharedDataPanel() {
         },
       });
       setMessage(formatCurrentPcRecordPushResult(result));
+      if (result.notion.status === "success") {
+        setNotionSync({ status: "success", progress: result.notion.result });
+      } else {
+        const error = result.notion.message;
+        setNotionSync((previous) => ({ status: "error", progress: previous?.progress, error }));
+      }
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "현재 기록 업데이트에 실패했습니다.");
     } finally {
@@ -147,7 +160,8 @@ export function GitHubSharedDataPanel() {
           </div>
         </div>
       </form>
-      {message ? <p className="mt-3 text-sm text-muted">{message}</p> : null}
+      {notionSync ? <div className="mt-4"><NotionSyncProgress state={notionSync} /></div> : null}
+      {message && (!notionSync || !isPushing) ? <p className="mt-3 text-sm text-muted">{message}</p> : null}
       <p className="mt-3 text-sm leading-6 text-muted">
         GitHub Pages 공유는 public/shared-data.json을 이 repo에 공개 커밋합니다. 거래 내역과 카테고리는
         암호 없이 공유됩니다. GitHub 토큰은 브라우저를 닫으면 지워지는 세션 저장소에만 보관합니다.

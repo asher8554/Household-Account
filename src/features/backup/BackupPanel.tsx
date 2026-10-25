@@ -10,6 +10,7 @@ import {
   saveNotionBackupWriteKey,
 } from "./notion-backup-service";
 import type { ImportSummary } from "./backup-types";
+import { NotionSyncProgress, type NotionSyncState } from "./NotionSyncProgress";
 
 function formatImportSummary(summary: ImportSummary) {
   return `카테고리 ${summary.categoriesAdded}개 추가, ${summary.categoriesUpdated}개 수정. 거래 ${summary.transactionsAdded}개 추가, ${summary.transactionsUpdated}개 수정.`;
@@ -21,8 +22,10 @@ export function BackupPanel() {
   const [notionBackupKey, setNotionBackupKey] = useState(() => loadNotionBackupWriteKey());
   const [isPushingNotionBackup, setIsPushingNotionBackup] = useState(false);
   const [message, setMessage] = useState("");
+  const [notionSync, setNotionSync] = useState<NotionSyncState | null>(null);
 
   async function handleImport(event: ChangeEvent<HTMLInputElement>) {
+    if (!isPushingNotionBackup) setNotionSync(null);
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -38,17 +41,20 @@ export function BackupPanel() {
 
   async function handleReset() {
     if (resetText !== "초기화") return;
+    if (!isPushingNotionBackup) setNotionSync(null);
     await resetAllData();
     setResetText("");
     setMessage("전체 데이터를 초기화했습니다.");
   }
 
   async function handleSharedExport() {
+    if (!isPushingNotionBackup) setNotionSync(null);
     const backup = await downloadSharedDataFile();
     setMessage(`공유용 shared-data.json을 내보냈습니다. 거래 ${backup.transactions.length}건.`);
   }
 
   function handleSaveNotionBackupKey() {
+    if (!isPushingNotionBackup) setNotionSync(null);
     saveNotionBackupWriteKey(notionBackupKey);
     setNotionBackupKey(loadNotionBackupWriteKey());
     setMessage("Notion 백업 키를 저장했습니다.");
@@ -58,6 +64,7 @@ export function BackupPanel() {
     if (isPushingNotionBackup) return;
 
     setIsPushingNotionBackup(true);
+    setNotionSync({ status: "running" });
     setMessage("백업 JSON을 Notion에 기록 중입니다.");
     let isActive = true;
     const slowNoticeTimer = window.setTimeout(() => {
@@ -69,15 +76,19 @@ export function BackupPanel() {
     try {
       const result = await pushCurrentBackupToNotion(notionBackupKey, {
         onBatchComplete: (progress) => {
+          window.clearTimeout(slowNoticeTimer);
+          setNotionSync({ status: "running", progress });
           setMessage(
             `Notion에 기록 중입니다. batch ${progress.batchCount} 완료. 거래 처리 ${progress.processed ?? 0}/${progress.transactions}건, 생성 ${progress.created}건, 업데이트 ${progress.updated}건, 정리 ${progress.legacyRemoved}건.`,
           );
         },
       });
+      setNotionSync({ status: "success", progress: result });
       setMessage(
         `Notion에 거래와 카테고리를 동기화했습니다. 생성 ${result.created}건, 업데이트 ${result.updated}건, 불필요/중복 행 정리 ${result.legacyRemoved}건. 거래 ${result.transactions}건, 카테고리 ${result.categories}개.`,
       );
     } catch (error) {
+      setNotionSync((previous) => ({ status: "error", progress: previous?.progress, error: error instanceof Error ? error.message : "Notion 백업 기록에 실패했습니다." }));
       setMessage(error instanceof Error ? error.message : "Notion 백업 기록에 실패했습니다.");
     } finally {
       isActive = false;
@@ -133,6 +144,7 @@ export function BackupPanel() {
         <p className="mt-2 text-xs leading-5 text-muted">
           Notion token은 Worker secret에만 저장합니다. 이 키는 Worker 쓰기 요청 보호용입니다.
         </p>
+        {notionSync ? <div className="mt-4"><NotionSyncProgress state={notionSync} /></div> : null}
       </div>
 
       <div className="mt-4 border-t border-line pt-4">
@@ -156,7 +168,7 @@ export function BackupPanel() {
         </Button>
       </div>
 
-      {message ? <p className="mt-3 text-sm text-muted">{message}</p> : null}
+      {message && !notionSync ? <p className="mt-3 text-sm text-muted">{message}</p> : null}
     </SectionPanel>
   );
 }

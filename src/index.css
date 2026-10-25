@@ -29,9 +29,9 @@
   --color-expense-4: 220 142 129;
 
   /* 글래스모피즘 토큰: 패널 투명도, 광택, 경계, 블러 강도 */
-  --glass-panel-alpha: 0.64;
-  --glass-field-alpha: 0.72;
-  --glass-blur: 22px;
+  --glass-panel-alpha: 0.54;
+  --glass-field-alpha: 0.6;
+  --glass-blur: 28px;
   --glass-sheen-strong: 0.38;
   --glass-sheen-weak: 0.1;
   /* 라이트 모드 경계는 밝은 배경 위에서도 보이도록 어두운 헤어라인 사용 */
@@ -85,17 +85,17 @@
   --color-expense-3: 104 58 50;
   --color-expense-4: 138 71 60;
 
-  --glass-panel-alpha: 0.42;
-  --glass-field-alpha: 0.5;
-  --glass-sheen-strong: 0.09;
-  --glass-sheen-weak: 0.03;
+  --glass-panel-alpha: 0.24;
+  --glass-field-alpha: 0.34;
+  --glass-sheen-strong: 0.17;
+  --glass-sheen-weak: 0.045;
   --hairline-rgb: 255 255 255;
-  --hairline-alpha: 0.14;
+  --hairline-alpha: 0.22;
   --shadow-panel:
     0 26px 54px -18px rgba(0, 0, 0, 0.55),
     0 8px 20px -10px rgba(0, 0, 0, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.14),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.24);
   color-scheme: dark;
 }
 
@@ -123,10 +123,10 @@ body {
 
 :root.dark .bg-surface {
   background-image:
-    radial-gradient(44rem 44rem at 5% -6%, rgb(var(--color-mint) / 0.16), transparent 62%),
-    radial-gradient(40rem 40rem at 97% 2%, rgb(var(--color-honey) / 0.13), transparent 64%),
-    radial-gradient(46rem 46rem at 80% 92%, rgb(var(--color-coral) / 0.12), transparent 66%),
-    radial-gradient(50rem 50rem at 14% 104%, rgb(var(--color-moss) / 0.15), transparent 62%);
+    radial-gradient(34rem 38rem at 5% -6%, rgb(var(--color-mint) / 0.25), transparent 66%),
+    radial-gradient(32rem 34rem at 97% 2%, rgb(var(--color-honey) / 0.19), transparent 68%),
+    radial-gradient(38rem 40rem at 80% 92%, rgb(var(--color-coral) / 0.17), transparent 68%),
+    radial-gradient(36rem 38rem at 14% 104%, rgb(var(--color-moss) / 0.23), transparent 66%);
 }
 
 /* 글래스 패널: 반투명 배경 + 대각선 광택 + 블러 + 채도 보정 */
@@ -144,7 +144,7 @@ body {
     rgb(255 255 255 / var(--glass-sheen-strong)) 0%,
     rgb(255 255 255 / var(--glass-sheen-weak)) 36%,
     rgb(255 255 255 / 0) 64%
-  );
+  ), linear-gradient(180deg, rgb(255 255 255 / 0.035), transparent 40%);
 }
 
 .bg-field {
@@ -157,6 +157,53 @@ body {
 
 .shadow-panel {
   box-shadow: var(--shadow-panel);
+}
+
+.notion-sync-progress {
+  background-image: linear-gradient(125deg, rgb(255 255 255 / 0.035), transparent 65%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.18), 0 10px 26px rgb(0 0 0 / 0.08);
+}
+
+:root.dark .notion-sync-progress .text-coral {
+  color: rgb(255 181 162);
+}
+
+.notion-sync-progress .text-muted {
+  color: rgb(var(--color-ink) / 0.88);
+}
+
+.notion-progress-track {
+  height: 0.75rem;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgb(var(--color-moss) / 0.12);
+  box-shadow: inset 0 1px 4px rgb(0 0 0 / 0.2), 0 1px 0 rgb(255 255 255 / 0.08);
+}
+
+.notion-progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgb(var(--color-moss)), rgb(var(--color-mint)));
+  box-shadow: inset 0 1px 1px rgb(255 255 255 / 0.45), 0 0 14px rgb(var(--color-mint) / 0.3);
+  transition: width 500ms ease;
+}
+
+.notion-progress-error {
+  background: rgb(var(--color-coral));
+}
+
+.notion-progress-waiting {
+  animation: notion-progress-wait 1.8s ease-in-out infinite;
+}
+
+@keyframes notion-progress-wait {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(300%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .notion-progress-fill { transition: none; }
+  .notion-progress-waiting { animation: none; }
 }
 
 button,
@@ -182,7 +229,7 @@ textarea {
 }
 
 ::placeholder {
-  color: rgb(var(--color-muted) / 0.72);
+  color: rgb(var(--color-muted));
 }
 
 button {
