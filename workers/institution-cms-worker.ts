@@ -146,15 +146,26 @@ async function handleBackupRequest(request: Request, env: WorkerEnv): Promise<Re
       await updateNotionDataSourceSchema(notionEnv, schemaPatch);
     }
 
+    workerStage = "row_build";
+    const rows = buildNotionBackupRows(backup, titlePropertyName, dataSource.properties);
+    const offset = cursor?.phase === "upsert" ? Math.min(cursor.offset, rows.length) : 0;
+    const candidateRows = rows.slice(offset, offset + BACKUP_MUTATION_BATCH_SIZE);
+    const filters: Record<string, unknown>[] = candidateRows.flatMap((row) => [
+      { property: "recordId", rich_text: { equals: row.id } },
+      { property: titlePropertyName, title: { equals: row.id } },
+    ]);
+    if (cursor?.phase !== "upsert") {
+      filters.push({ property: titlePropertyName, title: { starts_with: "Household account backup " } });
+    }
+
     workerStage = "page_query";
-    const existingPages = await fetchAllInstitutionPages(
+    const existingPages = filters.length ? await fetchAllInstitutionPages(
       notionEnv,
       "notion_backup_page_query_failed",
       "Notion backup pages query failed.",
-    );
-    workerStage = "row_build";
-    const rows = buildNotionBackupRows(backup, titlePropertyName, dataSource.properties);
-    const targetRowIds = new Set(rows.map((row) => row.id));
+      { or: filters },
+    ) : [];
+    const targetRowIds = new Set(candidateRows.map((row) => row.id));
     const existingPagesResult = mapExistingPagesByTitle(existingPages, titlePropertyName, targetRowIds);
     let mutationBudget = BACKUP_MUTATION_BATCH_SIZE;
     let legacyRemoved = 0;
@@ -190,13 +201,17 @@ async function handleBackupRequest(request: Request, env: WorkerEnv): Promise<Re
 
     workerStage = "upsert";
     if (mutationBudget > 0) {
-      const pendingRows = rows.filter((row) => needsNotionBackupMutation(row, existingPagesResult.pageMap.get(row.id)));
+      const pendingRows = candidateRows.filter((row) => needsNotionBackupMutation(row, existingPagesResult.pageMap.get(row.id)));
       const rowBatch = pendingRows.slice(0, mutationBudget);
       const result = await upsertNotionBackupRows(notionEnv, rowBatch, existingPagesResult.pageMap);
+      const consumed = pendingRows.length > rowBatch.length
+        ? candidateRows.indexOf(pendingRows[rowBatch.length])
+        : candidateRows.length;
+      const nextOffset = offset + consumed;
 
       created = result.created;
       updated = result.updated;
-      processed = rowBatch.filter((row) => row.recordType === "transaction").length;
+      processed = candidateRows.slice(0, consumed).filter((row) => row.recordType === "transaction").length;
 
       return backupJsonResponse(
         {
@@ -207,8 +222,8 @@ async function handleBackupRequest(request: Request, env: WorkerEnv): Promise<Re
           processed,
           categories: backup.categories.length,
           transactions: backup.transactions.length,
-          hasMore: pendingRows.length > rowBatch.length,
-          nextCursor: pendingRows.length > rowBatch.length ? { phase: "upsert", offset: 0 } : null,
+          hasMore: nextOffset < rows.length,
+          nextCursor: nextOffset < rows.length ? { phase: "upsert", offset: nextOffset } : null,
         },
         env,
       );
@@ -321,6 +336,7 @@ async function fetchAllInstitutionPages(
   env: RequiredNotionEnv,
   notionErrorCode = "notion_request_failed",
   notionErrorMessage = NOTION_REQUEST_FAILED_MESSAGE,
+  filter?: Record<string, unknown>,
 ): Promise<NotionInstitutionPage[]> {
   const pages: NotionInstitutionPage[] = [];
   const seenCursors = new Set<string>();
@@ -340,7 +356,7 @@ async function fetchAllInstitutionPages(
       seenCursors.add(startCursor);
     }
 
-    const payload = await queryInstitutionPages(env, startCursor, notionErrorCode, notionErrorMessage);
+    const payload = await queryInstitutionPages(env, startCursor, notionErrorCode, notionErrorMessage, filter);
     pages.push(...payload.results);
     startCursor = payload.hasMore ? payload.nextCursor : null;
     pageCount += 1;
@@ -354,8 +370,10 @@ async function queryInstitutionPages(
   startCursor: string | null,
   notionErrorCode: string,
   notionErrorMessage: string,
+  filter?: Record<string, unknown>,
 ): Promise<{ results: NotionInstitutionPage[]; hasMore: boolean; nextCursor: string | null }> {
-  const body: { page_size: number; start_cursor?: string } = { page_size: 100 };
+  const body: { page_size: number; start_cursor?: string; filter?: Record<string, unknown> } = { page_size: 100 };
+  if (filter) body.filter = filter;
 
   if (startCursor) {
     body.start_cursor = startCursor;

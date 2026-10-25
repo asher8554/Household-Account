@@ -526,6 +526,10 @@ test("backup endpoint chunks upserts to stay under the Worker subrequest limit",
     }
 
     if (method === "POST" && url.includes("/v1/data_sources/") && url.endsWith("/query")) {
+      const query = JSON.parse(String(init?.body));
+      expect(query.filter.or).toHaveLength(41);
+      expect(query.filter.or).toContainEqual({ property: "recordId", rich_text: { equals: "tx-19" } });
+      expect(query.filter.or).not.toContainEqual({ property: "recordId", rich_text: { equals: "tx-20" } });
       return new Response(
         JSON.stringify({
           results: [],
@@ -577,7 +581,7 @@ test("backup endpoint chunks upserts to stay under the Worker subrequest limit",
       transactions: 25,
       processed: 19,
       hasMore: true,
-      nextCursor: { phase: "upsert", offset: 0 },
+      nextCursor: { phase: "upsert", offset: 20 },
     });
     expect(createCalls).toHaveLength(20);
   } finally {
@@ -646,7 +650,7 @@ test("backup endpoint skips already migrated rows and continues pending title up
           "Content-Type": "application/json",
           "X-Household-Backup-Key": "secret",
         },
-        body: JSON.stringify({ backup }),
+        body: JSON.stringify({ backup, cursor: { phase: "upsert", offset: 20 } }),
       }),
       {
         NOTION_TOKEN: "ntn_test",
@@ -659,7 +663,7 @@ test("backup endpoint skips already migrated rows and continues pending title up
     await expect(response.json()).resolves.toMatchObject({
       created: 0,
       updated: 5,
-      processed: 5,
+      processed: 6,
       transactions: 25,
       hasMore: false,
       nextCursor: null,
@@ -995,21 +999,25 @@ test("backup endpoint completes category batches and updates renamed or reassign
     throw new Error(`Unexpected fetch: ${method} ${url}`);
   };
 
+  let cursor: unknown = null;
   const runBatch = async () => {
     const response = await worker.fetch(new Request("https://worker.test/backups", {
       method: "POST",
       headers: { "Content-Type": "application/json", "X-Household-Backup-Key": "secret" },
-      body: JSON.stringify({ backup }),
+      body: JSON.stringify({ backup, cursor }),
     }), {
       NOTION_TOKEN: "ntn_test", NOTION_DATA_SOURCE_ID: "test-source", NOTION_BACKUP_WRITE_KEY: "secret",
     });
     expect(response.status).toBe(201);
-    return response.json();
+    const result = await response.json();
+    cursor = result.nextCursor;
+    return result;
   };
 
   try {
     expect(await runBatch()).toMatchObject({ created: 20, categories: 2, processed: 18, hasMore: true });
     expect(await runBatch()).toMatchObject({ created: 7, categories: 2, processed: 7, hasMore: false });
+    expect(await runBatch()).toMatchObject({ created: 0, updated: 0, hasMore: true });
     expect(await runBatch()).toMatchObject({ created: 0, updated: 0, hasMore: false });
     expect(pages.size).toBe(28);
     const unusedCategory = [...pages.values()].find((page) => JSON.stringify(page.properties.recordId ?? "").includes("cat_unused"));
@@ -1017,8 +1025,9 @@ test("backup endpoint completes category batches and updates renamed or reassign
 
     backup.categories[0].name = "외식";
     backup.transactions[0].categoryId = "cat_unused";
-    expect(await runBatch()).toMatchObject({ created: 0, updated: 20, hasMore: true });
-    expect(await runBatch()).toMatchObject({ created: 0, updated: 6, hasMore: false });
+    expect(await runBatch()).toMatchObject({ created: 0, updated: 19, hasMore: true });
+    expect(await runBatch()).toMatchObject({ created: 0, updated: 7, hasMore: false });
+    expect(await runBatch()).toMatchObject({ created: 0, updated: 0, hasMore: true });
     expect(await runBatch()).toMatchObject({ created: 0, updated: 0, hasMore: false });
     expect(pages.size).toBe(28);
     expect(pages.has("historical-category")).toBe(true);

@@ -1176,3 +1176,11 @@
 - Worker 버전 f21138eb-7121-49f9-b22a-499dadfa7086을 배포했다. 사용자 표 view://3783d76f-8874-803c-addb-000c0756a1a4는 recordType=transaction 필터와 카테고리/categoryId 인접 표시를 적용했다.
 - 감사 파일 category-id-repair-audit.json, 재검증 category-id-repair-verification.json 및 화면 notion-category-id-matched.png는 C:/Users/asher/.codex/visualizations/2026/10/24/01a17003-c83a-72b0-9c59-5bc6552ca1bf에 보존했다. 금융 원자료를 이번 코드 커밋에 포함하지 않는다.
 - 이번 정정은 기존 Notion 거래의 카테고리 연결을 맞추는 작업이다. 사이트에만 존재하는 거래 222건을 새로 가져오거나 기존에만 남은 66건을 삭제하지 않았다. 전체 거래 백업의 Failed to fetch 문제를 해결했다고 주장하지 않는다.
+## 2026-10-25 백업 완료 후 UI 재조정 요청
+
+- 사용자는 Notion 백업이 모두 완료된 뒤 진행률 막대와 글래스 UI를 조정하도록 요청했다. 다크 모드·현재 색상을 유지하면서 투명감·배경 흐림·반사를 강화하는 선택을 받았다. UI 변경과 프런트 배포는 백업 완료 뒤로 둔다.
+- 진행 중 batch 21, 거래 처리 380/2538건을 확인한 뒤 Failed to fetch로 중단됐다. 새로고침 없이 wrangler tail을 연결하고 Notion 기록을 재시도했다.
+- 실제 POST /backups 로그는 Exceeded CPU Limit, Worker exceeded CPU time limit이다. 원격 전체 행을 매번 읽고 전체 payload를 변환하는 비용을 줄인다. 가정에 따라 통신 재시도만 늘리지 않는다.
+- 관련 Notion 글래스 지식 검색은 일반 UI 기본값을 확인하는 정도였으며 가계부 전용 디자인 규격은 찾지 못했다. 기존 CSS·화면·사용자 선택을 우선한다. 계획은 docs/notion-progress-glass-plan.md다.
+- Worker를 35e8ceab-b9fb-4ff3-ae8a-3000cbb0f128로 배포했다. cursor offset을 실제 위치로 사용하고 현재 20행의 recordId/이전 ID 제목만 조회한다. 요약 정리와 해당 행의 중복 정리는 유지한다. 이미 동기화된 행도 확인 건수에 포함한다.
+- 관련 21개 테스트와 Worker 타입 검사가 통과했다. 운영 tail에서 수정 후 POST 정상 응답 15회 이상을 확인했고 화면은 batch 39, 거래 처리 740/2538건까지 진행했다. UI 파일 변경·프런트 배포·사용자 탭 새로고침은 아직 하지 않았다.
